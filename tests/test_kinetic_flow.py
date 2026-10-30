@@ -41,7 +41,7 @@ class KineticFlow(unittest.TestCase):
     def tearDown(self): self.d.cleanup()
 
     def window(self, side="left", wrist=48.0, palm=40.0):
-        w = MainWindow(); w.select("kinetic_hand"); w.side.setCurrentIndex(w.side.findData(side))
+        w = MainWindow(); w.advanced = True; w.custom.set_advanced(True); w.select("kinetic_hand"); w.side.setCurrentIndex(w.side.findData(side))
         w.fields["wrist_mm"].setValue(wrist); w.fields["palm_mm"].setValue(palm); w.recompute(); return w
 
     def test_measures_page_shows_the_manual_result(self):

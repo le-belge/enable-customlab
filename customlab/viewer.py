@@ -58,7 +58,7 @@ class MeshView(QWidget):
         super().__init__()
         self.setMinimumSize(360, 320)
         self.tris = None            # (n,3,3)
-        self.yaw, self.pitch, self.zoom = 0.6, -0.5, 1.0
+        self.yaw, self.pitch, self.zoom = 0.6, -0.5, 1.0; self.basis = np.eye(3)
         self._last = None; self.message = ""; self.dragging = False; self.hl = None; self.hlc = None; self.use_hlc = False; self.overlay = False
         self._cache = None; self._draft_key = None; self._timer = QTimer(self); self._timer.setSingleShot(True); self._timer.setInterval(180); self._timer.timeout.connect(self.update)
 
@@ -75,7 +75,11 @@ class MeshView(QWidget):
             self.radius = float(np.linalg.norm(pts - self.centre, axis=1).max()) or 1.0
         self.update()
 
-    def face_front(self): self.yaw, self.pitch = 0.25, -0.4; self.update()
+    def set_basis(self, rows):
+        """Rows = view x (right), y (up), z (towards the viewer) in part coordinates; None = part axes as they are."""
+        self.basis = np.eye(3) if rows is None else np.asarray(rows, float).reshape(3, 3)
+
+    def face_front(self): self.yaw, self.pitch = 0.0, 0.0; self.update()          # straight-on view, same orientation as the placement view
 
     def mousePressEvent(self, e): self._last = e.position(); self.dragging = True
 
@@ -92,7 +96,7 @@ class MeshView(QWidget):
     def render_image(self, W, H, draft=False):
         """Returns an (H, W, 3) uint8 image of the current view."""
         cy, sy, cp, sp = np.cos(self.yaw), np.sin(self.yaw), np.cos(self.pitch), np.sin(self.pitch)
-        R = np.array([[1, 0, 0], [0, cp, -sp], [0, sp, cp]]) @ np.array([[cy, 0, sy], [0, 1, 0], [-sy, 0, cy]])
+        R = np.array([[1, 0, 0], [0, cp, -sp], [0, sp, cp]]) @ np.array([[cy, 0, sy], [0, 1, 0], [-sy, 0, cy]]) @ self.basis
         v = (self.tris - self.centre) @ R.T
         n = np.cross(v[:, 1] - v[:, 0], v[:, 2] - v[:, 0]); n /= (np.linalg.norm(n, axis=1, keepdims=True) + 1e-12)
         front = (n[:, 2] > -0.02) | self.hl                                   # back-face culling; decoration shells always kept

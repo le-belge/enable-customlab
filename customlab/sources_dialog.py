@@ -38,23 +38,46 @@ def status(pid):
     """(found: bool|None, count, detail path) for one device; None = optional."""
     sub, _, need = DEVICES[pid]; base = paths.sources_dir() / sub
     if need == "scad":
-        prof = load_profile(pid); p = armgen.scad_path(prof); return p is not None, 0, p or paths.resolve(prof.get("official_scad") or "")
+        prof = load_profile(pid)
+        if armgen.scad_path(prof) is None: unpack_nested(pid)       # archives left zipped by an earlier add
+        p = armgen.scad_path(prof); return p is not None, 0, p or paths.resolve(prof.get("official_scad") or "")
     n = sum(1 for f in base.rglob("*") if f.suffix.lower() == ".stl") if base.is_dir() else 0
+    if n == 0 and unpack_nested(pid): n = sum(1 for f in base.rglob("*") if f.suffix.lower() == ".stl")
     return (n > 0 if need == "stl" else None), n, base
+
+
+def _extract(z, dest, progress=lambda i, n: None):
+    """Write every file of an open ZipFile under dest (entries leaving dest are refused). Returns the number of files written."""
+    n = 0
+    members = [m for m in z.infolist() if not m.is_dir() and not m.filename.startswith("__MACOSX/") and not Path(m.filename).name.startswith("._")]
+    for i, m in enumerate(members):
+        target = (dest / m.filename).resolve()
+        if dest != target and dest not in target.parents: raise ValueError(f"Entrée refusée (hors du dossier) : {m.filename}")
+        target.parent.mkdir(parents=True, exist_ok=True)
+        with z.open(m) as src, open(target, "wb") as out: shutil.copyfileobj(src, out)
+        n += 1; progress(i + 1, len(members))
+    return n
+
+
+def unpack_nested(pid):
+    """Thingiverse sometimes delivers zips inside the download ("part 1 of 2"...): unzip them in place (then remove the archive). Returns the number of files written."""
+    dest = (paths.sources_dir() / DEVICES[pid][0]).resolve(); n = 0
+    for _ in range(3):                                               # archives inside archives, a few levels at most
+        zips = [p for p in sorted(dest.rglob("*.zip")) if p.is_file()] if dest.is_dir() else []
+        if not zips: break
+        for zp in zips:
+            try:
+                with zipfile.ZipFile(zp) as z: n += _extract(z, zp.parent.resolve() / zp.stem)
+                zp.unlink()
+            except (zipfile.BadZipFile, ValueError, OSError): continue
+    return n
 
 
 def add_zip(pid, zip_path, progress=lambda i, n: None):
     """Unzip a downloaded archive into <sources>/<device sub-folder>/ (entries leaving that folder are refused). Returns the number of files written."""
-    dest = (paths.sources_dir() / DEVICES[pid][0]).resolve(); dest.mkdir(parents=True, exist_ok=True); n = 0
-    with zipfile.ZipFile(zip_path) as z:
-        members = [m for m in z.infolist() if not m.is_dir() and not m.filename.startswith("__MACOSX/") and not Path(m.filename).name.startswith("._")]
-        for i, m in enumerate(members):
-            target = (dest / m.filename).resolve()
-            if dest != target and dest not in target.parents: raise ValueError(f"Entrée refusée (hors du dossier) : {m.filename}")
-            target.parent.mkdir(parents=True, exist_ok=True)
-            with z.open(m) as src, open(target, "wb") as out: shutil.copyfileobj(src, out)
-            n += 1; progress(i + 1, len(members))
-    return n
+    dest = (paths.sources_dir() / DEVICES[pid][0]).resolve(); dest.mkdir(parents=True, exist_ok=True)
+    with zipfile.ZipFile(zip_path) as z: n = _extract(z, dest, progress)
+    return n + unpack_nested(pid)
 
 
 def add_folder(pid, folder, progress=lambda i, n: None):
@@ -63,7 +86,7 @@ def add_folder(pid, folder, progress=lambda i, n: None):
     if dest == src or dest in src.parents or src in dest.parents: raise ValueError("Ce dossier est déjà dans le dossier des sources.")
     for i, p in enumerate(files):
         t = dest / p.relative_to(src); t.parent.mkdir(parents=True, exist_ok=True); shutil.copyfile(p, t); progress(i + 1, len(files))
-    return len(files)
+    return len(files) + unpack_nested(pid)
 
 
 class _Sig(QObject):

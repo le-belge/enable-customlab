@@ -473,3 +473,30 @@ class AutoProtect(unittest.TestCase):
         hm = deco.build_heightmap(read_stl(f), "+z", 0.25); prot = deco.auto_protected_mask(hm, 2.0); bare = deco.auto_protected_mask(hm, 0.0)
         self.assertGreater(int(prot.sum()), int(bare.sum()) * 1.5)      # margins add area around the strap slots and square holes
         self.assertGreater(int(bare.sum()), 500)                        # several through-holes exist on this part
+
+
+class SuggestColours(unittest.TestCase):
+    def test_counts_logo_colours(self):
+        import tempfile
+        svg = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 30"><rect width="30" height="30" fill="#09324E"/>'
+               '<rect x="30" width="30" height="30" fill="#2A67A1"/><rect x="60" width="30" height="30" fill="#CF232A"/></svg>')
+        one = svg.replace("#2A67A1", "#09324E").replace("#CF232A", "#09324E")
+        with tempfile.TemporaryDirectory() as d:
+            for name, txt, n in (("three.svg", svg, 3), ("one.svg", one, 1)):
+                p = Path(d) / name; p.write_text(txt)
+                self.assertEqual(deco.suggest_colours(deco.DecoSpec(kind="svg", path=str(p), mode="inlay", axis="+z", size_mm=20)), n)
+
+
+if __name__ == "__main__": unittest.main()
+
+
+class ThickenThin(unittest.TestCase):
+    def test_thin_strokes_are_widened_thick_blocks_and_other_colours_untouched(self):
+        m = np.zeros((120, 60), bool); m[10:12, 5:55] = True; m[30:90, 10:50] = True       # res 0.1 mm: 0.2 mm line + a 4 mm block
+        out = deco.thicken_thin(m, 0.1)
+        self.assertGreaterEqual(out[:, 30][5:17].sum(), 6)                                  # line now >= 0.6 mm wide
+        self.assertEqual(out[30:90, 10:50].sum(), m[30:90, 10:50].sum()); self.assertTrue((out[40:80, 20:40]).all())
+        self.assertFalse(out[60, 5] and not m[60, 5] and out[60, 4] and out[60, 3])         # the block is not grown
+        other = np.zeros_like(m); other[8:10, 5:55] = True
+        self.assertFalse((deco.thicken_thin(m, 0.1, other) & other).any())
+

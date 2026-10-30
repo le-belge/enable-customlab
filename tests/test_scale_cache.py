@@ -50,7 +50,7 @@ class FinalScale(unittest.TestCase):
     def tearDown(self): self.d.cleanup()
 
     def window(self):
-        w = MainWindow(); w.select("kinetic_arm")
+        w = MainWindow(); w.advanced = True; w.custom.set_advanced(True); w.select("kinetic_arm")
         for k, x in (("hand_mm", 168.7), ("elbow_mm", 70.66), ("resid_mm", 83.32)): w.fields[k].setValue(x)
         w.go(2); c = w.custom; c.pick_library(next(i for i in range(1, c.lib.count()) if c.lib.itemText(i).startswith("UpArmCov100"))); return w
 
@@ -86,19 +86,19 @@ class DirectScale(unittest.TestCase):
     def tearDown(self): self.d.cleanup()
 
     def test_kinetic_hand_scale_can_be_chosen_without_any_measure(self):
-        w = MainWindow(); w.select("kinetic_hand"); self.assertIsNone(w.sizing); self.assertIsNone(w.scale_percent()); self.assertFalse(w.direct_row.isHidden())
+        w = MainWindow(); w.advanced = True; w.select("kinetic_hand"); self.assertIsNone(w.sizing); self.assertIsNone(w.scale_percent()); self.assertFalse(w.direct_row.isHidden())
         w.direct_spin.setValue(80.0); w._direct_edited(); self.assertEqual(w.scale_percent(), 80.0); self.assertFalse(w.scale_out_of_range()); self.assertEqual(w.scale_for_part("x.stl"), (80.0, None))
         w.direct_spin.setValue(40.0); w._direct_edited(); self.assertTrue(w.scale_out_of_range()); self.assertIn("refusée", w.direct_info.text())     # 50-100 % documented: refused, not clamped
         self.assertEqual(w.scale_percent(), 40.0)
         w.direct_spin.setValue(0.0); w._direct_edited(); self.assertIsNone(w.scale_override); self.assertIsNone(w.scale_percent())
 
     def test_phoenix_direct_scale_and_arm_has_no_direct_row(self):
-        w = MainWindow(); w.select("phoenix_hand"); w.direct_spin.setValue(120.0); w._direct_edited(); self.assertEqual(w.scale_percent(), 120.0); self.assertFalse(w.scale_out_of_range())
+        w = MainWindow(); w.advanced = True; w.select("phoenix_hand"); w.direct_spin.setValue(120.0); w._direct_edited(); self.assertEqual(w.scale_percent(), 120.0); self.assertFalse(w.scale_out_of_range())
         w.direct_spin.setValue(170.0); w._direct_edited(); self.assertTrue(w.scale_out_of_range())
         w.select("kinetic_arm"); self.assertTrue(w.direct_row.isHidden()); self.assertIsNone(w.scale_override)                        # switching device drops the value
         self.assertEqual(w.scale_for_part("PalmRH70.STL")[0], None)
 
     def test_measures_still_give_the_computed_scale_and_the_direct_value_wins(self):
-        w = MainWindow(); w.select("kinetic_hand"); w.recompute()
+        w = MainWindow(); w.advanced = True; w.select("kinetic_hand"); w.recompute()
         w.scale_override = 75.0; w.sync_direct(); self.assertEqual(w.direct_spin.value(), 75.0); self.assertEqual(w.scale_percent(), 75.0)
         w.scale_override = None; w.sync_direct(); self.assertEqual(w.direct_spin.value(), 0.0)

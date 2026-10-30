@@ -29,37 +29,43 @@
       "id": "BicepCircum",
       "scad_param": "BicepCircum",
       "letter": "A",
-      "label_fr": "A — Circonférence du biceps (bras atteint)",
-      "label_en": "A — Biceps circumference (affected arm)",
+      "label_fr": "A — Circonférence du bras ATTEINT (milieu du bras)",
+      "label_en": "A — Circumference of the AFFECTED arm (mid-arm)",
       "unit": "mm",
       "min": 110,
       "max": 350,
       "documented_range": true,
-      "source": "SCAD v2.1 : BicepCircum [110:350] ; README : minimum passé de 160 à 110"
+      "source": "SCAD v2.1 : BicepCircum [110:350] ; README : minimum passé de 160 à 110",
+      "help_fr": "Mesurée à partir du milieu du bras ; c'est le bras pour lequel on construit l'appareil, pas celui des autres mesures (page e-NABLE France).",
+      "help_en": "Measured at the middle of the arm; this is the arm the device is built for, not the one used for the other measures (e-NABLE France page)."
     },
     {
       "id": "ForearmLen",
       "scad_param": "ForearmLen",
       "letter": "B",
-      "label_fr": "B — Longueur de l'avant-bras : poignet → pli du coude",
-      "label_en": "B — Forearm length: wrist joint → elbow crease",
+      "label_fr": "B — Longueur de l'avant-bras NON atteint : pli interne du coude → poignet",
+      "label_en": "B — NON-affected forearm length: inner elbow crease → wrist",
       "unit": "mm",
       "min": 120,
       "max": 315,
       "documented_range": true,
-      "source": "SCAD v2.1 : ForearmLen [120:315] (« Wrist Joint to Elbow Crease »)"
+      "source": "SCAD v2.1 : ForearmLen [120:315] (« Wrist Joint to Elbow Crease »)",
+      "help_fr": "Mesure prise sur le bras NON atteint (page e-NABLE France).",
+      "help_en": "Taken on the NON-affected arm (e-NABLE France page)."
     },
     {
       "id": "HandLen",
       "scad_param": "HandLen",
       "letter": "C",
-      "label_fr": "C — Longueur de la main : poignet → bout du doigt (main valide)",
-      "label_en": "C — Hand length: wrist joint → fingertip (sound hand)",
+      "label_fr": "C — Longueur de la main NON atteinte : poignet → doigt le plus long",
+      "label_en": "C — NON-affected hand length: wrist → longest fingertip",
       "unit": "mm",
       "min": 135,
       "max": 230,
       "documented_range": true,
-      "source": "SCAD v2.1 : HandLen [135:230] ; README : 135 minimum (sécurité des enfants : petites pièces ; tolérance des petites broches)"
+      "source": "SCAD v2.1 : HandLen [135:230] ; README : 135 minimum (sécurité des enfants : petites pièces ; tolérance des petites broches)",
+      "help_fr": "Mesure prise sur la main NON atteinte (page e-NABLE France). 135 mm minimum (sécurité des enfants).",
+      "help_en": "Taken on the NON-affected hand (e-NABLE France page). 135 mm minimum (children's safety)."
     }
   ],
   "label_mapping_confirmed": true,

@@ -1,1 +1,20 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 205"><rect width="460" height="205" fill="#f7f7f7"/><text x="10" y="20" font-size="12" font-family="sans-serif">Schéma indicatif — largeur du poignet (mm)</text><path d="M100 190 L100 90 Q100 60 160 60 Q220 60 220 90 L220 190" fill="#f1d3b8" stroke="#555"/><line x1="100" y1="110" x2="220" y2="110" stroke="#c00" stroke-width="2"/><polygon points="100,110 110,105 110,115" fill="#c00"/><polygon points="220,110 210,105 210,115" fill="#c00"/><text x="125" y="104" font-size="12" font-family="sans-serif" fill="#c00">largeur</text><text x="10" y="190" font-size="10" font-family="sans-serif">Ligne d'articulation du poignet · sans la marge de 5 mm</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 270"><rect width="520" height="270" fill="#f7f7f7"/>
+<text x="10" y="22" font-size="14" font-weight="700" font-family="sans-serif" fill="#0b314d">Où mesurer pour la Phoenix</text>
+<g transform="translate(-30 0)"><rect x="100" y="178" width="60" height="80" fill="#f1d3b8" stroke="#555"/>
+<rect x="86" y="52" width="19" height="62" rx="9.5" fill="#f1d3b8" stroke="#555"/><rect x="107" y="38" width="19" height="76" rx="9.5" fill="#f1d3b8" stroke="#555"/><rect x="128" y="34" width="19" height="80" rx="9.5" fill="#f1d3b8" stroke="#555"/><rect x="149" y="46" width="19" height="68" rx="9.5" fill="#f1d3b8" stroke="#555"/>
+<path d="M84 110 L176 110 L176 150 Q176 178 160 178 L100 178 Q84 178 84 150 Z" fill="#f1d3b8" stroke="#555"/>
+<rect x="0" y="0" width="20" height="56" rx="10" fill="#f1d3b8" stroke="#555" transform="translate(84 128) rotate(55)"/>
+<line x1="86" y1="178" x2="174" y2="178" stroke="#777" stroke-dasharray="4 3"/>
+<line x1="100" y1="196" x2="160" y2="196" stroke="#c00" stroke-width="2.5"/>
+<polygon points="100,196 110,191 110,201" fill="#c00"/><polygon points="160,196 150,191 150,201" fill="#c00"/>
+<line x1="100" y1="186" x2="100" y2="206" stroke="#c00"/><line x1="160" y1="186" x2="160" y2="206" stroke="#c00"/>
+<text x="130" y="224" text-anchor="middle" font-size="12" font-weight="700" font-family="sans-serif" fill="#c00">largeur du poignet</text>
+<text x="180" y="174" font-size="10.5" font-family="sans-serif" fill="#555">ligne d'articulation du poignet</text>
+</g>
+<text x="205" y="70" font-size="12" font-family="sans-serif" fill="#1b2a38">1  Main atteinte posée à plat, paume vers le bas.</text><text x="205" y="89" font-size="12" font-family="sans-serif" fill="#1b2a38">2  Repérez la ligne d'articulation du poignet</text><text x="205" y="108" font-size="12" font-family="sans-serif" fill="#1b2a38">    (le pli, là où la main rejoint l'avant-bras).</text><text x="205" y="127" font-size="12" font-family="sans-serif" fill="#1b2a38">3  Mesurez la largeur à cet endroit, en mm.</text><text x="205" y="146" font-size="12" font-family="sans-serif" fill="#1b2a38">    Ex. : 40 mm → saisissez 40.</text>
+<rect x="205" y="178" width="305" height="76" rx="6" fill="#fff4dc" stroke="#e0b050"/>
+<text x="214" y="199" font-size="12" font-weight="700" font-family="sans-serif" fill="#8a4b00">Ne rajoutez pas de marge :</text>
+<text x="214" y="216" font-size="12" font-weight="700" font-family="sans-serif" fill="#8a4b00">CustomLab ajoute 5 mm tout seul.</text>
+<text x="214" y="236" font-size="11" font-family="sans-serif" fill="#5b6b78">Échelle = (mesure + 5) ÷ 43 × 100</text>
+<text x="214" y="250" font-size="11" font-family="sans-serif" fill="#5b6b78">Plage documentée : 100–160 %</text>
+</svg>

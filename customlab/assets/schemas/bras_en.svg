@@ -1,1 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 205"><rect width="460" height="205" fill="#f7f7f7"/><text x="10" y="20" font-size="12" font-family="sans-serif">Indicative diagram — Unlimbited Arm v2.1 (A, B, C stamped under the cuff)</text><rect x="30" y="80" width="90" height="26" fill="#f1d3b8" stroke="#555"/><rect x="120" y="80" width="130" height="26" fill="#f1d3b8" stroke="#555"/><rect x="250" y="72" width="80" height="42" fill="#f1d3b8" stroke="#555"/><line x1="30" y1="140" x2="120" y2="140" stroke="#c00" stroke-width="2"/><text x="30" y="158" font-size="11" font-family="sans-serif" fill="#c00">C — HandLen (sound hand)</text><line x1="120" y1="170" x2="250" y2="170" stroke="#06c" stroke-width="2"/><text x="120" y="188" font-size="11" font-family="sans-serif" fill="#06c">B — ForearmLen (forearm)</text><ellipse cx="290" cy="93" rx="10" ry="21" fill="none" stroke="#080" stroke-width="2"/><text x="200" y="52" font-size="11" font-family="sans-serif" fill="#080">A — BicepCircum (biceps, affected arm)</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 230"><rect width="460" height="230" fill="#f7f7f7"/>
+<text x="10" y="20" font-size="13" font-weight="700" font-family="sans-serif" fill="#0b314d">Where to measure — Unlimbited Arm</text>
+<rect x="20" y="88" width="120" height="44" rx="10" fill="#f1d3b8" stroke="#555"/>
+<rect x="140" y="92" width="150" height="36" fill="#f1d3b8" stroke="#555"/>
+<path d="M290 88 L300 88 Q330 88 345 80 L420 70 Q432 70 432 80 L432 100 L440 112 Q440 124 425 124 L345 138 Q330 140 300 132 L290 132 Z" fill="#f1d3b8" stroke="#555"/>
+<ellipse cx="70" cy="110" rx="9" ry="26" fill="none" stroke="#d11" stroke-width="3"/><text x="40" y="78" font-size="16" font-weight="700" font-family="sans-serif" fill="#d11">A</text>
+<line x1="140" y1="150" x2="290" y2="150" stroke="#1a1" stroke-width="3"/><line x1="140" y1="142" x2="140" y2="158" stroke="#1a1"/><line x1="290" y1="142" x2="290" y2="158" stroke="#1a1"/><text x="208" y="146" font-size="16" font-weight="700" font-family="sans-serif" fill="#1a1">B</text>
+<line x1="296" y1="168" x2="438" y2="168" stroke="#22d" stroke-width="3"/><line x1="296" y1="160" x2="296" y2="176" stroke="#22d"/><line x1="438" y1="160" x2="438" y2="176" stroke="#22d"/><text x="360" y="164" font-size="16" font-weight="700" font-family="sans-serif" fill="#22d">C</text>
+<text x="10" y="190" font-size="11.5" font-family="sans-serif" fill="#d11">A  AFFECTED arm circumference (mid-arm)</text>
+<text x="10" y="206" font-size="11.5" font-family="sans-serif" fill="#1a1">B  NON-affected forearm: elbow crease → wrist</text>
+<text x="10" y="222" font-size="11.5" font-family="sans-serif" fill="#22d">C  NON-affected hand: wrist → longest fingertip</text>
+</svg>

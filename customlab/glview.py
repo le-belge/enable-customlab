@@ -45,7 +45,7 @@ class GLMeshView(QOpenGLWidget):
     def __init__(self):
         super().__init__()
         self.setMinimumSize(360, 320)
-        self.tris = None; self.yaw, self.pitch, self.zoom = 0.6, -0.5, 1.0; self._last = None; self.message = ""; self.dragging = False
+        self.tris = None; self.yaw, self.pitch, self.zoom = 0.6, -0.5, 1.0; self.basis = np.eye(3); self._last = None; self.message = ""; self.dragging = False
         self.overlay = False; self.radius = 1.0; self.centre = np.zeros(3); self._data = None; self._n = 0; self._ready = False; self._err = ""
 
     # ---- same interface as MeshView
@@ -64,7 +64,11 @@ class GLMeshView(QOpenGLWidget):
         pts = a.reshape(-1, 3); self.centre = ((pts.max(0) + pts.min(0)) / 2).astype(np.float64)
         self.radius = float(np.linalg.norm(pts - self.centre, axis=1).max()) or 1.0; self.update()
 
-    def face_front(self): self.yaw, self.pitch = 0.25, -0.4; self.update()
+    def set_basis(self, rows):
+        """Rows = view x (right), y (up), z (towards the viewer) in part coordinates; None = part axes as they are."""
+        self.basis = np.eye(3) if rows is None else np.asarray(rows, float).reshape(3, 3)
+
+    def face_front(self): self.yaw, self.pitch = 0.0, 0.0; self.update()          # straight-on view, same orientation as the placement view
 
     def mousePressEvent(self, e): self._last = e.position(); self.dragging = True
 
@@ -103,7 +107,7 @@ class GLMeshView(QOpenGLWidget):
         if self._dirty: self._upload()
         W, H = max(2, self.width()), max(2, self.height()); s = min(W, H) / 2.2 / self.radius * self.zoom
         cy, sy, cp, sp = np.cos(self.yaw), np.sin(self.yaw), np.cos(self.pitch), np.sin(self.pitch)
-        R = np.array([[1, 0, 0], [0, cp, -sp], [0, sp, cp]]) @ np.array([[cy, 0, sy], [0, 1, 0], [-sy, 0, cy]])
+        R = np.array([[1, 0, 0], [0, cp, -sp], [0, sp, cp]]) @ np.array([[cy, 0, sy], [0, 1, 0], [-sy, 0, cy]]) @ self.basis
         gl.glEnable(0x0B71); gl.glDepthFunc(0x0201)
         self.prog.bind()
         for i in range(3): self.prog.setUniformValue(f"r{i}", QVector3D(*map(float, R[i])))

@@ -35,7 +35,7 @@ def run(parts, base_spec, out_root, ctx, progress=lambda i, n, msg: None, cancel
         except Exception as e: r.update(status="failed", message=str(e)[:300])
         results.append(r)
     progress(len(parts), len(parts), "")
-    summary = {"generated": datetime.now().isoformat(timespec="seconds"), "status": "EXPERIMENTAL", "spec": base_spec.__dict__, "parts": results,
+    summary = {"generated": datetime.now().isoformat(timespec="seconds"), "status": "EXPERIMENTAL", "spec": deco._spec_dict(base_spec), "parts": results,
                "disclaimer": deco.DISCLAIMER}
     (out_root / "RECAP_camouflage.json").write_text(json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")
     lines = ["CustomLab — camouflage sur plusieurs pièces (EXPÉRIMENTAL)", "", deco.DISCLAIMER, ""]

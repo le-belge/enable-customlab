@@ -39,13 +39,13 @@ Méthode des pages 28–33 du manuel (tableaux B1–B4) :
 - Le manuel demande un bras d'essai et une relecture par un professionnel de santé en cas de changement d'échelle.
 
 ## Unlimbited Arm v2.1
-Pas de mise à l'échelle par CustomLab : le **SCAD officiel** calcule les pièces à partir de trois mesures (noms des paramètres, pas les lettres A/B/C de la page e-NABLE France, qui se contredisent) :
+Pas de mise à l'échelle par CustomLab : le **SCAD officiel** calcule les pièces à partir de trois mesures, telles que la page e-NABLE France « Prise de mesures du destinataire » les décrit (A = bras atteint ; B et C = bras/main **NON atteints**) :
 
 | Mesure | Paramètre | Plage officielle |
 |---|---|---|
-| Longueur de la main saine (poignet → bout du doigt) | `HandLen` | 135 – 230 mm |
-| Longueur de l'avant-bras (poignet → pli du coude) | `ForearmLen` | 120 – 315 mm |
-| Circonférence du biceps, bras atteint | `BicepCircum` | 110 – 350 mm |
+| C — longueur de la main NON atteinte (poignet → doigt le plus long) | `HandLen` | 135 – 230 mm |
+| B — longueur de l'avant-bras NON atteint (pli interne du coude → poignet) | `ForearmLen` | 120 – 315 mm |
+| A — circonférence du bras ATTEINT, mesurée au milieu du bras | `BicepCircum` | 110 – 350 mm |
 
 - Échelle de la main : `HandPerc = round(HandLen ÷ 135 × 100)`. Palm, Fingers, Phalanx et Pins suivent cette échelle ; Forearm, Cuff et Jig sont paramétrés par les trois mesures.
 - 135 mm est le minimum pour la sécurité des enfants (petites pièces, tolérance des broches).

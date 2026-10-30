@@ -67,3 +67,20 @@ class Sources(unittest.TestCase):
 
 
 if __name__ == "__main__": unittest.main()
+
+
+class NestedZip(unittest.TestCase):
+    def test_zip_inside_download_is_unpacked(self):
+        import io, zipfile, tempfile, os
+        from unittest import mock
+        from customlab import sources_dialog as sd
+        with tempfile.TemporaryDirectory() as d:
+            inner = io.BytesIO()
+            with zipfile.ZipFile(inner, "w") as z: z.writestr("files/Unlimbited_Arm_v2.1.scad", "// scad")
+            outer = os.path.join(d, "dl.zip")
+            with zipfile.ZipFile(outer, "w") as z: z.writestr("part 2 of 2.zip", inner.getvalue()); z.writestr("README.txt", "x")
+            with mock.patch.dict(os.environ, {"CUSTOMLAB_SOURCES": os.path.join(d, "src")}):
+                sd.add_zip("unlimbited_arm", outer)
+                found = list((Path(d) / "src" / "unlimbited_arm").rglob("*.scad"))
+                self.assertEqual(len(found), 1)
+                self.assertFalse(list((Path(d) / "src").rglob("*.zip")))

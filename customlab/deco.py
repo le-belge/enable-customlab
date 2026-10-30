@@ -72,6 +72,8 @@ class DecoSpec:
     camo_scale_mm: float = 28.0   # kind "camo": size of the patches
     threshold: int = 128          # raster images: luminance below this is decorated (0-255)
     white_is_empty: bool = True   # SVG/image: near-white fills (logos drawn on white) are NOT decorated
+    extra: tuple = ()             # further motifs (DecoSpec), sharing mode/depth/axis/quality of this one: several texts / logos on the same part
+    thicken_thin: bool = False    # SVG/image: strokes thinner than MIN_FEATURE_MM are widened (by THICKEN_MM each side) so the slicer keeps them
 
 
 @dataclass
@@ -318,6 +320,20 @@ def _artwork_color_image(spec: DecoSpec, target_px=300):
     return QImage(out.data, out.shape[1], out.shape[0], out.shape[1] * 4, QImage.Format_ARGB32_Premultiplied).copy()
 
 
+def suggest_colours(spec: DecoSpec, max_k=4, min_share=0.04):
+    """Number of distinct colours of the artwork (1..max_k) so that a multi-colour logo is exported with one filament per colour without any setting.
+    Colours are grouped on a coarse grid; groups under min_share of the visible pixels (anti-aliasing, noise) are ignored. 1 when it cannot be read."""
+    try:
+        im = _artwork_color_image(spec)
+        arr = np.frombuffer(im.constBits(), np.uint8).reshape(im.height(), im.bytesPerLine() // 4, 4)[:, :im.width(), :].astype(float)
+    except Exception: return 1
+    a = arr[..., 3]; vis = a > 127
+    if not vis.any(): return 1
+    rgb = arr[..., :3][vis] * 255.0 / np.maximum(a[vis], 1)[:, None]
+    q = (rgb // 48).astype(int); keys, counts = np.unique(q[:, 0] * 100 + q[:, 1] * 10 + q[:, 2], return_counts=True)
+    return int(max(1, min(max_k, (counts >= min_share * len(rgb)).sum())))
+
+
 def _kmeans(X, k, iters=15, seed=0):
     rng = np.random.default_rng(seed); n = len(X)
     sub = X if n <= 20000 else X[rng.choice(n, 20000, replace=False)]
@@ -373,8 +389,22 @@ def render_color_layers(spec: DecoSpec, hm: "HeightMap"):
         m = (L == jj)[::-1, :].T.copy()
         if m.any():
             c = tuple(int(round(x)) for x in cent[j]); layers.append(("#%02X%02X%02X" % c, c, m))
+    layers = _merge_fringes(layers, hm.res)
     layers.sort(key=lambda t: -int(t[2].sum()))
     return layers
+
+
+def _merge_fringes(layers, res):
+    """Anti-aliasing turns the border of a dark shape into 1-2 cell thin lines of a lighter intermediate colour (dotted outline in another filament). Such thin cells touching a DARKER layer join that layer: nothing is deleted, free-standing thin strokes stay as they are."""
+    if len(layers) < 2: return layers
+    lum = [0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2] for _, c, _ in layers]; masks = [m.copy() for _, _, m in layers]
+    near = [_dilate_mm(m, 2 * res, res) for m in masks]
+    for i, m in enumerate(layers):
+        mi = masks[i]; eroded = ~_dilate_mm(~mi, MIN_FEATURE_MM / 2, res); thin = mi & ~_dilate_mm(eroded, MIN_FEATURE_MM / 2, res)
+        for j in sorted((j for j in range(len(layers)) if lum[j] < lum[i] - 20), key=lambda j: lum[j]):
+            mv = thin & near[j] & masks[i]
+            if mv.any(): masks[i] = masks[i] & ~mv; masks[j] = masks[j] | mv; thin = thin & ~mv
+    return [(h, c, masks[k]) for k, (h, c, _) in enumerate(layers) if masks[k].any()]
 
 
 def camo_valid_mask(spec: DecoSpec, hm: "HeightMap", protected=None, zones=()):
@@ -401,15 +431,95 @@ def render_camo(spec: DecoSpec, hm: "HeightMap", protected=None, zones=()):
     return union, ly
 
 
+THICKEN_MM = 0.3           # each side (rounded to whole grid cells): a 0.4 mm stroke becomes ~1 mm
+
+
+def thicken_thin(m, res, taken=None, min_mm=None, grow_mm=THICKEN_MM):
+    """m with its strokes thinner than min_mm (default MIN_FEATURE_MM) widened by grow_mm on each side; never into cells of `taken` (other colours)."""
+    min_mm = MIN_FEATURE_MM if min_mm is None else min_mm
+    half = min_mm / 2
+    eroded = ~_dilate_mm(~m, half, res); opened = _dilate_mm(eroded, half, res)
+    thin = m & ~opened
+    if not thin.any(): return m
+    grown = _dilate_mm(thin, max(grow_mm, res), res)
+    if taken is not None: grown &= ~taken
+    return m | grown
+
+
+MOTIF_COLOURS = ("#0B2F4B", "#DC2823", "#285591", "#F2B705")      # labels of single-colour motifs when several are combined (the filament is chosen in the slicer)
+MAX_PIECES = 4
+
+
+def _spec_dict(spec):
+    from dataclasses import asdict
+    return asdict(spec)
+
+
+def spec_empty(s):
+    return (s.kind == "text" and not s.text.strip()) or (s.kind in ("svg", "image") and not s.path)
+
+
 def render_spec_masks(spec: DecoSpec, hm: "HeightMap", protected=None, zones=()):
+    """(union_mask, layers|None) of the spec and of its extra motifs. A later motif wins where two overlap. Several motifs = one piece per colour (relief/inlay)."""
+    from dataclasses import replace
+    parts = [replace(x, extra=()) for x in (spec,) + tuple(spec.extra) if not spec_empty(x)]
+    if not spec.extra: return _render_one(spec, hm, protected, zones)
+    if not parts: raise DecoError("empty text")
+    if len(parts) == 1: return _render_one(parts[0], hm, protected, zones)       # the other motifs are still empty
+    if any(x.kind == "camo" for x in parts): raise DecoError("Camouflage : un seul motif possible (retirer les autres motifs).")
+    rendered = [_render_one(x, hm, protected, zones) for x in parts]
+    if spec.mode == "engrave":
+        union = rendered[0][0].copy()
+        for m, _ in rendered[1:]: union |= m
+        return union, None
+    groups = []; k = 0                                                     # [(hex, rgb, mask)] per motif, in order
+    for m, ly in rendered:
+        if ly: groups.append(list(ly))
+        else:
+            h = MOTIF_COLOURS[k % len(MOTIF_COLOURS)]; k += 1; groups.append([(h, tuple(int(h[i:i + 2], 16) for i in (1, 3, 5)), m)])
+    later = np.zeros_like(rendered[0][0]); out = []
+    for g in reversed(groups):                                             # later motifs take priority over earlier ones
+        cur = np.zeros_like(later)
+        for h, c, m in g:
+            m2 = m & ~later
+            if m2.any(): out.append((h, c, m2))
+            cur |= m
+        later |= cur
+    out.reverse()
+    if not out: raise DecoError("artwork outside the placement area")
+    if len(out) > MAX_PIECES: raise DecoError(f"Trop de couleurs : {len(out)} pièces demandées pour {MAX_PIECES} filaments au maximum (réduire le nombre de couleurs ou de motifs).")
+    union = np.zeros_like(out[0][2])
+    for _, _, m in out: union |= m
+    return union, out
+
+
+def _forbidden_cells(hm, protected, zones, shape):
+    """Cells the motif must not enter (automatic protection, drawn zones): thickening never grows into them."""
+    bad = np.zeros(shape, bool) if protected is None else protected.copy()
+    ii, jj = np.mgrid[0:shape[0], 0:shape[1]]; cu = hm.u0 + (ii + 0.5) * hm.res; cv = hm.v0 + (jj + 0.5) * hm.res
+    for a, b, c, d in zones: bad |= (cu >= min(a, c)) & (cu <= max(a, c)) & (cv >= min(b, d)) & (cv <= max(b, d))
+    return bad
+
+
+def _render_one(spec: DecoSpec, hm: "HeightMap", protected=None, zones=()):
     """(union_mask, layers|None). Colour separation only for svg/image with ncolors > 1 and mode relief/inlay; camouflage always has layers."""
     if spec.kind == "camo": return render_camo(spec, hm, protected, zones)
     if spec.kind in ("svg", "image") and spec.ncolors > 1 and spec.mode in ("relief", "inlay"):
         layers = render_color_layers(spec, hm)
+        if spec.thicken_thin:
+            masks = [m for _, _, m in layers]; new = []; forbid = _forbidden_cells(hm, protected, zones, masks[0].shape)
+            for i, (h, c, m) in enumerate(layers):
+                others = forbid.copy()
+                for j, o in enumerate(masks):
+                    if j != i: others |= o
+                new.append((h, c, thicken_thin(m, hm.res, others)))
+                masks[i] = new[-1][2]
+            layers = new
         union = np.zeros_like(layers[0][2])
         for _, _, m in layers: union |= m
         return union, layers
-    return render_mask(spec, hm), None
+    m = render_mask(spec, hm)
+    return (thicken_thin(m, hm.res, _forbidden_cells(hm, protected, zones, m.shape)) if (spec.thicken_thin and spec.kind in ("svg", "image")) else m), None
 
 
 # ---------------------------------------------------------------- automatic protected zones
@@ -669,7 +779,7 @@ def export_result(result: DecoResult, part_path, spec: DecoSpec, out_dir, zones=
     lic = read_license_info(src)
     side = {"generated": datetime.now().isoformat(timespec="seconds"), "status": "EXPERIMENTAL",
             "disclaimer": DISCLAIMER, "source_file": str(src), "source_sha256": hashlib.sha256(src.read_bytes()).hexdigest(),
-            "source_license": lic, "spec": spec.__dict__, "exclusion_zones_mm": [list(z) for z in zones],
+            "source_license": lic, "spec": _spec_dict(spec), "exclusion_zones_mm": [list(z) for z in zones],
             "scale_percent_applied": scale_percent, "triangles": len(tris), "warnings": result.warnings,
             "color_pieces": piece_files if result.layers else None, "bambu_3mf": bambu_name, "guide": guide_name,
             "how_to_use": ("Charger <1_base_unmodified> puis <2_incrustation> ensemble comme pièces d'un même objet ; l'incrustation doit être la DERNIÈRE pièce de la liste (hypothèse non vérifiée : la dernière pièce l'emporte dans le volume commun) et avoir un filament différent." if spec.mode == "inlay" else None), **(extra or {})}
