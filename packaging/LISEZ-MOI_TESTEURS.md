@@ -3,7 +3,11 @@
 Application gratuite et hors ligne pour dimensionner, personnaliser et exporter des pièces de mains/bras e-NABLE. **Expérimentale** : aucune pièce n'a été validée à l'impression ni à l'essayage ; à faire relire par un bénévole e-NABLE compétent avant tout usage.
 
 ## Installer
-**Mac** : décompressez `e-NABLE_CustomLab_mac.zip`, glissez l'appli dans Applications. Au premier lancement, macOS refuse parce que l'appli n'est pas notariée : clic droit sur l'appli → **Ouvrir** → **Ouvrir**. (Sinon : Réglages système → Confidentialité et sécurité → « Ouvrir quand même ».)
+**Mac** (Apple Silicon : M1 et suivants) : décompressez `e-NABLE_CustomLab_mac.zip`, glissez l'appli dans Applications, puis double-cliquez dessus. macOS la bloque (« Apple n'a pas pu vérifier… ») parce qu'elle n'est pas notariée. Pour l'autoriser :
+1. Cliquez sur « OK » (ou « Terminé »).
+2. Ouvrez **Réglages Système → Confidentialité et sécurité**, descendez jusqu'au message sur « e-NABLE CustomLab » et cliquez sur **Ouvrir quand même** (mot de passe ou Touch ID).
+3. Rouvrez l'appli et confirmez « Ouvrir ». Cela n'est à faire qu'une fois.
+Sur un macOS plus ancien (avant 15), le clic droit sur l'appli → Ouvrir fonctionne aussi. Dernier recours, dans le Terminal : `xattr -dr com.apple.quarantine "/Applications/e-NABLE CustomLab.app"`.
 **Windows** : décompressez `e-NABLE_CustomLab_windows.zip`, lancez `CustomLab\CustomLab.exe`. Si SmartScreen s'affiche : « Informations complémentaires » → « Exécuter quand même ».
 
 ## Premier lancement
