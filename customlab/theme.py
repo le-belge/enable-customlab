@@ -152,7 +152,7 @@ class Header(QFrame):
         lay = QHBoxLayout(self); lay.setContentsMargins(18, 10, 14, 10); lay.setSpacing(14)
         logo = QLabel(); logo.setStyleSheet("background:white;border-radius:23px;padding:3px"); pm = QPixmap(str(LOGO))
         if not pm.isNull(): logo.setPixmap(pm.scaledToHeight(40, Qt.SmoothTransformation)); lay.addWidget(logo)
-        brand = QLabel("e-NABLE <span style='color:%s'>CustomLab</span>" % SKY); brand.setStyleSheet("color:white;font-size:17px;font-weight:700;background:transparent")
+        brand = QLabel("e-NABLE <span style='color:%s'>CustomLab</span><br><span style='font-size:10px;font-weight:400;color:#cfe3f0'>par e-NABLE France</span>" % SKY); brand.setStyleSheet("color:white;font-size:17px;font-weight:700;background:transparent")
         stripe = QWidget(); stripe.setFixedSize(3, 22); stripe.setStyleSheet(f"background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 {FRENCH_BLUE}, stop:0.34 {FRENCH_BLUE}, stop:0.34 white, stop:0.67 white, stop:0.67 {FRENCH_RED}, stop:1 {FRENCH_RED}); border-radius:1px")
         step_label.setStyleSheet("color:white;font-size:15px;font-weight:600;background:transparent")
         self.steps = StepBar(); lang_button.setObjectName("lang")

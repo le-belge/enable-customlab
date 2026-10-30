@@ -2,7 +2,11 @@
 [Setup]
 AppName=e-NABLE CustomLab
 AppVersion=0.9.0-test
-AppPublisher=e-NABLE CustomLab
+AppPublisher=e-NABLE France
+AppPublisherURL=https://e-nable.fr
+AppComments=e-NABLE CustomLab, par e-NABLE France
+WizardImageFile=wizard_large.bmp
+WizardSmallImageFile=wizard_small.bmp
 DefaultDirName={autopf}\e-NABLE CustomLab
 DefaultGroupName=e-NABLE CustomLab
 PrivilegesRequired=lowest
