@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(SPECPATH).parent
-VERSION = "0.9.0-test"
+VERSION = "1.0.0-beta.1"
 datas = [(str(ROOT / "customlab" / "assets"), "customlab/assets"), (str(ROOT / "customlab" / "profiles"), "customlab/profiles"),
          (str(ROOT / "customlab" / "bundled_parts"), "customlab/bundled_parts"), (str(ROOT / "docs" / "TUTO_ECHELLES.md"), "docs"),
          (str(ROOT / "examples" / "star.svg"), "examples")]

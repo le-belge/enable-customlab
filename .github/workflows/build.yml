@@ -6,6 +6,9 @@ on:
   push:
     tags: ["v*"]
 
+permissions:
+  contents: write
+
 jobs:
   build:
     strategy:
@@ -50,3 +53,20 @@ jobs:
           path: |
             dist/*.zip
             dist/*Setup.exe
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Publish the pre-release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/* --repo "$GITHUB_REPOSITORY" --prerelease \
+            --title "e-NABLE CustomLab V1 - bêta test ($GITHUB_REF_NAME)" \
+            --notes "Version bêta de test, EXPÉRIMENTALE : non signée, non testée sur poste vierge, aucune validation médicale ni d'impression (à faire contrôler par un bénévole e-NABLE compétent). Windows : lancer e-NABLE_CustomLab_Setup.exe (installer OpenSCAD à part). macOS : e-NABLE_CustomLab_mac.zip. Voir le README. Code sous GPL-3.0 ; pièces jesimon (CC BY-NC) et logo e-NABLE France : licences propres."

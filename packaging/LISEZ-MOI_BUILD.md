@@ -1,6 +1,6 @@
 # Fabriquer les applications de test (Mac et Windows)
 
-Version de test **0.9.0-test** : expérimentale, non signée, aucune pièce validée à l'impression.
+Version de test **1.0.0-beta.1** : expérimentale, non signée, aucune pièce validée à l'impression.
 
 ## Contenu / non-contenu
 - Inclus : le code, les profils, les 16 pièces Phoenix (jesimon, CC BY-NC 3.0, avec leurs licences et la NOTICE), le tuto, le logo e-Nable France (accord de l'association à confirmer avant toute diffusion hors des bénévoles).
