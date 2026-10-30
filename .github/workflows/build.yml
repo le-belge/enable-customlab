@@ -39,7 +39,14 @@ jobs:
         run: |
           python -m PyInstaller packaging/customlab.spec --noconfirm --distpath dist --workpath build
           Compress-Archive -Path dist/CustomLab -DestinationPath dist/e-NABLE_CustomLab_windows.zip -Force
+      - name: Installer (Windows, Inno Setup)
+        if: matrix.name == 'windows'
+        run: |
+          choco install innosetup -y --no-progress
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" packaging\installer.iss
       - uses: actions/upload-artifact@v4
         with:
           name: e-NABLE_CustomLab_${{ matrix.name }}
-          path: dist/*.zip
+          path: |
+            dist/*.zip
+            dist/*Setup.exe
