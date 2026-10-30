@@ -1,0 +1,13 @@
+PIÈCES TIERCES INCLUSES / THIRD-PARTY PARTS INCLUDED
+
+phoenix_jesimon_100pct/{left,right}
+  "Phoenix Hand (Left/Right) - 100% Scale" par/by jesimon
+  Thingiverse 2185114 (gauche/left), 2185115 (droite/right)
+  Dérivé du Customizer de "Unlimbited Phoenix Hand" (Team UnLimbited), Thingiverse 1674320.
+  Licence : Creative Commons Attribution-NonCommercial 3.0 (CC BY-NC 3.0)
+  https://creativecommons.org/licenses/by-nc/3.0/
+
+Fichiers copiés sans modification, avec leurs LICENSE.txt / README.txt / SOURCES.txt d'origine.
+USAGE NON COMMERCIAL UNIQUEMENT. Ne pas vendre ce logiciel ni ces fichiers. Conserver cette notice et l'attribution à toute redistribution.
+Les pièces décorées dérivées héritent de cette licence (non commercial + attribution).
+Le code de CustomLab est distinct de ces fichiers ; seuls ces dossiers sont soumis à la licence ci-dessus.

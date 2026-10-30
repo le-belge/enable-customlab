@@ -1,0 +1,14 @@
+.venv/
+tools/
+__pycache__/
+*.py[cod]
+.claude/settings.local.json
+user_assets/
+.DS_Store
+dist/
+build/
+sources/
+experiments/
+outputs/
+enable-customlab/
+result.json

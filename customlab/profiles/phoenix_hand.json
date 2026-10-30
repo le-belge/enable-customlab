@@ -1,0 +1,149 @@
+{
+  "id": "phoenix_hand",
+  "name": "Phoenix Unlimbited Hand",
+  "designer": "Team UnLimbited",
+  "kind": "scad",
+  "source": {
+    "thingiverse": "https://www.thingiverse.com/thing:1674320",
+    "version": "Unlimbited Phoenix Hand, mise à jour du 17/03/2017 (archive Thingiverse lue)"
+  },
+  "license": {
+    "name": "CC BY-NC (LICENSE.txt de l'archive) ; en-tête du .scad : CC BY-NC-SA 4.0 — retenir la plus restrictive",
+    "verified": true,
+    "redistribution": "Non commercial, attribution, partage dans les mêmes conditions (en-tête du .scad). Les dérivés héritent. Aucune source embarquée sauf pièces jesimon (voir NOTICE)."
+  },
+  "status": "experimental",
+  "sides": [
+    "left",
+    "right"
+  ],
+  "scad_params_side": {
+    "param": "LeftRight",
+    "values": {
+      "left": "Left",
+      "right": "Right"
+    }
+  },
+  "inputs": [
+    {
+      "id": "scale_percent",
+      "scad_param": "HandPerc",
+      "label_fr": "Échelle (%) — paramètre HandPerc",
+      "label_en": "Scale (%)",
+      "unit": "%",
+      "min": 100,
+      "max": 160,
+      "documented_range": true,
+      "source": "SCAD officiel Team UnLimbited (thing:1674320) : HandPerc [100:160] ; page e-NABLE France"
+    }
+  ],
+  "label_mapping_confirmed": true,
+  "parts": [
+    "Palm",
+    "Box",
+    "TPins",
+    "Fingers",
+    "Phalanx",
+    "Pins",
+    "Gauntlet",
+    "Jig"
+  ],
+  "part_param": "part",
+  "fixed_params": {},
+  "decoration_zones": [],
+  "forbidden_zones": "NON DÉFINI — nécessite la géométrie réelle",
+  "unprinted_components": "NON DOCUMENTÉ ici — voir instructions e-NABLE France",
+  "notes": "Le SCAD officiel s'utilise avec les paramètres part, LeftRight (Left/Right) et HandPerc.",
+  "method": "phoenix_wrist",
+  "method_source": "https://e-nable.fr/fr/fabrications/matching/mettre-a-lechelle/",
+  "method_doc": "Coeff(%) = ((largeur poignet + marge) / 43) x 100 ; marge recommandée 5 mm ; Phoenix, Raptor, Raptor Reloaded ; plage SCAD 100-160 %",
+  "wizard_inputs": [
+    {
+      "id": "wrist_mm",
+      "label_fr": "Largeur du poignet (côté atteint)",
+      "label_en": "Wrist width (affected side)",
+      "unit": "mm",
+      "default": null,
+      "help_fr": "Mesurer la largeur du poignet à la ligne d'articulation (en direct, ou sur photo mains à plat avec une règle étalon). Ne pas ajouter la marge : elle est ajoutée automatiquement.",
+      "help_en": "Measure the wrist width at the joint line (in person, or from a flat-hands photo with a ruler). Do not add the margin: it is added automatically."
+    },
+    {
+      "id": "margin_mm",
+      "label_fr": "Marge de confort",
+      "label_en": "Comfort margin",
+      "unit": "mm",
+      "default": 5.0,
+      "help_fr": "5 mm recommandés par e-NABLE France.",
+      "help_en": "5 mm recommended by e-NABLE France."
+    }
+  ],
+  "sources_provenance": {
+    "nih3d": "3DPX-020258 v3 (CC-BY 4.0, Jason Tothy): pièces 'NIH 3D repaired' gauche/droite à 100 %, SCAD non fourni",
+    "thingiverse": "thing:1674320 (403 en accès automatisé)",
+    "jig": "STL 'gabarit phoenix' proposé sur la page e-NABLE France Mettre à l'échelle (à fournir localement)"
+  },
+  "expected_local_files": [
+    "Palm_Left.stl",
+    "Palm_Right.stl",
+    "Fingers_*.stl",
+    "Phalanx_*.stl",
+    "Pins_*.stl",
+    "TPins_*.stl",
+    "Box_*.stl",
+    "Gauntlet_*.stl",
+    "Jig_*.stl (+ gabarit Phoenix)"
+  ],
+  "equivalence_note": "Mise à l'échelle uniforme de STL 100 % ≡ SCAD (vérifié par calcul, ≤ 0,0001 mm, voir sizing_rule_evidence).",
+  "variants": [
+    {
+      "id": "team_unlimbited_scad_1674320",
+      "label": "SCAD officiel Team UnLimbited (archive Thingiverse 1674320, fichier UnLimbitedPhoenix.scad, 17/03/2017)",
+      "license": "CC BY-NC (LICENSE.txt) / CC BY-NC-SA 4.0 (en-tête du .scad)",
+      "license_verified": true,
+      "license_evidence": "LICENSE.txt et en-tête de UnLimbitedPhoenix.scad lus localement",
+      "author": "Team UnLimbited (S. R. Davies, D. Murray) d'après Jason Bryant",
+      "non_commercial": true,
+      "share_alike": true,
+      "scad_param": "HandPerc",
+      "sizing_rule_confirmed": true,
+      "sizing_rule_evidence": "SCAD lu : chaque pièce = scale([HandPerc/100]×3) uniforme, côté droit = mirror X, HandPerc ∈ [100:160] (plage identique à la page e-NABLE France). Vérifié par calcul : rendu OpenSCAD = STL jesimon à ≤ 0,0001 mm pour Palm/Box/TPins/Fingers/Phalanx/Pins (G et D) à HandPerc=100, et = STL×k à HandPerc=125 (≤ 0,0001 mm). Gauntlet/Jig : même volume, orientation d'un côté différente."
+    },
+    {
+      "id": "jesimon_customizer_100pct",
+      "label": "Archives Customizer « Phoenix Hand 100 % Scale » (jesimon), Thingiverse 2185114 / 2185115",
+      "license": "CC BY-NC 3.0",
+      "license_url": "https://creativecommons.org/licenses/by-nc/3.0/",
+      "license_verified": true,
+      "license_evidence": "LICENSE.txt et README.txt fournis dans chaque archive",
+      "author": "jesimon (dérivé du SCAD ci-dessus, HandPerc=100)",
+      "non_commercial": true,
+      "scad_param": "HandPerc",
+      "sizing_rule_confirmed": true,
+      "sizing_rule_evidence": "Sortie du Customizer du même SCAD à HandPerc=100 (identité sommet par sommet vérifiée pour 6 pièces sur 8)"
+    },
+    {
+      "id": "nih_repaired_3DPX-020258",
+      "label": "NIH 3D 3DPX-020258 v3, pièces « NIH 3D repaired »",
+      "license": "CC-BY 4.0 selon la page NIH — DISCORDANT avec la licence du fichier d'origine (CC BY-NC) : ne pas retenir",
+      "license_verified": false,
+      "license_evidence": "page NIH lue ; fichiers non obtenus",
+      "author": "Jason Tothy (entrée NIH)",
+      "non_commercial": null,
+      "scad_param": null,
+      "sizing_rule_confirmed": false
+    },
+    {
+      "id": "enable_fr_stl_100",
+      "label": "STL 100 % hébergés par e-NABLE France (Hand_Phoenix_Unlimbited_(stl_100).zip)",
+      "license": "non précisée sur la page",
+      "license_verified": false,
+      "author": "e-NABLE France / Team UnLimbited",
+      "non_commercial": null,
+      "scad_param": null,
+      "sizing_rule_confirmed": false,
+      "note": "fichier non encore comparé"
+    }
+  ],
+  "official_scad": "sources/phoenix_scad/thing_1674320/files/UnLimbitedPhoenix.scad",
+  "notice": "Règle d'échelle ((poignet + marge) / 43 × 100) : variante confirmée par lecture du SCAD officiel (paramètre HandPerc 100–160, échelle uniforme, plage identique à la page e-NABLE France). La valeur de 43 mm elle-même vient de la page e-NABLE France et n'a pas été mesurée sur la géométrie ; essayer le gabarit Phoenix avant d'imprimer."
+}

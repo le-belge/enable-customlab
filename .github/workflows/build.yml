@@ -1,0 +1,45 @@
+name: Build test apps
+# Manual run (Actions > Build test apps > Run workflow) or on a tag "v*". Produces unsigned test builds as downloadable artifacts.
+# The user's SCAD/STL sources and OpenSCAD are NOT bundled (see packaging/LISEZ-MOI_BUILD.md).
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-14
+            name: mac
+          - os: windows-latest
+            name: windows
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: python -m pip install PySide6-Essentials numpy pyinstaller
+      - name: Smoke test (imports, offscreen)
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: python -c "import customlab.gui, customlab.placement, customlab.deco; print('imports ok')"
+      - name: Build (macOS)
+        if: matrix.name == 'mac'
+        run: |
+          python -m PyInstaller packaging/customlab.spec --noconfirm --distpath dist --workpath build
+          codesign --force --deep --sign - "dist/e-NABLE CustomLab.app"
+          cd dist && ditto -c -k --sequesterRsrc --keepParent "e-NABLE CustomLab.app" "e-NABLE_CustomLab_mac.zip"
+      - name: Build (Windows)
+        if: matrix.name == 'windows'
+        run: |
+          python -m PyInstaller packaging/customlab.spec --noconfirm --distpath dist --workpath build
+          Compress-Archive -Path dist/CustomLab -DestinationPath dist/e-NABLE_CustomLab_windows.zip -Force
+      - uses: actions/upload-artifact@v4
+        with:
+          name: e-NABLE_CustomLab_${{ matrix.name }}
+          path: dist/*.zip

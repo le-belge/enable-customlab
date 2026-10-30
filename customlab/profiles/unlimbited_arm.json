@@ -1,0 +1,113 @@
+{
+  "id": "unlimbited_arm",
+  "name": "Unlimbited Arm",
+  "designer": "Team UnLimbited",
+  "kind": "scad",
+  "source": {
+    "thingiverse": "https://www.thingiverse.com/thing:1672381",
+    "version": "The UnLimbited Arm v2.1 - Alfie Edition (fichier UnLimbited_Arm_v2.1.scad lu ; l'archive contient aussi UnLimbited_Arm_V2.2.scad, non retenue : paramètres numériques et bornes différentes)"
+  },
+  "license": {
+    "name": "CC BY-NC-SA (LICENSE.txt, en-tête du .scad : CC BY-NC-SA 4.0)",
+    "verified": true,
+    "redistribution": "Non commercial, attribution, partage dans les mêmes conditions : les pièces dérivées (décorées) doivent être partagées sous la même licence. Sources non embarquées."
+  },
+  "status": "experimental",
+  "sides": [
+    "left",
+    "right"
+  ],
+  "scad_params_side": {
+    "param": "LeftRight",
+    "values": {
+      "left": "Left",
+      "right": "Right"
+    }
+  },
+  "inputs": [
+    {
+      "id": "BicepCircum",
+      "scad_param": "BicepCircum",
+      "letter": "A",
+      "label_fr": "A — Circonférence du biceps (bras atteint)",
+      "label_en": "A — Biceps circumference (affected arm)",
+      "unit": "mm",
+      "min": 110,
+      "max": 350,
+      "documented_range": true,
+      "source": "SCAD v2.1 : BicepCircum [110:350] ; README : minimum passé de 160 à 110"
+    },
+    {
+      "id": "ForearmLen",
+      "scad_param": "ForearmLen",
+      "letter": "B",
+      "label_fr": "B — Longueur de l'avant-bras : poignet → pli du coude",
+      "label_en": "B — Forearm length: wrist joint → elbow crease",
+      "unit": "mm",
+      "min": 120,
+      "max": 315,
+      "documented_range": true,
+      "source": "SCAD v2.1 : ForearmLen [120:315] (« Wrist Joint to Elbow Crease »)"
+    },
+    {
+      "id": "HandLen",
+      "scad_param": "HandLen",
+      "letter": "C",
+      "label_fr": "C — Longueur de la main : poignet → bout du doigt (main valide)",
+      "label_en": "C — Hand length: wrist joint → fingertip (sound hand)",
+      "unit": "mm",
+      "min": 135,
+      "max": 230,
+      "documented_range": true,
+      "source": "SCAD v2.1 : HandLen [135:230] ; README : 135 minimum (sécurité des enfants : petites pièces ; tolérance des petites broches)"
+    }
+  ],
+  "label_mapping_confirmed": true,
+  "parts": [
+    "Forearm",
+    "Cuff",
+    "Jig",
+    "Palm",
+    "Fingers",
+    "Phalanx",
+    "Pins"
+  ],
+  "part_param": "part",
+  "fixed_params": {
+    "CuffLength": "défaut du SCAD (65, plage 65–90) — ne pas modifier (page e-NABLE France)",
+    "PinHoleDia": "défaut du SCAD (3, plage 3–6) — ne pas modifier (page e-NABLE France)"
+  },
+  "decoration_zones": [],
+  "forbidden_zones": "NON DÉFINI — nécessite la géométrie réelle",
+  "unprinted_components": "NON DOCUMENTÉ ici",
+  "notes": "Seuls part, LeftRight, HandLen, ForearmLen, BicepCircum sont passés au SCAD ; CuffLength et PinHoleDia gardent leur défaut.",
+  "method_doc": "Trois mesures passées au SCAD v2.1 : A = BicepCircum (biceps, bras atteint), B = ForearmLen (poignet → pli du coude), C = HandLen (poignet → bout du doigt). L'échelle de la main est dérivée par le SCAD : HandPerc = round(HandLen / 135 × 100).",
+  "sources_provenance": {
+    "nih3d": "3DPX-020264 v2 (CC BY 4.0, Jason Tothy) : STL 'v2.1'/'v2.2' ; AUCUN SCAD, aucun nom de paramètre listé",
+    "thingiverse": "thing:1672381 (403)",
+    "color_customizer": "https://bymu.eu/customizer/?device=unlimbited-arm-v2.1 (non analysé)"
+  },
+  "mapping_evidence": "UnLimbited_Arm_v2.1.scad : le texte estampillé sous le cuff est str(ArmVersion, BicepCircum, ForearmLen, HandLen, \"/\", HandPerc, \"%\") ; README : « Measurement A B C ». Donc A = BicepCircum (biceps), B = ForearmLen (avant-bras), C = HandLen (main). La liste de PARAMÈTRES de la page e-NABLE France est correcte ; sa liste de MESURES (A = main, C = biceps) est inversée.",
+  "derived": {
+    "HandPerc": "round(HandLen / 135 × 100) — échelle appliquée à Palm, Fingers, Phalanx, Pins (SCAD v2.1)"
+  },
+  "official_scad": "sources/unlimbited_arm/part2/files/UnLimbited_Arm_v2.1.scad",
+  "render_times_s": {
+    "Pins": 1,
+    "Palm": 1,
+    "Fingers": 1,
+    "Phalanx": 1,
+    "Jig": 23,
+    "Cuff": 260,
+    "Forearm": 312,
+    "note": "OpenSCAD 2021.01 (CGAL), mesures du 24/10/2026 pour HandLen 150 / ForearmLen 200 / BicepCircum 220"
+  },
+  "readme_constraints": {
+    "source": "README.txt (partie 1) — confirmées par les bornes du SCAD v2.1",
+    "statements": [
+      "biceps minimum 110 ; main minimum 135 (sécurité des enfants, tolérance des petites broches) ; cuff minimum 65 mm",
+      "version, mesures A B C et échelle de la main % estampillés sous le cuff"
+    ]
+  },
+  "notice": "Dimensionnement et rendu OpenSCAD vérifiés sur le SCAD officiel v2.1 (7 pièces rendues). Cuff et Forearm demandent ~4-5 minutes (OpenSCAD 2021). Aucune impression ni essayage : à valider par un bénévole e-NABLE compétent."
+}

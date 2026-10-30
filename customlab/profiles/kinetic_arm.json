@@ -1,0 +1,96 @@
+{
+  "id": "kinetic_arm",
+  "name": "Kinetic Arm",
+  "designer": "Mat Bowtell / Free 3D Hands",
+  "kind": "mesh",
+  "source": {
+    "thingiverse": "https://www.thingiverse.com/thing:6736769",
+    "version": "NIH 3D 3DPX-022894 v8 (Mat Bowtell / Free 3D Hands) + « Kinetic Arm Assembly Manual » (247 pages) lu localement"
+  },
+  "license": {
+    "name": "CC BY-NC-SA 4.0 (NIH 3D 3DPX-022894 v8)",
+    "verified": true,
+    "redistribution": "Non commercial, ShareAlike ; manuel et STL non embarqués"
+  },
+  "status": "experimental",
+  "sides": [
+    "left",
+    "right"
+  ],
+  "inputs": [],
+  "label_mapping_confirmed": false,
+  "parts": [],
+  "decoration_zones": [],
+  "forbidden_zones": "NON DÉFINI",
+  "unprinted_components": "NON DOCUMENTÉ",
+  "notes": "Méthode : voir method_doc. Les valeurs des tableaux B1–B4 sont recopiées depuis les images du manuel et vérifiées (monotonie, exemple de Jake).",
+  "documented_constraints": {
+    "tested_scale_percent": [
+      50,
+      100
+    ],
+    "recommended_min_percent": 50,
+    "residual_limb_ratio_of_sound_forearm": [
+      0.15,
+      0.7
+    ],
+    "scalable_parts_supplied_at": "100 %",
+    "non_scalable_parts": {
+      "Tensioners (TPU)": "~47.5-120 %",
+      "Locking Mechanism (PLA)": "~50-100 %",
+      "Palm RH (PLA)": "~50-97.5 %"
+    }
+  },
+  "sources_provenance": {
+    "nih3d": "3DPX-022894 v8 ; origine Free 3D Hands / thing:6736769",
+    "manual": "Kinetic_Arm_Assembly_Manual.pdf (46 927 793 octets, SHA-256 ca01eaea030208ffb6e20225cab9bcb3066c2648704875c23af3d303d8af3610), téléchargé le 2026-10-28 depuis l'entrée NIH 3DPX-022894 v8 ; voir sources/kinetic_arm/manual/PROVENANCE.txt"
+  },
+  "method": "kinetic_arm_chart",
+  "method_source": "Kinetic Arm Assembly Manual, « Scaling Steps » 3 à 8 (pages 28–33) et Appendix B1–B4 (pages 220–223), tableaux lus sur les images des pages",
+  "method_doc": "Étape 3 : longueur de la main (bout du majeur → poignet) → échelle des composants inférieurs (arrondi vers le BAS). Étape 4 : largeur du coude du moignon, même ligne → type d'avant-bras A–F (arrondi vers le HAUT). Étape 5 : (échelle inférieure, type) → échelle des composants supérieurs (1 décimale). Étape 6 : longueur du moignon, même ligne → insert A–Q (arrondi vers le HAUT). Étapes 7–8 : (insert, type) → languette 1–4 et jeu de doublure néoprène 1–12. Paume et mécanisme de verrouillage : fichiers pré-échelonnés à l'échelle inférieure ; tendeurs : fichier pré-échelonné le plus proche de l'échelle supérieure ; ils ne se mettent jamais à l'échelle dans le trancheur. Bras gauche : symétrie de certaines pièces. Un bras d'ESSAI (bras supérieur, charnières de coude, avant-bras) doit être imprimé et évalué avant le vrai bras.",
+  "wizard_inputs": [
+    {
+      "id": "hand_mm",
+      "label_fr": "Longueur de la main saine (bout du majeur → poignet)",
+      "label_en": "Hand length (middle fingertip → wrist)",
+      "unit": "mm",
+      "default": null,
+      "required": true,
+      "help_fr": "Manuel étape 2, mesure 1. Tableau des composants inférieurs : de 119 à 237 mm ; arrondi vers le bas.",
+      "help_en": "Manual step 2, measurement 1. Lower Components chart: 119 to 237 mm; rounded down."
+    },
+    {
+      "id": "elbow_mm",
+      "label_fr": "Largeur du coude — membre résiduel",
+      "label_en": "Elbow width — residual limb",
+      "unit": "mm",
+      "default": null,
+      "required": true,
+      "help_fr": "Manuel étape 2, mesure 2 : partie la plus large du coude, souvent au pli. Arrondi vers le haut.",
+      "help_en": "Manual step 2, measurement 2: widest part of the elbow, usually at the crease. Rounded up."
+    },
+    {
+      "id": "resid_mm",
+      "label_fr": "Longueur du membre résiduel (olécrâne → extrémité)",
+      "label_en": "Residual limb length (olecranon → tip)",
+      "unit": "mm",
+      "default": null,
+      "required": true,
+      "help_fr": "Manuel étape 2, mesure 3. Choisit l'insert A–Q (arrondi vers le haut).",
+      "help_en": "Manual step 2, measurement 3. Selects the Insert A–Q (rounded up)."
+    },
+    {
+      "id": "sound_mm",
+      "label_fr": "Longueur de l'avant-bras valide (facultatif)",
+      "label_en": "Unaffected forearm length (optional)",
+      "unit": "mm",
+      "default": 0.0,
+      "required": false,
+      "help_fr": "Sert uniquement au contrôle documenté : le membre résiduel doit faire 15–70 % de l'avant-bras valide ; 0 = non mesuré.",
+      "help_en": "Only for the documented check: the residual limb should be 15–70 % of the unaffected forearm; 0 = not measured."
+    }
+  ],
+  "notice": "Méthode de dimensionnement identifiée dans le manuel officiel et testée sur son exemple chiffré (Jake : 70 %, type B, composants supérieurs 70 %, insert D, languette 2, doublure 4). CustomLab calcule la sélection des pièces ; il n'embarque ni ne met à l'échelle les STL du bras (non fournis). Imprimer un bras d'essai avant le bras final. Aucun essayage ni impression : à faire valider par un bénévole compétent.",
+  "official_manual": "sources/kinetic_arm/manual/Kinetic_Arm_Assembly_Manual.pdf",
+  "limits": "Fichiers STL de l'entrée non téléchargés (1,8 Go) ni décorables ici : seul le dimensionnement et la sélection des pièces sont implémentés. Paume : tissage/zones fonctionnelles non définis."
+}

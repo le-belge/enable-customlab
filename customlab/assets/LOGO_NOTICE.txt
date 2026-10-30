@@ -1,0 +1,3 @@
+enable_france_logo.png : logo de e-Nable France, copie de https://e-nable.fr (themes/enable/dist/images/logo_324f8c07.png), recupere le 2026-10-29
+a la demande de l'utilisateur. Marque de l'association : usage a faire confirmer par e-Nable France avant toute diffusion hors du cercle des benevoles.
+Ce fichier n'est pas sous la licence du code de CustomLab.
