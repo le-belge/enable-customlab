@@ -6,8 +6,8 @@ the platform reports reduced motion is not available, so that nothing ever waits
 import os
 from pathlib import Path
 
-from PySide6.QtCore import QEasingCurve, QEvent, QObject, QPropertyAnimation, Qt, QVariantAnimation
-from PySide6.QtGui import QColor, QFont, QPainter, QPixmap
+from PySide6.QtCore import QEasingCurve, QEvent, QObject, QPropertyAnimation, Qt, QUrl, QVariantAnimation
+from PySide6.QtGui import QColor, QDesktopServices, QFont, QPainter, QPixmap
 from PySide6.QtWidgets import QFrame, QGraphicsDropShadowEffect, QGraphicsOpacityEffect, QHBoxLayout, QLabel, QWidget
 
 NAVY = "#0b314d"        # e-nable.fr: titles, footer, text on light
@@ -145,13 +145,25 @@ class StepBar(QWidget):
             r = 7 if cur else 5; p.drawEllipse(int(x - r), int(cy - r), 2 * r, 2 * r)
 
 
+SITE_URL = "https://e-nable.fr"
+
+
+class LogoLink(QLabel):
+    """The e-NABLE France logo: a click opens the association's website."""
+    def __init__(self):
+        super().__init__(); self.setCursor(Qt.PointingHandCursor); self.setToolTip(f"e-NABLE France — {SITE_URL}")
+
+    def mousePressEvent(self, e):
+        if e.button() == Qt.LeftButton: QDesktopServices.openUrl(QUrl(SITE_URL))
+
+
 class Header(QFrame):
     """Navy band with the app name, tricolour hairline, step name, step dots and the language button."""
     def __init__(self, step_label, lang_button):
         super().__init__(); self.setObjectName("header"); self.setStyleSheet(f"QFrame#header {{ background: {NAVY}; border-radius: 14px; }}")
-        lay = QHBoxLayout(self); lay.setContentsMargins(18, 10, 14, 10); lay.setSpacing(14)
-        logo = QLabel(); logo.setStyleSheet("background:white;border-radius:23px;padding:3px"); pm = QPixmap(str(LOGO))
-        if not pm.isNull(): logo.setPixmap(pm.scaledToHeight(40, Qt.SmoothTransformation)); lay.addWidget(logo)
+        lay = QHBoxLayout(self); lay.setContentsMargins(18, 8, 14, 8); lay.setSpacing(14)
+        logo = LogoLink(); logo.setStyleSheet("background:white;border-radius:34px;padding:4px"); pm = QPixmap(str(LOGO))
+        if not pm.isNull(): logo.setPixmap(pm.scaledToHeight(64, Qt.SmoothTransformation)); lay.addWidget(logo)
         brand = QLabel("e-NABLE <span style='color:%s'>CustomLab</span><br><span style='font-size:10px;font-weight:400;color:#cfe3f0'>par e-NABLE France</span>" % SKY); brand.setStyleSheet("color:white;font-size:17px;font-weight:700;background:transparent")
         stripe = QWidget(); stripe.setFixedSize(3, 22); stripe.setStyleSheet(f"background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 {FRENCH_BLUE}, stop:0.34 {FRENCH_BLUE}, stop:0.34 white, stop:0.67 white, stop:0.67 {FRENCH_RED}, stop:1 {FRENCH_RED}); border-radius:1px")
         step_label.setStyleSheet("color:white;font-size:15px;font-weight:600;background:transparent")
