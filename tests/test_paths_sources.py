@@ -39,6 +39,29 @@ class Sources(unittest.TestCase):
         self.assertTrue(any(i["device"] == "kinetic_hand" for i in library.scan_all()))
         self.assertTrue(any(i["bundled"] and i["device"] == "phoenix_hand" for i in library.scan_all()))      # bundled Phoenix parts always there
 
+    def test_scad_is_found_wherever_the_archive_put_it(self):
+        from customlab import armgen
+        from customlab.profiles import load_profile
+        prof = load_profile("unlimbited_arm"); self.assertIsNone(armgen.scad_path(prof))
+        f = Path(self.d.name) / "src" / "unlimbited_arm" / "unzipped" / "files" / "unlimbited_arm_v2.1.SCAD"; f.parent.mkdir(parents=True); f.write_text("// x")
+        self.assertEqual(armgen.scad_path(prof), f); self.assertIs(sources_dialog.status("unlimbited_arm")[0], True)
+
+    def test_add_zip_puts_files_in_the_device_folder_and_refuses_escaping_entries(self):
+        import zipfile
+        z = Path(self.d.name) / "kin.zip"
+        with zipfile.ZipFile(z, "w") as zf: zf.writestr("Kinetic Hand/Palm.stl", "solid x\nendsolid x\n"); zf.writestr("__MACOSX/._Palm.stl", "junk")
+        self.assertEqual(sources_dialog.add_zip("kinetic_hand", z), 1)
+        self.assertTrue((Path(self.d.name) / "src" / "kinetic_hand" / "Kinetic Hand" / "Palm.stl").is_file()); self.assertIs(sources_dialog.status("kinetic_hand")[0], True)
+        bad = Path(self.d.name) / "bad.zip"
+        with zipfile.ZipFile(bad, "w") as zf: zf.writestr("../evil.stl", "x")
+        with self.assertRaises(ValueError): sources_dialog.add_zip("kinetic_arm", bad)
+        self.assertFalse((Path(self.d.name) / "src" / "evil.stl").exists())
+
+    def test_add_folder_copies_and_refuses_the_sources_folder_itself(self):
+        s = Path(self.d.name) / "dl"; (s / "a").mkdir(parents=True); (s / "a" / "P.stl").write_text("x"); (s / ".DS_Store").write_text("x")
+        self.assertEqual(sources_dialog.add_folder("kinetic_arm", s), 1); self.assertTrue((Path(self.d.name) / "src" / "kinetic_arm" / "a" / "P.stl").is_file())
+        with self.assertRaises(ValueError): sources_dialog.add_folder("kinetic_arm", Path(self.d.name) / "src" / "kinetic_arm")
+
     def test_dialog_opens_and_lists_every_device(self):
         dlg = sources_dialog.SourcesDialog(None, "fr"); self.assertEqual(dlg.grid.count(), 3 * len(sources_dialog.DEVICES)); self.assertIn("✗", " ".join(w.widget().text() for w in map(dlg.grid.itemAt, range(dlg.grid.count())) if hasattr(w.widget(), "text")))
 

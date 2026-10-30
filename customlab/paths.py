@@ -50,3 +50,13 @@ def resolve(rel):
     rel = str(rel)
     if rel.startswith("sources/"): return sources_dir() / rel[len("sources/"):]
     return resource_dir() / rel
+
+
+def find_file(name, subfolder=None):
+    """A file of the given name anywhere under the sources folder (first under <subfolder>, then everywhere), case-insensitive; None if absent."""
+    root = sources_dir(); low = name.lower()
+    for base in ([root / subfolder] if subfolder else []) + [root]:
+        if base.is_dir():
+            for p in sorted(base.rglob("*")):
+                if p.name.lower() == low and p.is_file(): return p
+    return None

@@ -11,8 +11,9 @@ Sur un macOS plus ancien (avant 15), le clic droit sur l'appli → Ouvrir foncti
 **Windows** : décompressez `e-NABLE_CustomLab_windows.zip`, lancez `CustomLab\CustomLab.exe`. Si SmartScreen s'affiche : « Informations complémentaires » → « Exécuter quand même ».
 
 ## Premier lancement
-- Une fenêtre **Fichiers sources** s'ouvre : elle explique quels fichiers télécharger sur les pages officielles pour la Kinetic Hand, le Kinetic Arm et l'Unlimbited Arm. La Phoenix fonctionne tout de suite (pièces incluses).
-- Pour la gravure et l'Unlimbited Arm, installez aussi **OpenSCAD** (openscad.org).
+- La **Phoenix** fonctionne tout de suite (pièces incluses).
+- Une fenêtre **Fichiers sources** s'ouvre au premier lancement (menu Aide → Fichiers sources pour la rouvrir). Pour la Kinetic Hand, le Kinetic Arm ou l'Unlimbited Arm : « Ouvrir la page officielle » → téléchargez les fichiers → « Ajouter le .zip téléchargé… » et choisissez le fichier. CustomLab le range tout seul ; quand la ligne passe au ✓ vert, c'est prêt.
+- Pour la gravure et l'Unlimbited Arm, installez aussi **OpenSCAD** (gratuit, openscad.org) ; il est détecté automatiquement.
 - Le menu **Aide → Tuto** résume les méthodes de mise à l'échelle de chaque appareil.
 
 ## Ce que nous voulons savoir
