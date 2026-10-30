@@ -13,6 +13,17 @@ python3 -m customlab demo-svg examples/star.svg --mode relief
 ```
 Lire `docs/AUDIT.md` d'abord : les limites et blocages réels y sont listés.
 
+## Installer l'application (versions de test)
+
+Les versions de test se téléchargent depuis l'onglet **Actions** du dépôt (workflow « Build test apps », section *Artifacts* du dernier run réussi).
+
+**Windows** : télécharger `e-NABLE_CustomLab_windows`, décompresser, lancer `e-NABLE_CustomLab_Setup.exe` (sans droits administrateur). L'application n'est pas signée : Windows affiche « Windows a protégé votre ordinateur » → *Informations complémentaires* → *Exécuter quand même*.
+Installer aussi [OpenSCAD](https://openscad.org) (gravure et bras Unlimbited), puis ajouter vos sources via *Fichier → Fichiers sources*.
+
+**macOS** : télécharger `e-NABLE_CustomLab_mac`, décompresser, ouvrir `e-NABLE CustomLab.app` (clic droit → *Ouvrir* la première fois).
+
+Ces versions n'ont pas été testées sur un poste vierge. Les fichiers sources (SCAD / STL officiels) ne sont pas fournis.
+
 ## Licence
 
 Le **code de CustomLab** est publié sous **GNU GPL v3** (fichier `LICENSE`).
