@@ -5,6 +5,7 @@ location is chosen in the app (menu Aide > Fichiers sources) and remembered in <
 """
 import json
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -52,11 +53,38 @@ def resolve(rel):
     return resource_dir() / rel
 
 
+def _junk(p):
+    """macOS archive leftovers ("._x", "__MACOSX/"): never the real file."""
+    return p.name.startswith("._") or "__MACOSX" in p.parts
+
+
 def find_file(name, subfolder=None):
     """A file of the given name anywhere under the sources folder (first under <subfolder>, then everywhere), case-insensitive; None if absent."""
     root = sources_dir(); low = name.lower()
     for base in ([root / subfolder] if subfolder else []) + [root]:
         if base.is_dir():
             for p in sorted(base.rglob("*")):
-                if p.name.lower() == low and p.is_file(): return p
+                if p.name.lower() == low and p.is_file() and not _junk(p): return p
     return None
+
+
+def _words_version(stem):
+    """'UnLimbited_Arm_v2.1' -> (['unlimbited', 'arm'], ('2', '1')): name words (letters only) and the first version number (None if none)."""
+    low = stem.lower(); v = re.search(r"(\d+)[._\- ](\d+)", low)
+    return re.findall(r"[a-z]+(?=[^a-z]|$)", re.sub(r"v?\d+([._\- ]\d+)*", " ", low)), (v.groups() if v else None)
+
+
+def find_similar(name, subfolder=None):
+    """Lenient search for a downloaded file whose name was changed ("(1)", spaces, case, other folder): same extension, every word of
+    <name> in it and, if <name> carries a version (v2.1), the same version. Returns (match or None, other versions found)."""
+    root = sources_dir(); ext = Path(name).suffix.lower(); words, ver = _words_version(Path(name).stem); others = []
+    for base in ([root / subfolder] if subfolder else []) + [root]:
+        if not base.is_dir(): continue
+        for p in sorted(base.rglob("*"), key=lambda q: (len(q.parts), str(q).lower())):
+            if p.suffix.lower() != ext or not p.is_file() or _junk(p): continue
+            key = re.sub(r"[^a-z]", "", p.stem.lower())
+            if not all(w in key for w in words): continue
+            v = _words_version(p.stem)[1]
+            if ver is None or v == ver: return p, others
+            if p not in others: others.append(p)                     # another version (v2.2...): not interchangeable, reported only
+    return None, others

@@ -24,6 +24,7 @@ def scad_path(profile):
     rel = profile.get("official_scad")
     p = paths.resolve(rel) if rel else None
     if rel and not (p and p.is_file()): p = paths.find_file(Path(rel).name, "unlimbited_arm")      # the downloaded archive may be laid out differently
+    if rel and not (p and p.is_file()): p = paths.find_similar(Path(rel).name, "unlimbited_arm")[0]   # renamed by the browser ("(1)"), other case/separators
     return p if (p and p.is_file()) else None
 
 
