@@ -79,7 +79,9 @@ jobs:
         run: |
           $p = Start-Process -FilePath "dist\CustomLab\CustomLab.exe" -ArgumentList "--selftest", "--report", "selftest_windows.txt" -Wait -PassThru -NoNewWindow
           if (Test-Path selftest_windows.txt) { Get-Content selftest_windows.txt -Encoding utf8 } else { Write-Output "no report written" }
-          exit $p.ExitCode
+          # fail-safe: a null ExitCode or a missing/incomplete report must not pass as success
+          $ok = (Test-Path selftest_windows.txt) -and (Select-String -Path selftest_windows.txt -Pattern '^selftest OK$' -Quiet)
+          if ($p.ExitCode -ne 0 -or -not $ok) { Write-Output "selftest failed (exit code: $($p.ExitCode))"; exit 1 }
       - name: Installer (Windows, Inno Setup)
         if: matrix.name == 'windows'
         run: |

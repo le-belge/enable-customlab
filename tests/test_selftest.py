@@ -30,7 +30,7 @@ class SelfTest(unittest.TestCase):
 
     def test_packaged_entry_point_dispatches_selftest_without_gui(self):
         with tempfile.TemporaryDirectory() as home:
-            env = dict(os.environ, PYTHONPATH=str(ROOT), QT_QPA_PLATFORM="offscreen", CUSTOMLAB_HOME=home)
+            env = dict(os.environ, PYTHONPATH=str(ROOT), QT_QPA_PLATFORM="offscreen", CUSTOMLAB_HOME=home, PYTHONIOENCODING="utf-8")  # Windows pipes default to cp1252
             p = subprocess.run([sys.executable, str(ROOT / "packaging" / "entry.py"), "--selftest"], env=env, capture_output=True, text=True, encoding="utf-8", timeout=120)
         self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
         self.assertIn("selftest OK", p.stdout)
