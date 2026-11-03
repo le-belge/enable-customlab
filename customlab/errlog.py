@@ -72,7 +72,10 @@ _busy = threading.local()
 
 def excepthook(exc_type, exc, tb):
     if issubclass(exc_type, KeyboardInterrupt): return sys.__excepthook__(exc_type, exc, tb)
-    if getattr(_busy, "on", False): return                     # an error while reporting an error: stop there
+    if getattr(_busy, "on", False):                             # an error while a report is shown (nested event loop) or being built:
+        try: get_logger().error("Exception non gérée (pendant un autre rapport)\n%s", "".join(traceback.format_exception(exc_type, exc, tb)))
+        except Exception: pass                                  # log it, but never open a second dialog nor recurse
+        return
     _busy.on = True
     try:
         text = report(exc_type, exc, tb)

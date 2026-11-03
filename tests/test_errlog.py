@@ -16,6 +16,8 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 from PySide6.QtWidgets import QApplication, QMessageBox
 
 from customlab import errlog, paths
+from customlab import batch_dialog as bd
+from customlab import deco
 from customlab import export_all_dialog as ed
 from customlab.store import Store
 from tests.test_deco import slab
@@ -82,6 +84,32 @@ class ExportDialogNeverStuck(_Home):
         self.assertTrue(hasattr(dlg, "results"), "finished never emitted: dialog stuck")
         self.assertEqual([r["status"] for r in dlg.results], ["failed"]); self.assertTrue(dlg.b_go.isEnabled()); self.assertFalse(dlg.b_cancel.isEnabled())
         self.assertIn("Export interrompu", dlg.log.toPlainText()); self.assertIn("Traceback", self.log_text())
+
+
+    def test_camo_batch_unwritable_destination_ends_with_an_error(self):
+        d = self.home; d.mkdir(parents=True); a = d / "a.stl"; slab(a); blocker = d / "pas un dossier"; blocker.write_text("x", encoding="utf-8")
+        ctx = {"mirror_for": lambda p: False, "extra": lambda: {}, "scale_for": lambda p: (100.0, None)}
+        spec = deco.DecoSpec()
+        with mock.patch.object(bd.QFileDialog, "getExistingDirectory", return_value=str(blocker)):
+            dlg = bd.BatchDialog(None, "fr", [{"label": "A", "path": a}], spec, ctx, current=a)
+            dlg.start(); t0 = time.time()
+            while not hasattr(dlg, "results") and time.time() - t0 < 30: app.processEvents(); time.sleep(0.05)
+        self.assertTrue(hasattr(dlg, "results"), "finished never emitted: dialog stuck")
+        self.assertEqual([r["status"] for r in dlg.results], ["failed"]); self.assertTrue(dlg.b_go.isEnabled())
+        self.assertIn("Export interrompu", dlg.log.toPlainText()); self.assertIn("Traceback", self.log_text())
+
+
+class NestedError(_Home):
+    def test_error_while_report_is_shown_is_logged_not_lost(self):
+        shown = []
+        def show(text):
+            shown.append(text)
+            try: raise KeyError("pendant la fenêtre é")              # e.g. a timer slot failing in the dialog's event loop
+            except KeyError: errlog.excepthook(*sys.exc_info())
+        with mock.patch.object(errlog, "show", side_effect=show), mock.patch.object(sys, "stderr", io.StringIO()):
+            try: raise ValueError("premier")
+            except ValueError: errlog.excepthook(*sys.exc_info())
+        self.assertEqual(len(shown), 1); self.assertIn("pendant la fenêtre é", self.log_text()); self.assertIn("premier", self.log_text())
 
 
 class DamagedFiles(_Home):

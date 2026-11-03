@@ -6,14 +6,14 @@ from PySide6.QtCore import QObject, QRunnable, Qt, QThreadPool, Signal
 from PySide6.QtWidgets import (QCheckBox, QDialog, QFileDialog, QHBoxLayout, QLabel, QListWidget, QListWidgetItem, QMessageBox, QProgressBar, QPushButton,
                                QTextEdit, QVBoxLayout)
 
-from . import camo_batch
+from . import camo_batch, errlog
 
 TX = {"fr": {"title": "Camouflage sur plusieurs pièces", "intro": "Cochez les pièces à décorer avec le camouflage choisi (style, taille des taches, profondeur et qualité de la page). Chaque pièce reçoit sa propre variante, sa vue et ses zones interdites déjà tracées ; un dossier par pièce est exporté.",
              "all": "Tout cocher", "none": "Aucune", "vary": "Une variante différente par pièce", "go": "Exporter…", "cancel": "Annuler", "close": "Fermer", "running": "En cours : {p} ({i}/{n})", "done": "Terminé : {ok} exportée(s), {sk} ignorée(s), {fl} en échec.\nDossier : {d}",
-             "pick": "Choisir le dossier d'export", "none_sel": "Cochez au moins une pièce.", "stopped": "Arrêté."},
+             "pick": "Choisir le dossier d'export", "none_sel": "Cochez au moins une pièce.", "stopped": "Arrêté.", "crash": "Export interrompu"},
       "en": {"title": "Camouflage on several parts", "intro": "Tick the parts to decorate with the chosen camouflage (style, patch size, depth and quality from the page). Each part gets its own variant, view and the forbidden zones already drawn; one folder per part is exported.",
              "all": "Tick all", "none": "None", "vary": "A different variant for each part", "go": "Export…", "cancel": "Cancel", "close": "Close", "running": "Working: {p} ({i}/{n})", "done": "Done: {ok} exported, {sk} skipped, {fl} failed.\nFolder: {d}",
-             "pick": "Choose the export folder", "none_sel": "Tick at least one part.", "stopped": "Stopped."}}
+             "pick": "Choose the export folder", "none_sel": "Tick at least one part.", "stopped": "Stopped.", "crash": "Export interrupted"}}
 
 
 class _Sig(QObject):
@@ -60,7 +60,16 @@ class BatchDialog(QDialog):
         if not d: return
         self.out = Path(d) / f"camouflage_{self.base_spec.camo_style}"; self.cancel_flag.clear(); self.bar.setRange(0, len(parts)); self.bar.setValue(0); self.bar.setVisible(True)
         self.b_go.setEnabled(False); self.b_cancel.setEnabled(True); self.log.clear(); vary = self.vary.isChecked()
-        QThreadPool.globalInstance().start(_Job(lambda: self.sig.finished.emit(camo_batch.run(parts, self.base_spec, self.out, self.ctx, lambda i, n, m: self.sig.progress.emit(i, n, m), self.cancel_flag.is_set, vary))))
+        QThreadPool.globalInstance().start(_Job(lambda: self._work(parts, vary)))
+
+    def _work(self, parts, vary):
+        """Worker thread. Whatever happens (e.g. destination not writable), `finished` is emitted so the dialog never stays stuck."""
+        try: results = camo_batch.run(parts, self.base_spec, self.out, self.ctx, lambda i, n, m: self.sig.progress.emit(i, n, m), self.cancel_flag.is_set, vary)
+        except Exception as e:
+            try: errlog.get_logger().exception("Camouflage sur plusieurs pièces interrompu (%s)", self.out)
+            except Exception: pass
+            results = [{"part": self.t("crash"), "file": "", "status": "failed", "message": f"{type(e).__name__}: {e}"[:300], "folder": None}]
+        self.sig.finished.emit(results)
 
     def _progress(self, i, n, msg):
         self.bar.setValue(i); self.bar.setFormat(self.t("running").format(p=msg, i=min(i + 1, n), n=n) if msg else "")
