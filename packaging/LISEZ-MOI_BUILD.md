@@ -22,3 +22,6 @@ packaging\build_windows.bat
 ```
 Résultat : `dist\e-NABLE_CustomLab_windows.zip` (dossier `CustomLab\` avec `CustomLab.exe`). Non signé : Windows SmartScreen affichera « Windows a protégé votre ordinateur » → « Informations complémentaires » → « Exécuter quand même ».
 **La version Windows n'a jamais été lancée** : elle est à tester par un testeur sur PC.
+
+Auto-test sans fenêtre (imports, profils, mise à l'échelle et export d'une pièce Phoenix incluse dans un dossier temporaire), code de sortie 0 = OK, 1 = échec :
+`CustomLab.exe --selftest --report selftest.txt` (Windows, le rapport est dans le fichier) ou `"e-NABLE CustomLab.app/Contents/MacOS/CustomLab" --selftest` (macOS). La CI (`.github/workflows/build.yml`) le lance sur chaque application construite.
