@@ -3,6 +3,7 @@
 CustomLab bundles none of these files (only the Phoenix parts under customlab/bundled_parts). The user downloads them from the official
 pages, drops them in the sources folder and presses "Vérifier". Nothing is downloaded by the app.
 """
+import re
 import shutil
 import zipfile
 from pathlib import Path
@@ -23,13 +24,13 @@ DEVICES = {
 TX = {"fr": {"title": "Fichiers sources", "intro": "<b>Pour utiliser un autre appareil que la Phoenix :</b><br>1. Cliquez sur « Ouvrir la page officielle » et téléchargez les fichiers (bouton de téléchargement du site).<br>2. Cliquez sur « Ajouter le .zip téléchargé… » et choisissez le fichier : CustomLab le range au bon endroit tout seul.<br>3. C'est prêt (✓ vert). Rien d'autre à faire.",
              "folder": "Dossier de rangement :", "choose": "Changer de dossier…", "reveal": "Ouvrir le dossier", "check": "Vérifier", "close": "Fermer", "page": "Ouvrir la page officielle",
              "add_zip": "Ajouter le .zip téléchargé…", "add_dir": "Ajouter un dossier…", "pick_zip": "Choisir le .zip téléchargé", "pick_dir": "Choisir le dossier téléchargé", "busy": "⏳ Copie en cours… ({i}/{n})", "added": "✓ {n} fichier(s) ajouté(s).", "err": "✗ Impossible d'ajouter : {e}",
-             "ok_stl": "✓ prêt ({n} fichiers STL)", "ko_stl": "✗ pas encore de fichiers", "ok_scad": "✓ prêt (SCAD officiel trouvé)", "ko_scad": "✗ pas encore de fichiers", "opt": "Facultatif : les pièces Phoenix incluses suffisent",
+             "ok_stl": "✓ prêt ({n} fichiers STL)", "ko_stl": "✗ pas encore de fichiers", "ok_scad": "✓ prêt (SCAD officiel trouvé)", "ko_scad": "✗ pas encore de fichiers", "ko_part2": "✗ il manque la partie 2 sur 2 de l'archive : c'est elle qui contient le fichier {f}. Téléchargez « part 2 of 2 » sur la page officielle et ajoutez-la.", "ko_version": "✗ fichier trouvé ({g}), mais ce n'est pas la version attendue ({f}). Ajoutez la partie 2 sur 2 de l'archive officielle, qui contient {f}.", "opt": "Facultatif : les pièces Phoenix incluses suffisent",
              "sub": "", "scad_ok": "✓ OpenSCAD trouvé", "scad_ko": "✗ OpenSCAD (gratuit, openscad.org) n'est pas installé : il n'est nécessaire que pour la gravure et l'Unlimbited Arm. Installez-le puis relancez CustomLab.",
              "names": {"kinetic_hand": "Kinetic Hand", "kinetic_arm": "Kinetic Arm", "unlimbited_arm": "Unlimbited Arm", "phoenix_hand": "Phoenix (SCAD, facultatif)"}},
       "en": {"title": "Source files", "intro": "<b>To use a device other than the Phoenix:</b><br>1. Click \"Open the official page\" and download the files (the site's download button).<br>2. Click \"Add the downloaded .zip…\" and choose the file: CustomLab puts it in the right place by itself.<br>3. It is ready (green ✓). Nothing else to do.",
              "folder": "Storage folder:", "choose": "Change folder…", "reveal": "Open the folder", "check": "Check", "close": "Close", "page": "Open the official page",
              "add_zip": "Add the downloaded .zip…", "add_dir": "Add a folder…", "pick_zip": "Choose the downloaded .zip", "pick_dir": "Choose the downloaded folder", "busy": "⏳ Copying… ({i}/{n})", "added": "✓ {n} file(s) added.", "err": "✗ Could not add: {e}",
-             "ok_stl": "✓ ready ({n} STL files)", "ko_stl": "✗ no files yet", "ok_scad": "✓ ready (official SCAD found)", "ko_scad": "✗ no files yet", "opt": "Optional: the bundled Phoenix parts are enough",
+             "ok_stl": "✓ ready ({n} STL files)", "ko_stl": "✗ no files yet", "ok_scad": "✓ ready (official SCAD found)", "ko_scad": "✗ no files yet", "ko_part2": "✗ part 2 of 2 of the archive is missing: it is the part that contains the file {f}. Download \"part 2 of 2\" from the official page and add it.", "ko_version": "✗ file found ({g}), but it is not the expected version ({f}). Add part 2 of 2 of the official archive, which contains {f}.", "opt": "Optional: the bundled Phoenix parts are enough",
              "sub": "", "scad_ok": "✓ OpenSCAD found", "scad_ko": "✗ OpenSCAD (free, openscad.org) is not installed: only needed for engraving and the Unlimbited Arm. Install it, then restart CustomLab.",
              "names": {"kinetic_hand": "Kinetic Hand", "kinetic_arm": "Kinetic Arm", "unlimbited_arm": "Unlimbited Arm", "phoenix_hand": "Phoenix (SCAD, optional)"}}}
 
@@ -46,6 +47,16 @@ def status(pid):
     return (n > 0 if need == "stl" else None), n, base
 
 
+def scad_missing_reason(pid):
+    """Why the official SCAD of <pid> is not ready: ("version", found file) if only another version (v2.2...) is there, ("part2", None) if
+    the folder holds other files (Thingiverse splits the archive in two and the .scad is in part 2 of 2), None if the folder is empty."""
+    sub = DEVICES[pid][0]; base = paths.sources_dir() / sub; name = Path(load_profile(pid).get("official_scad") or "").name
+    others = paths.find_similar(name, sub)[1] if name else []
+    if others: return "version", others[0]
+    if base.is_dir() and any(f.is_file() for f in base.rglob("*")): return "part2", None
+    return None
+
+
 def _extract(z, dest, progress=lambda i, n: None):
     """Write every file of an open ZipFile under dest (entries leaving dest are refused). Returns the number of files written."""
     n = 0
@@ -59,16 +70,39 @@ def _extract(z, dest, progress=lambda i, n: None):
     return n
 
 
+_DL_SUFFIXES = {".zip", "", ".part", ".crdownload", ".download", ".tmp"}      # browsers leave unfinished/renamed downloads without ".zip"
+
+
+def _real_ext(p):
+    """The file's extension if it looks like one (".zip", ".3mf"), else "": in "… v2.1 - Alfie Edition - 1672381 - part 2 of 2" (a Thingiverse
+    download that lost its ".zip"), Path.suffix would be ".1 - Alfie Edition - …", which is part of the name, not an extension."""
+    return p.suffix.lower() if re.fullmatch(r"\.[a-z0-9]{1,10}", p.suffix.lower()) else ""
+
+
+def _is_archive(p):
+    """A zip archive to unpack: "*.zip", or a download left under a temporary browser name (".Q6L2SF…", "x.crdownload", "… part 2 of 2")
+    that is really a zip. Other zip-based files (.3mf...) are left alone."""
+    return p.is_file() and not p.name.startswith("._") and _real_ext(p) in _DL_SUFFIXES and zipfile.is_zipfile(p)
+
+
+def _unpack_dir(zp):
+    """Folder an archive is unpacked into: its name without a real extension (never empty, never hidden)."""
+    ext = _real_ext(zp); name = zp.name[:-len(ext)] if ext else zp.name
+    return zp.parent.resolve() / (name.lstrip(".") or "archive")
+
+
 def unpack_nested(pid):
     """Thingiverse sometimes delivers zips inside the download ("part 1 of 2"...): unzip them in place (then remove the archive). Returns the number of files written."""
     dest = (paths.sources_dir() / DEVICES[pid][0]).resolve(); n = 0
     for _ in range(3):                                               # archives inside archives, a few levels at most
-        zips = [p for p in sorted(dest.rglob("*.zip")) if p.is_file()] if dest.is_dir() else []
+        zips = [p for p in sorted(dest.rglob("*")) if _is_archive(p)] if dest.is_dir() else []
         if not zips: break
         for zp in zips:
             try:
-                with zipfile.ZipFile(zp) as z: n += _extract(z, zp.parent.resolve() / zp.stem)
+                out = _unpack_dir(zp); tmp = out.with_name(out.name + ".unpacking") if out == zp.resolve() else out   # "… part 2 of 2" unpacks under its own name
+                with zipfile.ZipFile(zp) as z: n += _extract(z, tmp)
                 zp.unlink()
+                if tmp != out: tmp.rename(out)
             except (zipfile.BadZipFile, ValueError, OSError): continue
     return n
 
@@ -118,7 +152,7 @@ class SourcesDialog(QDialog):
         for i, pid in enumerate(DEVICES):
             found, n, p = status(pid); sub, url, need = DEVICES[pid]
             if need == "optional": txt = self.t["opt"]
-            elif need == "scad": txt = self.t["ok_scad"] if found else self.t["ko_scad"]
+            elif need == "scad": txt = self.t["ok_scad"] if found else self._scad_ko(pid, p)
             else: txt = self.t["ok_stl"].format(n=n) if found else self.t["ko_stl"]
             name = QLabel(f"<b>{self.t['names'][pid]}</b>"); st = QLabel(txt); st.setWordWrap(True)
             st.setStyleSheet("color:%s" % ("#1b7f3b" if found else "#8a4b00" if found is False else "#5b6b78"))
@@ -131,9 +165,14 @@ class SourcesDialog(QDialog):
         o = openscad.find_openscad(); self.scad.setText(self.t["scad_ok"] if o else self.t["scad_ko"])
         self.changed = True
 
+    def _scad_ko(self, pid, expected):
+        why = scad_missing_reason(pid)
+        if why is None: return self.t["ko_scad"]
+        return self.t["ko_" + why[0]].format(f=Path(expected).name, g=why[1].name if why[1] else "")
+
     def pick(self, pid, zip_):
         """Ask for the downloaded archive/folder and copy it into place in a worker thread."""
-        if zip_: f, _ = QFileDialog.getOpenFileName(self, self.t["pick_zip"], str(Path.home() / "Downloads"), "ZIP (*.zip)")
+        if zip_: f, _ = QFileDialog.getOpenFileName(self, self.t["pick_zip"], str(Path.home() / "Downloads"), "ZIP (*.zip);;* (*)")
         else: f = QFileDialog.getExistingDirectory(self, self.t["pick_dir"], str(Path.home() / "Downloads"))
         if not f: return
         self.setEnabled(False); fn = add_zip if zip_ else add_folder
