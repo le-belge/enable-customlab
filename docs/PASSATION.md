@@ -20,14 +20,15 @@ Point d'entrée pour reprendre le travail avec un nouveau compte Claude (compte 
 ## Fonctions livrées
 Mode Simple/Avancé ; mesure du poignet sur photo (référence + zoom) ; guides de mise à l'échelle pas à pas par appareil ; export « tout, prêt pour Bambu » (3MF avec filaments) ; texte, SVG, image et **plusieurs motifs** ; choix de police avec aperçu ; grille des pièces ; logo e-NABLE France cliquable (e-nable.fr) et mention « par e-NABLE France » ; installateur Windows (Inno Setup, `packaging/installer.iss`).
 
-## Travail parallèle : branche `beta2`
-Une autre session a travaillé à partir du même commit `abdbd29` : branche `beta2`, 13 commits, **268 tests OK** (39 sautés faute d'OpenSCAD / fichiers officiels dans cet environnement), non poussée, fournie en `customlab-beta2.bundle` :
+## Travail parallèle : branche `beta2` (poussée sur GitHub, non fusionnée)
+`origin/beta2` (commit `e98126b`) : 14 commits au-dessus de `v1.0.0-beta.1`, **268 tests OK** en Python 3.9 sur macOS avec OpenSCAD (39 sautés dans un environnement sans OpenSCAD ni fichiers officiels). `main` n'a pas été modifiée par cette branche. Pour la reprendre :
 ```
-git fetch customlab-beta2.bundle beta2:beta2
+git fetch origin beta2
 git checkout beta2
 ```
-Contenu annoncé : taille forcée annulée quand une mesure change (la valeur exportée suit désormais l'échelle affichée) ; export multicolore : couleur 1 à la bonne échelle ; Kinetic Arm : plages par groupe (inférieurs 50-100 %, supérieurs 47,5-120 %) ; Phoenix : seules les 8 pièces du côté choisi sont listées et exportées ; vérification de l'étanchéité des STL, avec message et Gravure grisée ; recherche souple du `.scad` Unlimbited ; UTF-8 explicite pour OpenSCAD (Windows) ; journal d'erreurs (`errlog.py`) ; auto-test `--selftest` de l'exécutable ; CI renforcée (tests Ubuntu + Windows, auto-test des builds).
-**À faire pour l'intégrer** : récupérer la branche, lancer tous les tests, relire les différences. Attention au recouvrement avec `sources_dialog.py` (fonction `unpack_nested`, déjà sur `main`) pour les archives Unlimbited en deux parties.
+Ne pas repousser un exemplaire local plus ancien de `beta2` (les identifiants de commit ont été réécrits pour retirer des données de test personnelles).
+Contenu : taille forcée annulée quand une mesure change (la valeur exportée suit l'échelle affichée) ; export multicolore : couleur 1 à la bonne échelle ; Kinetic Arm : plages par groupe (inférieurs 50-100 %, supérieurs 47,5-120 %) ; Phoenix : seules les 8 pièces du côté choisi sont listées et exportées ; vérification de l'étanchéité des STL, avec message et Gravure grisée ; recherche souple du `.scad` Unlimbited et archive en deux parties ; UTF-8 explicite pour OpenSCAD (Windows) ; journal d'erreurs (`errlog.py`) ; auto-test `--selftest` de l'exécutable ; CI renforcée (tests Ubuntu + Windows, auto-test des builds).
+**À faire** : lire le résultat du workflow lancé sur `beta2` (onglet Actions), relire les différences avec `main` (`git diff main...beta2`), puis fusionner dans `main` seulement sur décision de Michael, et publier une `v1.0.0-beta.2` (tag `v*` = publication automatique d'une pré-version).
 
 ## Ce qui n'est PAS vérifié (ne jamais le déclarer validé)
 - Aucun test sur un PC Windows ni un Mac vierge ; installateur et binaires non signés.
@@ -37,7 +38,7 @@ Contenu annoncé : taille forcée annulée quand une mesure change (la valeur ex
 - Accord de l'association e-NABLE France sur l'usage du logo et de la mention « par e-NABLE France » : à obtenir de son conseil d'administration.
 
 ## À faire (priorité indicative)
-1. Intégrer et valider `beta2` (voir plus haut), puis publier une `beta.2` si Michael le décide.
+1. Valider `beta2` (CI et tests, voir plus haut), puis fusion et `beta.2` si Michael le décide.
 2. Retours de testeurs : un père novice bloque sur l'échelle à partir de photos. Points de blocage probables : mesure sur photo sans référence ou en perspective, refus hors plage 100-160 %, double mise à l'échelle dans le slicer, installation Windows. Reproduire avec ses informations avant de modifier le code.
 3. Schéma de mesure Phoenix plus clair (cote sur le pli du poignet, exemples bon / mauvais) ; schémas de mesure pour le Kinetic Hand et le Kinetic Arm.
 4. Mode Simple réellement allégé (étapes 2-3), premier lancement guidé.
