@@ -20,11 +20,13 @@ from tests.test_deco import slab
 FAKE = r'''#!{exe}
 import re, shutil, sys
 args = sys.argv[1:]; out = args[args.index("-o") + 1]; scad = args[-1]
+if "{fail}" == "1":     # like OpenSCAD: the message names the script, in UTF-8 whatever the code page, plus undefined cp1252 bytes
+    sys.stderr.buffer.write(("ERREUR : impossible d'ouvrir « %s » données\n" % scad).encode("utf-8") + b"\x81\x8d\x9d\n"); sys.exit(1)
 try: text = open(scad, "rb").read().decode("utf-8")
 except UnicodeDecodeError as e: sys.stderr.write("cannot decode script: %s\n" % e); sys.exit(1)
 paths = re.findall(r'import\("([^"]+)"\)', text)
 missing = [p for p in paths if not __import__("os").path.isfile(p)]
-if missing or "{fail}" == "1":
+if missing:
     sys.stderr.buffer.write(("ERREUR : fichier introuvable « %s » données\n" % (missing or ["x"])[0]).encode("utf-8") + b"\x81\x8d\x9d\n"); sys.exit(1)
 sys.stderr.buffer.write("Avertissement : géométrie\n".encode("utf-8") + b"\x81\x8d\x8f\x90\x9d\n")
 shutil.copyfile(paths[0], out)
