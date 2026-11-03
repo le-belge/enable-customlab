@@ -56,7 +56,7 @@ class KineticFlow(unittest.TestCase):
         w = self.window(); w.go(2); c = w.custom; labels = [c.lib.itemData(i, 3) for i in range(1, c.lib.count())]      # Qt.ToolTipRole = 3: the full label with the licence (the visible text is the short name)
         self.assertGreater(len(labels), 30); self.assertTrue(all("RH" in l or "LH" in l for l in labels)); self.assertTrue(any(l.startswith("Gauntlet cover") for l in labels))
         self.assertFalse(any("Grouped" in l or "fitment" in l.lower() for l in labels)); self.assertTrue(all("Share Alike" in l for l in labels))
-        w.select("phoenix_hand"); self.assertEqual(w.custom.lib.count(), 17)                      # the Phoenix list is unchanged
+        w.select("phoenix_hand"); self.assertEqual(w.custom.lib.count(), 9)                       # the Phoenix list: the 8 parts of the chosen side
 
     def pick(self, w, name="Gauntlet cover"):
         c = w.custom; c.pick_library(next(i for i in range(1, c.lib.count()) if c.lib.itemText(i).startswith(name))); return c

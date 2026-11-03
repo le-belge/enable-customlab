@@ -81,6 +81,16 @@ def closest_insert(scale, space_mm):
     ins = CHART[scale]["inserts"]; return min(ins, key=lambda k: (abs(ins[k] - space_mm), ins[k]))
 
 
+def insert_for_scale(scale, palm_length_mm):
+    """Soft insert for a scale chosen by the volunteer: (insert, thickness mm, free palm space mm) from the chart row of that scale.
+    A scale that is not a row of the chart (steps of 2.5 %) is refused: the manual gives no insert for it, nothing is interpolated."""
+    s = next((s for s in SCALES if abs(s - scale) < 1e-6), None)
+    if s is None:
+        raise OutOfRange(f"Scale {scale:g} % is not a row of the Hand Scaling Chart ({SCALES[0]:g}-{SCALES[-1]:g} % in steps of 2.5 %): no insert can be chosen for it.")
+    space = CHART[s]["palm_length"] - palm_length_mm; ins = closest_insert(s, space)
+    return ins, CHART[s]["inserts"][ins], space
+
+
 @dataclass
 class KineticResult:
     scale_percent: float

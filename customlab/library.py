@@ -17,6 +17,11 @@ SKIP_DIRS = ("grouped stls", "digital fitment", "advanced scaling")        # pla
 def _sha(f): return hashlib.sha256(Path(f).read_bytes()).hexdigest()
 
 
+def side_of(path):
+    """'left' / 'right' from a parent folder of the file (Phoenix sets come in left/ and right/ folders), '' if unknown."""
+    return next((p.name for p in Path(path).parents if p.name in ("left", "right")), "")
+
+
 def scan_all(roots=None):
     """Bundled parts first, then the user's own sources/; identical files (same SHA-256) are listed once."""
     roots = roots or (BUNDLED_ROOT, paths.sources_dir())
@@ -43,7 +48,7 @@ def scan(root=None, bundled=False):
         low = [x.lower() for x in f.parts]
         device = "kinetic_hand" if "kinetic_hand" in low else "kinetic_arm" if "kinetic_arm" in low else "unlimbited_arm" if "unlimbited_arm" in low else "phoenix_hand"
         m = _PART.search(f.name); part = m.group(1) if m else re.sub(r"\s*\(.*\)\s*$", "", f.stem)
-        side = next((p.name for p in f.parents if p.name in ("left", "right")), "")
+        side = side_of(f)
         if device.startswith("kinetic"):
             mm = re.search(r"\((RH|LH)[^,)]*(?:,\s*([^)]*))?\)", f.stem); side = (mm.group(1) if mm else "") + (f" · {mm.group(2).strip()}" if mm and mm.group(2) else "")
             part = re.sub(r"\s*\(.*\)\s*$", "", f.stem)

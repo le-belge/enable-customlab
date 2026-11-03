@@ -78,7 +78,7 @@ class ExportAllDialog(QDialog):
         if not parts: QMessageBox.information(self, self.t("title"), self.t("none_sel")); return
         d = QFileDialog.getExistingDirectory(self, self.t("pick"))
         if not d: return
-        self.out = Path(d) / "export_toutes_les_pieces"; self.cancel_flag.clear(); self.bar.setRange(0, len(parts)); self.bar.setValue(0); self.bar.setVisible(True)
+        self.out = Path(d) / ("export_toutes_les_pieces" + self.ctx.get("folder_suffix", "")); self.cancel_flag.clear(); self.bar.setRange(0, len(parts)); self.bar.setValue(0); self.bar.setVisible(True)
         self.b_go.setEnabled(False); self.b_cancel.setEnabled(True); self.log.clear()
         QThreadPool.globalInstance().start(_Job(lambda: self.sig.finished.emit(export_all.run(parts, self.decorated, self.out, self.ctx, lambda i, n, m: self.sig.progress.emit(i, n, m), self.cancel_flag.is_set))))
 

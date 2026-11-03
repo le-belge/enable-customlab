@@ -10,6 +10,7 @@ Method (manual "Scaling Steps", pages 28-33, charts in Appendix B1-B4; chart val
 Pre-scaled parts (never scaled in the slicer): Palm and Locking Mechanism (Lower scale), Tensioners (Upper scale, "closest value").
 Other Lower parts use the Lower scale, other Upper parts the Upper scale. All files are right-hand; a left arm mirrors some parts.
 Documented limits: tested 50-100 % (50 % recommended minimum); residual limb 15-70 % of the unaffected forearm.
+Chart B2 gives Upper Components scales of 47.5-120 %: they are allowed for the upper parts (GROUP_RANGE) with a warning outside 50-100 %.
 A TEST ARM (upper arm + elbow hinges + forearm) must be printed and evaluated before the real arm (manual, Scaling Validation).
 Values outside the charts are refused, never clamped.
 """
@@ -96,6 +97,8 @@ for _a, _b, _c in zip(_B1.splitlines(), _B2.splitlines(), _B3.splitlines()):
     CHART[_v[0]] = {"hand_length": _v[1], "elbow": dict(zip(TYPES, _v[2:])), "upper": dict(zip(TYPES, [float(x) for x in _b.split()])),
                     "insert_len": dict(zip(INSERTS, [float(x) for x in _c.split()]))}
 SCALES = sorted(CHART, reverse=True)                           # 100 -> 50
+UPPER_RANGE = (min(min(r["upper"].values()) for r in CHART.values()), max(max(r["upper"].values()) for r in CHART.values()))   # chart B2: 47.5 ... 120 %
+GROUP_RANGE = {"lower": TESTED_SCALE, "upper": UPPER_RANGE}     # documented scale range of each group of parts (lower: chart B1 = tested range; upper: chart B2)
 PRESCALED = tuple(50 + 2.5 * i for i in range(21))              # Palm / LockMech files: 50 ... 100
 TENSIONERS = tuple(47.5 + 2.5 * i for i in range(30))           # Tensioner files: 47.5 ... 120
 
@@ -148,6 +151,8 @@ def compute(hand_length_mm, elbow_width_mm, residual_length_mm, sound_forearm_mm
     tongue = next(v for k, v in TONGUE[kind].items() if ftype in k)                             # step 7
     liner = LINER[kind][ftype]                                                                  # step 8
     w = []
+    if not TESTED_SCALE[0] <= upper <= TESTED_SCALE[1]:
+        w.append(f"Upper scale {upper:g} % is given by the manual's chart B2 but lies outside the tested range {TESTED_SCALE[0]:g}-{TESTED_SCALE[1]:g} %: print the test arm and have the fit checked by a volunteer.")
     if lower < 55: w.append(f"Lower scale {lower:g} %: the manual recommends 50 % as the absolute minimum (tested 50-100 %).")
     if sound_forearm_mm:
         r = residual_length_mm / sound_forearm_mm
@@ -183,6 +188,12 @@ def scale_check(percent: float) -> dict:
 # --- per-file rules (manual pages 21-23: Upper / Lower components, pre-scaled parts, parts mirrored for a left arm) -----------------
 _UPPER = ("elbowhinges", "uparm")                       # ElbowHinges, UpArm, UpArmCov
 _PRESCALED = {"palm": "lower", "lockmech": "lower", "tensioners": "upper"}
+
+
+def part_group(filename):
+    """'lower' or 'upper': group of components of one STL of the entry (manual pages 21-23)."""
+    n = filename.lower().rsplit(".", 1)[0]
+    return next((grp for key, grp in _PRESCALED.items() if n.startswith(key)), "upper" if n.startswith(_UPPER) else "lower")
 
 
 def part_info(filename, derived):

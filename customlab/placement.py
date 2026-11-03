@@ -416,7 +416,8 @@ class CustomizePage(QWidget):
         self.view.hm = None; self.view.base = None; self.view.mask = None; self.view.layers = None; self.view.protected = None; self.view.update(); self.show_prov(); self.log.setHtml(""); self.update_model()
 
     def reload_library(self, root=None):
-        self.items = library.scan(root) if root else [i for i in library.scan_all() if i.get("device") == getattr(self, "device", "phoenix_hand")]
+        side = getattr(self, "side_filter", None)          # Phoenix: only the parts of the chosen side (files of unknown side are kept)
+        self.items = library.scan(root) if root else [i for i in library.scan_all() if i.get("device") == getattr(self, "device", "phoenix_hand") and (not side or i.get("side") in (side, ""))]
         self.lib.blockSignals(True); self.lib.clear(); self.lib.addItem(self.t("lib"), None); self.lib.setIconSize(QSize(44, 33)); self.lib.setMaxVisibleItems(30)
         if not isinstance(self.lib.view(), QListView) or self.lib.view().iconSize().width() < 110:      # grid of pictures in the pop-up, small one in the closed box
             v = QListView(); v.setViewMode(QListView.IconMode); v.setIconSize(QSize(100, 75)); v.setGridSize(QSize(150, 126)); v.setWordWrap(True); v.setWrapping(True); v.setMovement(QListView.Static)

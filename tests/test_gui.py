@@ -87,7 +87,7 @@ class GuiSmoke(unittest.TestCase):
 
     def test_library_pick_loads_part(self):
         w = MainWindow(); w.select("phoenix_hand")
-        self.assertEqual(w.custom.lib.count(), 17)                    # placeholder + 16 bundled parts
+        self.assertEqual(w.custom.lib.count(), 9)                     # placeholder + the 8 bundled parts of the chosen side (left by default)
         w.custom.pick_library(1); self.assertIsNotNone(w.custom.part_path); self.assertTrue(w.custom.lic["known"])
 
     def test_export_after_library_pick_with_svg(self):
