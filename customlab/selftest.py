@@ -18,7 +18,8 @@ def _imports():
     os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
     import customlab.gui, customlab.placement, customlab.deco, customlab.export_all  # noqa: F401,E401
     from PySide6.QtWidgets import QApplication
-    app = QApplication.instance() or QApplication(sys.argv[:1])
+    customlab.deco._ensure_qt()                         # same Qt start as the engine (Windows fonts in offscreen mode)
+    app = QApplication.instance()
     return f"Qt {app.platformName()}"
 
 

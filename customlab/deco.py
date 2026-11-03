@@ -94,8 +94,10 @@ class HeightMap:
 def _ensure_qt():
     from PySide6.QtWidgets import QApplication, QWidget   # a QApplication also serves widgets created later
     if QApplication.instance() is None:
-        import os
+        import os, sys
         os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+        if sys.platform == "win32" and os.environ["QT_QPA_PLATFORM"] == "offscreen":   # offscreen does not look in C:\Windows\Fonts:
+            os.environ.setdefault("QT_QPA_FONTDIR", os.path.join(os.environ.get("WINDIR", r"C:\Windows"), "Fonts"))   # text = empty boxes
         QApplication([])
 
 
