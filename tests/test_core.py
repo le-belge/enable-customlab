@@ -1,3 +1,4 @@
+import io
 import tempfile
 import unittest
 from pathlib import Path
@@ -109,7 +110,7 @@ class Mesh(unittest.TestCase):
             self.assertEqual(len(read_stl(p)), len(panel))
             write_3mf(Path(d) / "a.3mf", [("p", panel, 0), ("d", deco, 1)], ["#FFFFFF", "#FF0000"])
             import zipfile, xml.dom.minidom as md
-            z = zipfile.ZipFile(Path(d) / "a.3mf")
+            z = zipfile.ZipFile(io.BytesIO((Path(d) / "a.3mf").read_bytes()))     # in memory: no open handle blocks the cleanup on Windows
             md.parseString(z.read("3D/3dmodel.model"))
             self.assertIn("[Content_Types].xml", z.namelist())
 

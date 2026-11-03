@@ -6,7 +6,6 @@ Paths contain accents and spaces ("Dossier é").
 """
 import io
 import os
-import stat
 import subprocess
 import sys
 import tempfile
@@ -54,9 +53,15 @@ class Utf8Paths(unittest.TestCase):
         self.tmp.cleanup()
 
     def _fake(self, fail=False):
+        """Fake OpenSCAD, run as "python <script> -o ... file.scad": Windows cannot execute a .py script directly (WinError 193)."""
         f = self.dir / ("openscad fail.py" if fail else "openscad é.py")
         f.write_text(FAKE.replace("{exe}", sys.executable).replace("{fail}", "1" if fail else "0"), encoding="utf-8")
-        f.chmod(f.stat().st_mode | stat.S_IXUSR); return str(f)
+        real = openscad.build_command
+        return [mock.patch.object(openscad, "find_openscad", return_value=str(f)),
+                mock.patch.object(openscad, "build_command", lambda *a, **k: [sys.executable] + real(*a, **k))]
+
+    def _with_fake(self, fail=False):
+        for p in self._fake(fail): p.start(); self.addCleanup(p.stop)
 
     def test_simulation_really_breaks_unspecified_encoding(self):
         """Guard: without encoding="utf-8" the simulated Windows writes cp1252, which OpenSCAD cannot read."""
@@ -64,19 +69,19 @@ class Utf8Paths(unittest.TestCase):
         with self.assertRaises(UnicodeDecodeError): p.read_bytes().decode("utf-8")
 
     def test_meshscale_scad_with_accented_path(self):
-        with mock.patch.object(openscad, "find_openscad", return_value=self._fake()):
-            out = meshscale.scale_stl_openscad(self.part, self.dir / "sortie é.stl", 110)
+        self._with_fake()
+        out = meshscale.scale_stl_openscad(self.part, self.dir / "sortie é.stl", 110)
         self.assertEqual(len(read_stl(out)), 12)
 
     def test_engrave_scad_with_accented_path(self):
         s = deco.DecoSpec(kind="text", text="Léo", size_mm=30, u=30, v=30, depth_mm=0.8, mode="engrave")
-        with mock.patch.object(openscad, "find_openscad", return_value=self._fake()):
-            r = deco.apply_decoration(self.part, s, hm=deco.build_heightmap(read_stl(self.part), "+z", 0.25))
+        self._with_fake()
+        r = deco.apply_decoration(self.part, s, hm=deco.build_heightmap(read_stl(self.part), "+z", 0.25))
         self.assertEqual(r.errors, []); self.assertEqual(len(r.triangles), 12)
 
     def test_openscad_stderr_decoded_as_utf8(self):
-        with mock.patch.object(openscad, "find_openscad", return_value=self._fake(fail=True)):
-            with self.assertRaises(RuntimeError) as cm: openscad.render(self.dir / "absent é.scad", self.dir / "o.stl", {})
+        self._with_fake(fail=True)
+        with self.assertRaises(RuntimeError) as cm: openscad.render(self.dir / "absent é.scad", self.dir / "o.stl", {})
         self.assertNotIsInstance(cm.exception, UnicodeDecodeError); self.assertIn("Dossier é", str(cm.exception))
 
     def test_timeout_is_explained_in_french_and_english(self):

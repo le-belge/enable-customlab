@@ -1,3 +1,4 @@
+import io
 import hashlib
 import json
 import os
@@ -63,9 +64,10 @@ class Core(unittest.TestCase):
         # 'L' must have its vertical bar on the left and foot at the bottom when viewed from +z
         s = deco.DecoSpec(kind="text", text="L", size_mm=30, u=30, v=30, depth_mm=0.6, bold=True)
         m = deco.render_mask(s, self.hm)
-        ii, jj = np.nonzero(m); cu = ii.mean(); cv = jj.mean(); h = m.shape
-        left_half = m[: int(cu), :].sum(); right_half = m[int(cu):, :].sum()
-        bottom = m[:, : int(cv)].sum(); top = m[:, int(cv):].sum()
+        # split at the middle of the letter's bounding box, not at its centroid (the centroid depends on the font, e.g. on Windows)
+        ii, jj = np.nonzero(m); cu = (ii.min() + ii.max() + 1) // 2; cv = (jj.min() + jj.max() + 1) // 2
+        left_half = m[:cu, :].sum(); right_half = m[cu:, :].sum()
+        bottom = m[:, :cv].sum(); top = m[:, cv:].sum()
         self.assertGreater(left_half, right_half); self.assertGreater(bottom, top)
 
     def test_off_part_is_refused_not_clamped(self):
@@ -403,7 +405,7 @@ class BambuReady(unittest.TestCase):
         d = tempfile.TemporaryDirectory(); part = Path(d.name) / "src" / "p.stl"; part.parent.mkdir(); slab(part)
         s = deco.DecoSpec(kind="text", text="Léo", size_mm=30, u=30, v=30, depth_mm=1.0, mode="inlay", res_mm=0.25)
         r = deco.apply_decoration(part, s); out = deco.export_result(r, part, s, Path(d.name) / "out")
-        m3 = next(out.parent.glob("*_Bambu_pret.3mf")); z = zipfile.ZipFile(m3); names = z.namelist()
+        m3 = next(out.parent.glob("*_Bambu_pret.3mf")); z = zipfile.ZipFile(io.BytesIO(m3.read_bytes())); names = z.namelist()
         for n in ("[Content_Types].xml", "3D/3dmodel.model", "Metadata/model_settings.config", "3D/_rels/3dmodel.model.rels"): self.assertIn(n, names)
         parts = [n for n in names if n.startswith("3D/Objects/object_")]; self.assertEqual(len(parts), 2)
         for n in names:
@@ -426,7 +428,7 @@ class BambuReady(unittest.TestCase):
         f = Path(d.name) / "l.png"; im.save(str(f))
         s = deco.DecoSpec(kind="image", path=str(f), size_mm=30, u=30, v=30, depth_mm=1.0, mode="inlay", ncolors=2, res_mm=0.25)
         r = deco.apply_decoration(part, s); out = deco.export_result(r, part, s, Path(d.name) / "o")
-        cfg = zipfile.ZipFile(next(out.parent.glob("*_Bambu_pret.3mf"))).read("Metadata/model_settings.config").decode()
+        cfg = zipfile.ZipFile(io.BytesIO(next(out.parent.glob("*_Bambu_pret.3mf")).read_bytes())).read("Metadata/model_settings.config").decode()
         self.assertEqual(cfg.count("<part "), 3); self.assertIn('value="3"', cfg); d.cleanup()
 
 

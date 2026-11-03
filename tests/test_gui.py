@@ -1,3 +1,4 @@
+import io
 import os
 import tempfile
 import unittest
@@ -186,7 +187,7 @@ class GuiSmoke(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             part = Path(d) / "s" / "p.stl"; part.parent.mkdir(); slab(part); w.load_stl(str(part)); c = w.custom
             c.mode.setCurrentIndex(c.mode.findData("inlay")); c.text.setText("Léo"); c.size.setValue(20); c.place(30, 30); w.go(3)
-            out = w.export_to(Path(d) / "o"); z = zipfile.ZipFile(next(out.parent.glob("*_Bambu_pret.3mf")))
+            out = w.export_to(Path(d) / "o"); z = zipfile.ZipFile(io.BytesIO(next(out.parent.glob("*_Bambu_pret.3mf")).read_bytes()))
             xs = [float(x) for x in re.findall(r' x="([-\d.]+)"', z.read("3D/Objects/object_1.model").decode())]
             self.assertAlmostEqual(max(xs), 60.0 * 1.0465, places=2)                  # base part scaled like the STL export
 

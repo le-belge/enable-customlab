@@ -1,3 +1,4 @@
+import io
 import json
 import os
 import tempfile
@@ -80,7 +81,7 @@ class KineticFlow(unittest.TestCase):
         self.assertEqual(meta["scale_percent_applied"], 72.5); self.assertTrue(meta["spec"]["mirror_x"]); self.assertEqual(meta["device"], "kinetic_hand")
         self.assertTrue(meta["source_license"]["share_alike"]); self.assertTrue(meta["source_license"]["non_commercial"]); self.assertEqual(meta["source_license"]["author"], "MatBowtell")
         import zipfile, re
-        z = zipfile.ZipFile(next(out.parent.glob("*_Bambu_pret.3mf"))); xs = [float(x) for x in re.findall(r' x="([-\d.]+)"', z.read("3D/Objects/object_1.model").decode())]
+        z = zipfile.ZipFile(io.BytesIO(next(out.parent.glob("*_Bambu_pret.3mf")).read_bytes())); xs = [float(x) for x in re.findall(r' x="([-\d.]+)"', z.read("3D/Objects/object_1.model").decode())]
         self.assertAlmostEqual(max(xs), -lo[0] * 0.725, delta=0.05); self.assertAlmostEqual(min(xs), -hi[0] * 0.725, delta=0.05)          # mirrored THEN scaled, base part in the 3MF
         self.assertIn("PARTAGE DANS LES MÊMES CONDITIONS", next(out.parent.glob("*_ATTRIBUTION.txt")).read_text(encoding="utf-8"))
 
