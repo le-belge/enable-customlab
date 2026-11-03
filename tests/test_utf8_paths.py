@@ -31,13 +31,15 @@ sys.stderr.buffer.write("Avertissement : géométrie\n".encode("utf-8") + b"\x81
 shutil.copyfile(paths[0], out)
 '''
 
-_real_text_encoding = io.text_encoding
+_real_text_encoding = getattr(io, "text_encoding", None)      # Python 3.10+ only
 
 
 def _windows_code_page():
-    """Patches making every unspecified text encoding cp1252, as on a French Windows."""
-    return [mock.patch.object(io, "text_encoding", lambda enc, stacklevel=2: _real_text_encoding(enc) if enc is not None else "cp1252"),
-            mock.patch.object(subprocess, "_text_encoding", lambda: "cp1252")]
+    """Patches making every unspecified text encoding cp1252, as on a French Windows (Python 3.10+ via io.text_encoding, 3.9 via _bootlocale)."""
+    if _real_text_encoding is not None:
+        return [mock.patch.object(io, "text_encoding", lambda enc, stacklevel=2: _real_text_encoding(enc) if enc is not None else "cp1252"),
+                mock.patch.object(subprocess, "_text_encoding", lambda: "cp1252")]
+    return [mock.patch("_bootlocale.getpreferredencoding", lambda do_setlocale=True: "cp1252")]
 
 
 class Utf8Paths(unittest.TestCase):
@@ -75,7 +77,7 @@ class Utf8Paths(unittest.TestCase):
     def test_openscad_stderr_decoded_as_utf8(self):
         with mock.patch.object(openscad, "find_openscad", return_value=self._fake(fail=True)):
             with self.assertRaises(RuntimeError) as cm: openscad.render(self.dir / "absent é.scad", self.dir / "o.stl", {})
-        self.assertNotIsInstance(cm.exception, UnicodeDecodeError); self.assertIn("données", str(cm.exception))
+        self.assertNotIsInstance(cm.exception, UnicodeDecodeError); self.assertIn("Dossier é", str(cm.exception))
 
     def test_timeout_is_explained_in_french_and_english(self):
         with mock.patch.object(openscad, "find_openscad", return_value="openscad"), \
