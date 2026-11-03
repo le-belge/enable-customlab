@@ -40,6 +40,8 @@ SLOPE_WARN_DEG, SLOPE_REFUSE_DEG = 35.0, 60.0
 EMBED_MM = 0.4
 DISCLAIMER = ("Décoration EXPÉRIMENTALE. Zones fonctionnelles (articulations, trous de broches, passages de câbles, "
               "surfaces en contact avec la peau) non détectées automatiquement ; aucune validation physique ou clinique.")
+SOURCE_NOT_WATERTIGHT = ("Pièce source non étanche (non manifold) : défaut du fichier d'origine. "
+                         "Bambu Studio peut le réparer (clic droit > Réparer le modèle).")      # localised by messages.py
 
 
 class DecoError(ValueError):
@@ -735,7 +737,7 @@ def export_result(result: DecoResult, part_path, spec: DecoSpec, out_dir, zones=
         for n, L in enumerate(result.layers, start=2):
             fn = f"{src.stem[:40]}_{n}_EXPERIMENTAL_{'incrustation' if spec.mode == 'inlay' else 'relief'}_{L['hex'][1:]}.stl"
             write_stl(out / fn, sc(L["triangles"])); piece_files.append({"file": fn, "color": L["hex"], "cells": L["cells"], "suggested_filament": n - 1})
-        name = piece_files[0]["file"]; tris = result.layers[0]["triangles"]
+        name = piece_files[0]["file"]; tris = sc(result.layers[0]["triangles"])      # rewritten below: must stay at the export scale
     elif spec.mode == "inlay" and result.deco_triangles:
         name = f"{src.stem[:40]}_2_EXPERIMENTAL_incrustation.stl"        # inlay volume only; sorts AFTER the base
         base = f"{src.stem[:40]}_1_base_unmodified.stl"
@@ -749,6 +751,7 @@ def export_result(result: DecoResult, part_path, spec: DecoSpec, out_dir, zones=
         name = f"{src.stem[:40]}_" + ("EXPERIMENTAL_deco" if result.deco_triangles else "copy_unmodified") + ".stl"
     write_stl(out / name, tris)
     bambu_name, guide_name, pieces_info = None, None, []
+    src_watertight = is_watertight(read_stl(src))                         # a defect of the original file is reported, never repaired here
     if spec.mode in ("inlay", "relief") and result.deco_triangles:
         base_tris = list(result.triangles) if spec.mode == "inlay" else (mirror_tris(read_stl(src)) if spec.mirror_x else list(read_stl(src)))
         k = 1.0 if scale_percent in (None, 100, 100.0) else scale_percent / 100.0
@@ -773,14 +776,15 @@ def export_result(result: DecoResult, part_path, spec: DecoSpec, out_dir, zones=
         if len(pieces_info) + 1 > 4: lines.append("   Attention : plus de 4 filaments — ajoutez des filaments au projet dans Bambu Studio avant de trancher.")
         lines += ["", "3. Associez chaque filament du projet à la bonne bobine/couleur (AMS), puis tranchez.",
                   "   Chaque changement de couleur purge de la matière : prévoyez du temps et du déchet en plus.", "",
-                  "Les autres fichiers .stl du dossier sont les mêmes pièces séparées (pour un autre trancheur).", "",
-                  DISCLAIMER, "Aucune impression ni validation physique n'a été faite pour cette pièce."]
+                  "Les autres fichiers .stl du dossier sont les mêmes pièces séparées (pour un autre trancheur).", ""]
+        if not src_watertight: lines += ["ATTENTION : " + SOURCE_NOT_WATERTIGHT, "   Réparez la base dans Bambu Studio avant de trancher.", ""]
+        lines += [DISCLAIMER, "Aucune impression ni validation physique n'a été faite pour cette pièce."]
         (out / guide_name).write_text("\n".join(lines) + "\n", encoding="utf-8")
     lic = read_license_info(src)
     side = {"generated": datetime.now().isoformat(timespec="seconds"), "status": "EXPERIMENTAL",
             "disclaimer": DISCLAIMER, "source_file": str(src), "source_sha256": hashlib.sha256(src.read_bytes()).hexdigest(),
             "source_license": lic, "spec": _spec_dict(spec), "exclusion_zones_mm": [list(z) for z in zones],
-            "scale_percent_applied": scale_percent, "triangles": len(tris), "warnings": result.warnings,
+            "scale_percent_applied": scale_percent, "source_watertight": src_watertight, "triangles": len(tris), "warnings": result.warnings,
             "color_pieces": piece_files if result.layers else None, "bambu_3mf": bambu_name, "guide": guide_name,
             "how_to_use": ("Charger <1_base_unmodified> puis <2_incrustation> ensemble comme pièces d'un même objet ; l'incrustation doit être la DERNIÈRE pièce de la liste (hypothèse non vérifiée : la dernière pièce l'emporte dans le volume commun) et avoir un filament différent." if spec.mode == "inlay" else None), **(extra or {})}
     (out / (Path(name).stem + ".json")).write_text(json.dumps(side, indent=2, ensure_ascii=False), encoding="utf-8")

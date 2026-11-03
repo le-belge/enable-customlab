@@ -269,7 +269,7 @@ class CustomizePage(QWidget):
         self._sig = _Signals(); self._sig.done.connect(self._on_done); self._pool = QThreadPool(); self._pool.setMaxThreadCount(1)
         self._timer = QTimer(self); self._timer.setSingleShot(True); self._timer.setInterval(120); self._timer.timeout.connect(self._start_job)
         self.part_path = None; self.tris = None; self.hm = None; self.zones = []; self.lic = None; self.svg_path = ""
-        self.mask = None; self.errors = []; self.warns = []; self.advanced = False; self.view_rot = 0; self._rots = {}
+        self.mask = None; self.errors = []; self.warns = []; self.advanced = False; self.view_rot = 0; self._rots = {}; self.source_watertight = True
         h = QHBoxLayout(self); left = QVBoxLayout(); h.setContentsMargins(0, 0, 0, 0)
         panel = QWidget(); panel.setObjectName("page"); panel.setLayout(left); scroll = QScrollArea(); scroll.setWidget(panel); scroll.setWidgetResizable(True)      # the form may be taller than the screen
         scroll.setFrameShape(QFrame.NoFrame); scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff); h.addWidget(scroll, 2)
@@ -341,6 +341,7 @@ class CustomizePage(QWidget):
             cur = combo.currentData(); combo.blockSignals(True); combo.clear()
             for it in items: combo.addItem(self.t("camo_" + it if combo is self.camo_style else it), it)
             combo.setCurrentIndex(max(0, combo.findData(cur))); combo.blockSignals(False)
+        self._update_engrave()
         for k, b in self.spot_btns.items(): b.setText(self.t("spot_" + k))
         self.b_addm.setText(self.t("motif_add")); self.b_delm.setText(self.t("motif_del")); self._motif_names(); self.b_all.setText(self.t("camo_all")); self.b_zone.setText(self.t("zone")); self.b_clear.setText(self.t("clear")); self.warnbox.setText(self.t("warn"))
         self.view.msg = self.t("none"); self.show_prov(); self.view.update(); self.update_model()
@@ -372,7 +373,19 @@ class CustomizePage(QWidget):
         if l and l.get("known"):
             txt += f"{self.t('lic')}: <b>{l['license']}</b>" + (f" — {self.t('nc')}" if l["non_commercial"] else "") + f"<br>{l['title']} / {l['author']}"
         else: txt += f"<span style='color:#b00020'>{self.t('unknown')}</span>"
+        if not self.source_watertight:
+            from . import messages as M
+            txt += f"<br><span style='color:#8a4b00'>⚠ {M.localize(deco.SOURCE_NOT_WATERTIGHT, self.lang)[1]}</span>"
         self.prov.setText(txt)
+
+    def _update_engrave(self):
+        """Engraving (a subtraction) needs a watertight part: greyed out for a part whose original file is not (never repaired here)."""
+        i = self.mode.findData("engrave")
+        if i < 0: return
+        from . import messages as M
+        it = self.mode.model().item(i); it.setEnabled(self.source_watertight)
+        it.setToolTip("" if self.source_watertight else M.localize(deco.SOURCE_NOT_WATERTIGHT, self.lang)[1])
+        if not self.source_watertight and self.mode.currentData() == "engrave": self.mode.setCurrentIndex(max(0, self.mode.findData("relief")))
 
     def set_device(self, dev):
         arm = dev == "unlimbited_arm"; self.device = dev
@@ -413,6 +426,7 @@ class CustomizePage(QWidget):
     def clear_part(self):
         self._lgen += 1; self.lib.setEnabled(True); self.b_part.setEnabled(True); self.busy.setText("")       # a load still running for the previous device must not land here
         self.part_path = None; self.tris = None; self.hm = None; self.zones = []; self.mask = None; self.layers = None; self.errors = []; self.warns = []
+        self.source_watertight = True; self._update_engrave()
         self.view.hm = None; self.view.base = None; self.view.mask = None; self.view.layers = None; self.view.protected = None; self.view.update(); self.show_prov(); self.log.setHtml(""); self.update_model()
 
     def reload_library(self, root=None):
@@ -545,7 +559,9 @@ class CustomizePage(QWidget):
             self.busy.setText(self.t("analysing")); QApplication.processEvents()
             ax = self._axis_for(self.part_path, self.mirror_x, self.tris); self.axis.blockSignals(True); self.axis.setCurrentIndex(max(0, self.axis.findData(ax))); self.axis.blockSignals(False)
             self.axis_note = self.t("axis_auto").format(axis=ax)
-        self.zones = []; self.hm = None; self.show_prov(); self.update_model(); self.rebuild_heightmap(center=True); self.load_zones()
+        self.zones = []; self.hm = None
+        self.source_watertight = self._is_watertight(); self._update_engrave()       # checked on loading (cached per mesh): original-file defects are shown at once
+        self.show_prov(); self.update_model(); self.rebuild_heightmap(center=True); self.load_zones()
 
     @staticmethod
     def _axis_for(path, mirror, tris):
@@ -737,8 +753,7 @@ class CustomizePage(QWidget):
 
     # ---- recomputation: debounced and run in a worker thread so the window never freezes
     def _is_watertight(self):
-        key = id(self.tris)
-        if getattr(self, "_wt_key", None) != key: self._wt = deco.is_watertight(self.tris); self._wt_key = key
+        if getattr(self, "_wt_tris", None) is not self.tris: self._wt = deco.is_watertight(self.tris); self._wt_tris = self.tris      # holds the mesh: an id() could be reused by the next part
         return self._wt
 
     def refresh(self, *_):
