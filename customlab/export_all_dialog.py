@@ -5,16 +5,16 @@ from pathlib import Path
 from PySide6.QtCore import QObject, QRunnable, Qt, QThreadPool, QTimer, Signal
 from PySide6.QtWidgets import (QDialog, QFileDialog, QHBoxLayout, QLabel, QListWidget, QListWidgetItem, QMessageBox, QProgressBar, QPushButton, QTextEdit, QVBoxLayout)
 
-from . import export_all
+from . import errlog, export_all
 
 TX = {"fr": {"title": "Exporter toutes les pièces", "intro": "Chaque pièce cochée est exportée dans son propre dossier, avec l'échelle d'export de l'appareil{sc}. La pièce personnalisée garde sa décoration ; les autres sortent non décorées (miroir appliqué pour une main gauche Kinetic).",
              "all": "Tout cocher", "none": "Aucune", "go": "Exporter…", "cancel": "Annuler", "close": "Fermer", "running": "En cours : {p} ({i}/{n})",
              "done": "Terminé : {ok} exportée(s), {sk} ignorée(s), {fl} en échec.\nDossier : {d}", "pick": "Choisir le dossier d'export", "none_sel": "Cochez au moins une pièce.", "stopped": "Arrêté.",
-             "sc_on": " ({p:g} %)", "sc_off": " (échelle d'export non cochée : 100 %)", "deco": " — décorée", "quick_title": "Exporter tout, prêt pour Bambu", "quick_intro": "Toutes les pièces sont exportées à l'échelle calculée{sc}, chacune dans son dossier. La pièce personnalisée garde son motif et un fichier .3mf prêt pour Bambu Studio est créé.", "reveal": "Ouvrir le dossier", "bambu": "Ouvrir dans Bambu Studio (couleurs prêtes)"},
+             "sc_on": " ({p:g} %)", "sc_off": " (échelle d'export non cochée : 100 %)", "deco": " — décorée", "quick_title": "Exporter tout, prêt pour Bambu", "quick_intro": "Toutes les pièces sont exportées à l'échelle calculée{sc}, chacune dans son dossier. La pièce personnalisée garde son motif et un fichier .3mf prêt pour Bambu Studio est créé.", "reveal": "Ouvrir le dossier", "bambu": "Ouvrir dans Bambu Studio (couleurs prêtes)", "crash": "Export interrompu"},
       "en": {"title": "Export all parts", "intro": "Each ticked part is exported in its own folder at the device's export scale{sc}. The customised part keeps its decoration; the others are exported undecorated (mirrored for a left Kinetic hand).",
              "all": "Tick all", "none": "None", "go": "Export…", "cancel": "Cancel", "close": "Close", "running": "Working: {p} ({i}/{n})",
              "done": "Done: {ok} exported, {sk} skipped, {fl} failed.\nFolder: {d}", "pick": "Choose the export folder", "none_sel": "Tick at least one part.", "stopped": "Stopped.",
-             "sc_on": " ({p:g} %)", "sc_off": " (export scale unticked: 100 %)", "deco": " — decorated", "quick_title": "Export everything, ready for Bambu", "quick_intro": "All parts are exported at the computed scale{sc}, each in its own folder. The customised part keeps its motif and a .3mf file ready for Bambu Studio is created.", "reveal": "Open the folder", "bambu": "Open in Bambu Studio (colours ready)"}}
+             "sc_on": " ({p:g} %)", "sc_off": " (export scale unticked: 100 %)", "deco": " — decorated", "quick_title": "Export everything, ready for Bambu", "quick_intro": "All parts are exported at the computed scale{sc}, each in its own folder. The customised part keeps its motif and a .3mf file ready for Bambu Studio is created.", "reveal": "Open the folder", "bambu": "Open in Bambu Studio (colours ready)", "crash": "Export interrupted"}}
 
 
 class _Sig(QObject):
@@ -80,7 +80,16 @@ class ExportAllDialog(QDialog):
         if not d: return
         self.out = Path(d) / "export_toutes_les_pieces"; self.cancel_flag.clear(); self.bar.setRange(0, len(parts)); self.bar.setValue(0); self.bar.setVisible(True)
         self.b_go.setEnabled(False); self.b_cancel.setEnabled(True); self.log.clear()
-        QThreadPool.globalInstance().start(_Job(lambda: self.sig.finished.emit(export_all.run(parts, self.decorated, self.out, self.ctx, lambda i, n, m: self.sig.progress.emit(i, n, m), self.cancel_flag.is_set))))
+        QThreadPool.globalInstance().start(_Job(lambda: self._work(parts)))
+
+    def _work(self, parts):
+        """Worker thread. Whatever happens (e.g. destination not writable), `finished` is emitted so the dialog never stays stuck."""
+        try: results = export_all.run(parts, self.decorated, self.out, self.ctx, lambda i, n, m: self.sig.progress.emit(i, n, m), self.cancel_flag.is_set)
+        except Exception as e:
+            try: errlog.get_logger().exception("Export de toutes les pièces interrompu (%s)", self.out)
+            except Exception: pass
+            results = [{"part": self.t("crash"), "file": "", "status": "failed", "message": f"{type(e).__name__}: {e}"[:300], "folder": None}]
+        self.sig.finished.emit(results)
 
     def _progress(self, i, n, msg):
         self.bar.setValue(i); self.bar.setFormat(self.t("running").format(p=msg, i=min(i + 1, n), n=n) if msg else "")

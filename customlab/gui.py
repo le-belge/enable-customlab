@@ -20,7 +20,7 @@ from . import armgen, deco
 from .profiles import compute_kinetic_arm_sizing, compute_kinetic_sizing
 from . import messages as M
 from .placement import CustomizePage
-from . import thumbs
+from . import errlog, thumbs
 from .paths import get_setting, save_setting
 from .glview import make_view, set_default_format
 from .placement import _Job, _Signals
@@ -42,7 +42,7 @@ T = {
         "disclaimer": "Aucune validation médicale ni d'impression : à faire contrôler par un bénévole e-NABLE compétent.",
         "scale": "Échelle", "usable": "Largeurs de poignet utilisables", "err": "Erreur",
         "kcheck": "Contrôle de cohérence Kinetic Arm (documenté NIH 3D) — ce n'est pas un dimensionnement",
-        "resid": "Longueur du moignon", "forearm": "Avant-bras valide", "pick": "Choisissez un appareil.", "hello": "Quel appareil voulez-vous adapter ?", "hello2": "Dimensionnez-le à partir des mesures du bénéficiaire, personnalisez-le, puis exportez les pièces pour l'impression.", "select": "Sélectionner", "scale_cb": "Appliquer l'échelle calculée à l'export (uniforme, vérifiée sur le SCAD officiel)", "scale_cb_kinetic": "Appliquer l'échelle du tableau du manuel à l'export (uniforme, toutes les pièces)", "nocustom": "Personnalisation disponible pour la Phoenix uniquement.", "nopart": "Choisissez d'abord la pièce à l'étape 3.", "export_dir": "Exporter la pièce (STL + fiche)…", "export_all": "Exporter toutes les pièces à cette échelle…", "m_help": "Aide", "m_scale": "Mettre à l'échelle : pas à pas (appareil choisi)…", "scale_btn": "ℹ️ Comment calculer l'échelle ? (pas à pas)", "photo_btn": "📷 Mesurer sur une photo (avec un mètre ou une carte bancaire à côté)…", "export_one": "Exporter tout, prêt pour Bambu…", "m_view": "Affichage", "m_adv": "Mode avancé (tous les réglages)", "m_sources": "Fichiers sources (SCAD / STL)…", "m_tuto": "Tuto : mesures, échelles et personnalisation…", "tuto_btn": "📖 Lire le tuto avant de commencer", "exported": "Exporté", "open_slicer": "Ouvrir dans le trancheur (Bambu Studio)", "m_file": "Fichier", "m_new": "Nouveau projet", "m_open": "Ouvrir un projet…", "m_save": "Enregistrer le projet…", "m_recent": "Projets récents", "m_prof": "Profils bénéficiaires…", "m_people": "Bénéficiaires", "proj_filter": "Projet CustomLab (*.customlab.json)", "saved": "Projet enregistré", "none_recent": "(aucun)", "load_problems": "Projet ouvert avec des éléments introuvables"},
+        "resid": "Longueur du moignon", "forearm": "Avant-bras valide", "pick": "Choisissez un appareil.", "hello": "Quel appareil voulez-vous adapter ?", "hello2": "Dimensionnez-le à partir des mesures du bénéficiaire, personnalisez-le, puis exportez les pièces pour l'impression.", "select": "Sélectionner", "scale_cb": "Appliquer l'échelle calculée à l'export (uniforme, vérifiée sur le SCAD officiel)", "scale_cb_kinetic": "Appliquer l'échelle du tableau du manuel à l'export (uniforme, toutes les pièces)", "nocustom": "Personnalisation disponible pour la Phoenix uniquement.", "nopart": "Choisissez d'abord la pièce à l'étape 3.", "export_dir": "Exporter la pièce (STL + fiche)…", "export_all": "Exporter toutes les pièces à cette échelle…", "m_help": "Aide", "m_scale": "Mettre à l'échelle : pas à pas (appareil choisi)…", "scale_btn": "ℹ️ Comment calculer l'échelle ? (pas à pas)", "photo_btn": "📷 Mesurer sur une photo (avec un mètre ou une carte bancaire à côté)…", "export_one": "Exporter tout, prêt pour Bambu…", "m_view": "Affichage", "m_adv": "Mode avancé (tous les réglages)", "m_sources": "Fichiers sources (SCAD / STL)…", "m_tuto": "Tuto : mesures, échelles et personnalisation…", "tuto_btn": "📖 Lire le tuto avant de commencer", "exported": "Exporté", "open_slicer": "Ouvrir dans le trancheur (Bambu Studio)", "m_file": "Fichier", "m_new": "Nouveau projet", "m_open": "Ouvrir un projet…", "m_save": "Enregistrer le projet…", "m_recent": "Projets récents", "m_prof": "Profils bénéficiaires…", "m_people": "Bénéficiaires", "proj_filter": "Projet CustomLab (*.customlab.json)", "saved": "Projet enregistré", "none_recent": "(aucun)", "load_problems": "Projet ouvert avec des éléments introuvables", "open_failed": "Impossible d'ouvrir ce projet (fichier illisible ou abîmé)", "m_logs": "Ouvrir le dossier des journaux d'erreurs"},
  "en": {"title": "e-NABLE CustomLab", "catalog": "1 · Device", "measures": "2 · Measures & sizing", "custom": "3 · Customisation", "result": "4 · 3D preview & export",
         "next": "Next →", "back": "← Back", "side": "Side", "part": "Part", "left": "Left", "right": "Right",
         "status_experimental": "EXPERIMENTAL", "status_unavailable": "UNAVAILABLE", "status_verified": "VERIFIED",
@@ -53,7 +53,7 @@ T = {
         "disclaimer": "No medical or print validation: have a qualified e-NABLE volunteer check it.",
         "scale": "Scale", "usable": "Usable wrist widths", "err": "Error",
         "kcheck": "Kinetic Arm consistency check (NIH 3D documented) — not a sizing method",
-        "resid": "Residual limb length", "forearm": "Sound forearm length", "pick": "Choose a device.", "hello": "Which device would you like to adapt?", "hello2": "Size it from the beneficiary's measurements, personalise it, then export the parts for printing.", "select": "Select", "scale_cb": "Apply the computed scale on export (uniform, checked against the official SCAD)", "scale_cb_kinetic": "Apply the manual's chart scale on export (uniform, all parts)", "nocustom": "Customisation is available for the Phoenix only.", "nopart": "Choose the part in step 3 first.", "export_dir": "Export the part (STL + sheet)…", "export_all": "Export all parts at this scale…", "m_help": "Help", "m_scale": "Scaling: step by step (chosen device)…", "scale_btn": "ℹ️ How is the scale computed? (step by step)", "photo_btn": "📷 Measure on a photo (with a ruler or bank card beside it)…", "export_one": "Export everything, ready for Bambu…", "m_view": "View", "m_adv": "Advanced mode (all settings)", "m_sources": "Source files (SCAD / STL)…", "m_tuto": "Tutorial: measuring, scaling and customising (in French)…", "tuto_btn": "📖 Read the tutorial before starting (in French)", "exported": "Exported", "open_slicer": "Open in the slicer (Bambu Studio)", "m_file": "File", "m_new": "New project", "m_open": "Open a project…", "m_save": "Save the project…", "m_recent": "Recent projects", "m_prof": "Beneficiary profiles…", "m_people": "Beneficiaries", "proj_filter": "CustomLab project (*.customlab.json)", "saved": "Project saved", "none_recent": "(none)", "load_problems": "Project opened with items not found"},
+        "resid": "Residual limb length", "forearm": "Sound forearm length", "pick": "Choose a device.", "hello": "Which device would you like to adapt?", "hello2": "Size it from the beneficiary's measurements, personalise it, then export the parts for printing.", "select": "Select", "scale_cb": "Apply the computed scale on export (uniform, checked against the official SCAD)", "scale_cb_kinetic": "Apply the manual's chart scale on export (uniform, all parts)", "nocustom": "Customisation is available for the Phoenix only.", "nopart": "Choose the part in step 3 first.", "export_dir": "Export the part (STL + sheet)…", "export_all": "Export all parts at this scale…", "m_help": "Help", "m_scale": "Scaling: step by step (chosen device)…", "scale_btn": "ℹ️ How is the scale computed? (step by step)", "photo_btn": "📷 Measure on a photo (with a ruler or bank card beside it)…", "export_one": "Export everything, ready for Bambu…", "m_view": "View", "m_adv": "Advanced mode (all settings)", "m_sources": "Source files (SCAD / STL)…", "m_tuto": "Tutorial: measuring, scaling and customising (in French)…", "tuto_btn": "📖 Read the tutorial before starting (in French)", "exported": "Exported", "open_slicer": "Open in the slicer (Bambu Studio)", "m_file": "File", "m_new": "New project", "m_open": "Open a project…", "m_save": "Save the project…", "m_recent": "Recent projects", "m_prof": "Beneficiary profiles…", "m_people": "Beneficiaries", "proj_filter": "CustomLab project (*.customlab.json)", "saved": "Project saved", "none_recent": "(none)", "load_problems": "Project opened with items not found", "open_failed": "This project cannot be opened (unreadable or damaged file)", "m_logs": "Open the error logs folder"},
 }
 BADGE = theme.STATUS
 
@@ -79,7 +79,7 @@ class MainWindow(QMainWindow):
     def __init__(self, lang="fr"):
         super().__init__()
         self.advanced = bool(get_setting("advanced_mode", False))
-        self.lang = lang; self.profiles = {p["id"]: p for p in list_profiles()}
+        self.lang = errlog.lang = lang; self.profiles = {p["id"]: p for p in list_profiles()}
         self.dev = None; self.scad = None; self.base_tris = None; self.out_tris = None; self.sizing = None
         self.resize(1320, 760)
         root = QWidget(); self.setCentralWidget(root); v = QVBoxLayout(root); v.setContentsMargins(18, 14, 18, 14); v.setSpacing(12)
@@ -120,6 +120,7 @@ class MainWindow(QMainWindow):
         mb = self.menuBar(); self.m_file = mb.addMenu(""); self.m_people = mb.addMenu(""); self.m_help = mb.addMenu(""); self.a_tuto = QAction(self); self.a_tuto.triggered.connect(self.show_tuto); self.m_help.addAction(self.a_tuto)
         self.a_scale = QAction(self); self.a_scale.triggered.connect(self.show_scale_guide); self.m_help.insertAction(self.a_tuto, self.a_scale)
         self.a_src = QAction(self); self.a_src.triggered.connect(self.show_sources); self.m_help.addAction(self.a_src)
+        self.a_logs = QAction(self); self.a_logs.triggered.connect(self.open_logs); self.m_help.addAction(self.a_logs)
         self.a_new = QAction(self); self.a_new.triggered.connect(self.new_project)
         self.a_open = QAction(self); self.a_open.triggered.connect(lambda: self.open_project_dialog())
         self.a_save = QAction(self); self.a_save.triggered.connect(lambda: self.save_project_dialog())
@@ -177,7 +178,13 @@ class MainWindow(QMainWindow):
         Path(path).write_text(json.dumps(self.state_dict(), indent=2, ensure_ascii=False), encoding="utf-8"); self._remember(path); return path
 
     def open_project(self, path):
-        problems = self.load_state(json.loads(Path(path).read_text(encoding="utf-8"))); self._remember(path)
+        try:
+            d = json.loads(Path(path).read_text(encoding="utf-8"))
+            if not isinstance(d, dict): raise ValueError("pas un projet CustomLab / not a CustomLab project")
+        except (OSError, ValueError) as e:                          # unreadable / damaged / not a project: tell the user, keep the window as it is
+            errlog.warning(f"Projet illisible {path} : {e!r}"); msg = f"{self.t('open_failed')} :\n{path}\n\n{e}"
+            QMessageBox.warning(self, self.t("m_open"), msg); return [msg]
+        problems = self.load_state(d); self._remember(path)
         if problems: QMessageBox.warning(self, self.t("m_open"), self.t("load_problems") + " :\n" + "\n".join(problems))
         return problems
 
@@ -205,6 +212,11 @@ class MainWindow(QMainWindow):
         if paths.get_setting("sources_prompt_done"): return
         paths.save_setting("sources_prompt_done", True)
         if any(status(pid)[0] is False for pid in ("kinetic_hand", "kinetic_arm", "unlimbited_arm")): self.show_sources()
+
+    def open_logs(self):
+        from PySide6.QtCore import QUrl
+        from PySide6.QtGui import QDesktopServices
+        errlog.log_dir().mkdir(parents=True, exist_ok=True); QDesktopServices.openUrl(QUrl.fromLocalFile(str(errlog.log_dir())))
 
     def show_tuto(self):
         from .tuto_dialog import TutoDialog
@@ -310,11 +322,11 @@ class MainWindow(QMainWindow):
         self.view = make_view(); h.addLayout(left, 1); h.addWidget(self.view, 2); self.stack.addWidget(w)
 
     # --- logic
-    def toggle_lang(self): self.lang = "en" if self.lang == "fr" else "fr"; self.retranslate()
+    def toggle_lang(self): self.lang = errlog.lang = "en" if self.lang == "fr" else "fr"; self.retranslate()
 
     def retranslate(self):
         self.setWindowTitle(self.t("title")); self.langbtn.setText(self.t("lang"))
-        self.m_file.setTitle(self.t("m_file")); self.m_people.setTitle(self.t("m_people")); self.m_help.setTitle(self.t("m_help")); self.a_tuto.setText(self.t("m_tuto")); self.a_scale.setText(self.t("m_scale")); self.a_src.setText(self.t("m_sources")); self.b_tuto.setText(self.t("tuto_btn")); self.m_recent.setTitle(self.t("m_recent"))
+        self.m_file.setTitle(self.t("m_file")); self.m_people.setTitle(self.t("m_people")); self.m_help.setTitle(self.t("m_help")); self.a_tuto.setText(self.t("m_tuto")); self.a_scale.setText(self.t("m_scale")); self.a_src.setText(self.t("m_sources")); self.a_logs.setText(self.t("m_logs")); self.b_tuto.setText(self.t("tuto_btn")); self.m_recent.setTitle(self.t("m_recent"))
         self.a_new.setText(self.t("m_new")); self.a_open.setText(self.t("m_open")); self.a_save.setText(self.t("m_save")); self.a_prof.setText(self.t("m_prof")); self.m_view.setTitle(self.t("m_view")); self.a_adv.setText(self.t("m_adv")); self.refresh_recent_menu()
         self.hello.setText(f"<span style='font-size:20px;font-weight:700;color:{theme.NAVY}'>{self.t('hello')}</span><br><span style='color:{theme.MUTED}'>{self.t('hello2')}</span>")
         self.disc.setText(self.t("disclaimer")); self.bback.setText(self.t("back")); self.bnext.setText(self.t("next"))
@@ -816,7 +828,7 @@ def main(argv=None):
     ap.add_argument("--colors", type=int, default=1); ap.add_argument("--mode", default="inlay", choices=["relief", "engrave", "inlay"])
     ap.add_argument("--res", type=float, default=0.15, choices=[0.25, 0.15, 0.10])
     a = ap.parse_args(sys.argv[1:] if argv is None else argv)
-    set_default_format(); app = QApplication(sys.argv[:1]); theme.apply(app); app.setWindowIcon(QIcon(str(theme.LOGO))); w = MainWindow(); w.show()
+    set_default_format(); app = QApplication(sys.argv[:1]); errlog.install(); theme.apply(app); app.setWindowIcon(QIcon(str(theme.LOGO))); w = MainWindow(); w.show()
     if os.environ.get("CUSTOMLAB_SYNC") != "1" and not os.environ.get("CUSTOMLAB_NO_FIRST_RUN"): w.first_run_check()
     if a.device == "unlimbited_arm": preset_arm(w, a)
     elif a.device == "kinetic_hand": preset_kinetic(w, a)

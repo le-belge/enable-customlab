@@ -711,7 +711,7 @@ def apply_decoration(part_path, spec: DecoSpec, zones=(), hm: HeightMap = None, 
             scad = Path(d) / "e.scad"
             src_stl = Path(part_path).resolve()
             if spec.mirror_x: src_stl = Path(d) / "m.stl"; write_stl(src_stl, tris)                 # engrave the mirrored part, not the file on disk
-            scad.write_text(f'difference(){{import("{src_stl.as_posix()}");import("{cutter.as_posix()}");}}\n')
+            scad.write_text(f'difference(){{import("{src_stl.as_posix()}");import("{cutter.as_posix()}");}}\n', encoding="utf-8")
             final = read_stl(openscad.render(scad, Path(d) / "o.stl", {}))
     info["solid_triangles"] = len(deco)
     return DecoResult(final, deco, [], warns, info)

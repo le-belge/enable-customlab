@@ -59,6 +59,7 @@ RULES = [
     (r"^Échelle demandée mais non calculable", BLOCK, "Échelle demandée mais non calculable : saisissez la largeur du poignet (étape 2) ou décochez l'option.", "A scale is requested but cannot be computed: enter the wrist width (step 2) or untick the option."),
     (r"^Mesures manquantes ou hors plage", BLOCK, "Mesures manquantes ou hors plage : corrigez-les à l'étape 2.", "Missing or out-of-range measures: fix them in step 2."),
     (r"^La pièce générée ne correspond pas", BLOCK, "La pièce générée ne correspond pas aux mesures actuelles : générez-la à l'étape 3.", "The generated part does not match the current measures: generate it in step 3."),
+    (r"^OpenSCAD n'a pas terminé en ([\d.]+) s", BLOCK, "OpenSCAD n'a pas terminé en {0} s : rendu abandonné. Réessayez avec une résolution plus grossière ou vérifiez le fichier SCAD.", "OpenSCAD did not finish within {0} s: rendering abandoned. Retry with a coarser resolution or check the SCAD file."),
     (r"^Choisissez d'abord|^Choose the part", BLOCK, "Choisissez d'abord la pièce à l'étape 3.", "Choose the part in step 3 first."),
 ]
 _COMPILED = [(re.compile(p, re.S), sev, fr, en) for p, sev, fr, en in RULES]
