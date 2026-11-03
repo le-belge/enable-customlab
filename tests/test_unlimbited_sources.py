@@ -92,6 +92,12 @@ class UnlimbitedSources(unittest.TestCase):
                 self.assertIs(found, True); self.assertEqual(p.name, "UnLimbited_Arm_v2.1.scad"); self.assertFalse((self.arm / tmp).exists())
                 for f in self.arm.rglob("*.scad"): f.unlink()
 
+    def test_part2_under_its_thingiverse_name_without_zip_is_unpacked(self):
+        # nom réel sans « .zip » : Path.suffix vaudrait « .1 - Alfie Edition - … », ce n'est pas une extension
+        dl = Path(self.d.name) / "dl"; dl.mkdir(); name = PART1.replace("part 1 of 2.zip", "part 2 of 2"); (dl / name).write_bytes(_part2_bytes())
+        sources_dialog.add_folder("unlimbited_arm", dl)
+        p = armgen.scad_path(self.prof); self.assertIsNotNone(p); self.assertEqual(p.parent.parent.name, name); self.assertFalse((self.arm / name).is_file())
+
     def test_add_zip_accepts_an_archive_without_zip_extension(self):
         dl = Path(self.d.name) / "download_sans_extension"; dl.write_bytes(_part2_bytes())
         sources_dialog.add_zip("unlimbited_arm", dl); self.assertIsNotNone(armgen.scad_path(self.prof))

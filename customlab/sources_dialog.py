@@ -3,6 +3,7 @@
 CustomLab bundles none of these files (only the Phoenix parts under customlab/bundled_parts). The user downloads them from the official
 pages, drops them in the sources folder and presses "Vérifier". Nothing is downloaded by the app.
 """
+import re
 import shutil
 import zipfile
 from pathlib import Path
@@ -72,10 +73,22 @@ def _extract(z, dest, progress=lambda i, n: None):
 _DL_SUFFIXES = {".zip", "", ".part", ".crdownload", ".download", ".tmp"}      # browsers leave unfinished/renamed downloads without ".zip"
 
 
+def _real_ext(p):
+    """The file's extension if it looks like one (".zip", ".3mf"), else "": in "… v2.1 - Alfie Edition - 1672381 - part 2 of 2" (a Thingiverse
+    download that lost its ".zip"), Path.suffix would be ".1 - Alfie Edition - …", which is part of the name, not an extension."""
+    return p.suffix.lower() if re.fullmatch(r"\.[a-z0-9]{1,10}", p.suffix.lower()) else ""
+
+
 def _is_archive(p):
-    """A zip archive to unpack: "*.zip", or a download left under a temporary browser name (".Q6L2SF…", "x.crdownload") that is really a zip.
-    Other zip-based files (.3mf...) are left alone."""
-    return p.is_file() and not p.name.startswith("._") and p.suffix.lower() in _DL_SUFFIXES and zipfile.is_zipfile(p)
+    """A zip archive to unpack: "*.zip", or a download left under a temporary browser name (".Q6L2SF…", "x.crdownload", "… part 2 of 2")
+    that is really a zip. Other zip-based files (.3mf...) are left alone."""
+    return p.is_file() and not p.name.startswith("._") and _real_ext(p) in _DL_SUFFIXES and zipfile.is_zipfile(p)
+
+
+def _unpack_dir(zp):
+    """Folder an archive is unpacked into: its name without a real extension (never empty, never hidden)."""
+    ext = _real_ext(zp); name = zp.name[:-len(ext)] if ext else zp.name
+    return zp.parent.resolve() / (name.lstrip(".") or "archive")
 
 
 def unpack_nested(pid):
@@ -86,8 +99,10 @@ def unpack_nested(pid):
         if not zips: break
         for zp in zips:
             try:
-                with zipfile.ZipFile(zp) as z: n += _extract(z, zp.parent.resolve() / (zp.stem.lstrip(".") or "archive"))
+                out = _unpack_dir(zp); tmp = out.with_name(out.name + ".unpacking") if out == zp.resolve() else out   # "… part 2 of 2" unpacks under its own name
+                with zipfile.ZipFile(zp) as z: n += _extract(z, tmp)
                 zp.unlink()
+                if tmp != out: tmp.rename(out)
             except (zipfile.BadZipFile, ValueError, OSError): continue
     return n
 
