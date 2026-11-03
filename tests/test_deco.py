@@ -68,7 +68,9 @@ class Core(unittest.TestCase):
         ii, jj = np.nonzero(m); cu = (ii.min() + ii.max() + 1) // 2; cv = (jj.min() + jj.max() + 1) // 2
         left_half = m[:cu, :].sum(); right_half = m[cu:, :].sum()
         bottom = m[:, :cv].sum(); top = m[:, cv:].sum()
-        self.assertGreater(left_half, right_half); self.assertGreater(bottom, top)
+        from PySide6.QtGui import QFont, QFontInfo
+        why = f"font {QFontInfo(QFont(QFont().family())).family()!r}, os QT_QPA_FONTDIR={os.environ.get('QT_QPA_FONTDIR')!r}: 'L' drawn as a box?"
+        self.assertGreater(left_half, right_half, why); self.assertGreater(bottom, top, why)
 
     def test_off_part_is_refused_not_clamped(self):
         s = deco.DecoSpec(kind="text", text="Léo", size_mm=30, u=55, v=30, depth_mm=0.6)
