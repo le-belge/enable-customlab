@@ -94,6 +94,19 @@ class KineticArmSameScaleBothPaths(_Base):
         w.fields["hand_mm"].setValue(190); self.assertIsNone(w.scale_override); self.assertEqual(w.scale_for_part("UpArmCov100.STL"), (w.sizing.derived["upper_scale"], None))
         self.assertEqual(w.state_dict()["scale_override_group"], None)
 
+    def test_focus_out_on_a_part_of_the_other_group_keeps_the_forced_size(self):
+        w = self.window(); w.custom.part_path = "UpArmCov100.STL"; self.force(w, 75.0)
+        w.custom.part_path = "TypeB-Forearm100.STL"; w.refresh_scale_row(); self.assertEqual(w.scale_spin.value(), 70.0)
+        w._scale_edited()                                                   # editingFinished on focus out, value untouched
+        self.assertEqual((w.scale_override, w.scale_override_group), (75.0, "upper")); self.assertEqual(w.scale_for_part("UpArmCov100.STL"), (75.0, None))
+
+    def test_forced_upper_size_beyond_the_tested_range_is_accepted_with_a_warning(self):
+        w = self.window(); w.custom.part_path = "UpArmCov100.STL"; self.force(w, 110.0)
+        self.assertEqual(w.scale_for_part("UpArmCov100.STL"), (110.0, None))
+        sev, fr, ok = M.localize(w.arm_forced_warning(), "fr"); self.assertTrue(ok); self.assertEqual(sev, M.CHECK)
+        self.assertIn("110 % pour les composants supérieurs", fr); self.assertIn("bras d'essai", fr)
+        self.force(w, 90.0); self.assertIsNone(w.arm_forced_warning())
+
 
 class KineticArmUpperAbove100(_Base):
     def test_every_b2_value_is_inside_the_upper_range_and_lower_stays_50_100(self):

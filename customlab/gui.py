@@ -496,6 +496,12 @@ class MainWindow(QMainWindow):
             v = self.scale_percent(); txt = f"{v:g} %" + (forced if (self.scale_override is not None and v == self.scale_override) else "")
         return f"<p style='margin:2px 0;color:{theme.NAVY}'><b>{lab} :</b> {txt}</p>"
 
+    def arm_forced_warning(self):
+        """Kinetic Arm: a size forced by hand outside the tested range 50-100 % (accepted for the upper parts up to chart B2) gets the same warning as the chart."""
+        g = self.arm_override_group() if self.scale_cb.isChecked() else None; lo, hi = kinetic_arm.TESTED_SCALE
+        if not g or lo - 1e-9 <= self.scale_override <= hi + 1e-9: return None
+        return f"Forced {g} components scale {self.scale_override:g} % lies outside the tested range {lo:g}-{hi:g} %"
+
     def dropped_override_text(self):
         v = self._dropped_override
         if v is None: return None
@@ -633,7 +639,8 @@ class MainWindow(QMainWindow):
         return "".join(h)
 
     def _scale_edited(self):
-        c = self.computed_scale(); v = round(self.scale_spin.value(), 1)
+        c = self.computed_scale(); v = round(self.scale_spin.value(), 1); cur = self.scale_percent()
+        if cur is not None and abs(v - round(cur, 1)) < 0.05: return      # editingFinished without a change (focus out, Enter): keep the forced size (Kinetic Arm: the one of the other group)
         self.scale_override = None if (c is not None and abs(v - c) < 0.05) else v; self._dropped_override = None
         a = self.arm_part(); self.scale_override_group = a["group"] if (self.scale_override is not None and a is not None and not a["prescaled"]) else None      # Kinetic Arm: the forced size applies to this part's group only
         self.sync_direct(); self.show_result()
@@ -666,6 +673,7 @@ class MainWindow(QMainWindow):
         elif self.live.toPlainText(): base.append((self.live.toPlainText(), M.BLOCK))
         if self.side_mismatch_text(): base.append((self.side_mismatch_text(), M.BLOCK))
         if self.dev == "kinetic_hand" and self.sizing is not None and self.kinetic_insert()[2]: base.append((self.kinetic_insert()[2], M.CHECK))
+        if self.arm_forced_warning(): base.append((self.arm_forced_warning(), M.CHECK))
         self._rgen += 1; self.out_tris = None; self.deco_result = None
         if not dd: self._render_result(base); return
         self.custom.ensure_fresh(); self.b_exp.setEnabled(False)
