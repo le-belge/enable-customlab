@@ -8,6 +8,8 @@ import uuid
 from datetime import date
 from pathlib import Path
 
+from . import paths
+
 
 class Store:
     def __init__(self, root):
@@ -22,7 +24,7 @@ class Store:
 
     def load(self, pid): return json.loads(self._path(pid).read_text(encoding="utf-8"))
 
-    def _save(self, d): self._path(d["id"]).write_text(json.dumps(d, indent=2, ensure_ascii=False), encoding="utf-8")
+    def _save(self, d): paths.write_text_atomic(self._path(d["id"]), json.dumps(d, indent=2, ensure_ascii=False))
 
     def add_record(self, pid, sizing, customization=None, fabricated=False, on=None):
         d = self.load(pid)
@@ -45,9 +47,13 @@ class Store:
     def delete(self, pid): self._path(pid).unlink()
 
     def list_profiles(self):
-        out = []
+        """Readable profiles; a damaged file is skipped (listed in self.unreadable and in the error log) instead of hiding all the others."""
+        out = []; self.unreadable = []
         for f in sorted(self.root.glob("*.json")):
-            d = json.loads(f.read_text(encoding="utf-8")); out.append({"id": d["id"], "alias": d["alias"], "records": len(d["records"])})
+            try: d = json.loads(f.read_text(encoding="utf-8")); out.append({"id": d["id"], "alias": d["alias"], "records": len(d["records"])})
+            except (OSError, ValueError, KeyError, TypeError) as e:
+                from . import errlog
+                self.unreadable.append(f); errlog.warning(f"Fiche bénéficiaire illisible ignorée {f} : {e!r}")
         return sorted(out, key=lambda x: x["alias"].lower())
 
     def set_fabricated(self, pid, idx, flag=True):

@@ -34,7 +34,7 @@ def main(argv=None):
     if a.cmd == "validation-pack":
         from .svgdeco import project_on_cylinder
         out = Path(a.out_dir); out.mkdir(exist_ok=True)
-        panel, deco = project_on_cylinder((paths.resource_dir() / "examples/star.svg").read_text(), 45.0, 60.0, 70.0, 2.5)
+        panel, deco = project_on_cylinder((paths.resource_dir() / "examples/star.svg").read_text(encoding="utf-8"), 45.0, 60.0, 70.0, 2.5)
         write_stl(out / "synthetic_panel.stl", panel); write_stl(out / "synthetic_decoration.stl", deco)
         write_3mf(out / "synthetic_two_colours.3mf", [("panel", panel, 0), ("decoration", deco, 1)], ["#C0C0C0", "#E03030"])
         (out / "CHECKLIST.md").write_text(
@@ -67,7 +67,7 @@ def main(argv=None):
         from .svgdeco import project_on_cylinder, SVGUnsupported
         out = Path(a.out_dir); out.mkdir(exist_ok=True)
         try:
-            panel, deco = project_on_cylinder(Path(a.svg).read_text(), 45.0, 60.0, 70.0, 2.5, a.mode)
+            panel, deco = project_on_cylinder(Path(a.svg).read_text(encoding="utf-8"), 45.0, 60.0, 70.0, 2.5, a.mode)
         except SVGUnsupported as e:
             print(f"ERROR: {e}", file=sys.stderr); return 2
         write_stl(out / "panel.stl", panel); write_stl(out / "decoration.stl", deco)

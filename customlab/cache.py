@@ -44,13 +44,13 @@ def _save_hm(t, hm):
 
 def get_axis(path, mirror):
     if not enabled(): return None
-    try: return json.loads((_dir() / f"ax_{key(path, mirror)}.json").read_text())
+    try: return json.loads((_dir() / f"ax_{key(path, mirror)}.json").read_text(encoding="utf-8"))
     except (OSError, ValueError): return None
 
 
 def put_axis(path, mirror, axis, scores):
     if enabled():
-        try: _write(f"ax_{key(path, mirror)}.json", lambda t: Path(t).write_text(json.dumps({"axis": axis, "scores": scores})))
+        try: _write(f"ax_{key(path, mirror)}.json", lambda t: Path(t).write_text(json.dumps({"axis": axis, "scores": scores}), encoding="utf-8"))
         except OSError: pass
 
 

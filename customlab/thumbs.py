@@ -51,7 +51,7 @@ def _stamp(files): return "|".join(f"{f}:{f.stat().st_size}:{f.stat().st_mtime_n
 def cached(pid):
     """Path of an up-to-date picture, or None."""
     files = sources(pid); p = _png(pid); s = p.with_suffix(".txt")
-    if files and p.is_file() and s.is_file() and s.read_text() == _stamp(files): return p
+    if files and p.is_file() and s.is_file() and s.read_text(encoding="utf-8") == _stamp(files): return p
     return None
 
 
@@ -63,7 +63,7 @@ def render(pid):
     for f in files:
         t = np.asarray(read_stl(f), float).reshape(-1, 3, 3); p = t.reshape(-1, 3); t = t - (p.max(0) + p.min(0)) / 2
         w = float(np.ptp(t[:, :, 0])); t[:, :, 0] += x + w / 2; x += w * 1.08; parts.append(t)
-    p = _png(pid); _draw(np.concatenate(parts), SPECS[pid]["view"], W, H, p); p.with_suffix(".txt").write_text(_stamp(files)); return p
+    p = _png(pid); _draw(np.concatenate(parts), SPECS[pid]["view"], W, H, p); p.with_suffix(".txt").write_text(_stamp(files), encoding="utf-8"); return p
 
 
 def _draw(tris, view, w, h, out_png, zoom=1.1):

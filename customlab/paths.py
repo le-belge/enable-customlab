@@ -7,6 +7,7 @@ import json
 import os
 import re
 import sys
+import tempfile
 from pathlib import Path
 
 FROZEN = bool(getattr(sys, "frozen", False))
@@ -21,14 +22,40 @@ def home():
     return Path(os.environ.get("CUSTOMLAB_HOME") or Path.home() / ".customlab")
 
 
-def _settings():
-    try: return json.loads((home() / "settings.json").read_text(encoding="utf-8"))
-    except (OSError, ValueError): return {}
+def write_text_atomic(path, text):
+    """Write a UTF-8 text file all at once: a crash or a full disk leaves the old file, never a truncated one (temp file + os.replace)."""
+    path = Path(path); path.parent.mkdir(parents=True, exist_ok=True)
+    fd, tmp = tempfile.mkstemp(dir=path.parent, prefix=path.name + ".", suffix=".tmp")
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as f: f.write(text); f.flush(); os.fsync(f.fileno())
+        os.replace(tmp, path)
+    except BaseException:
+        try: os.remove(tmp)
+        except OSError: pass
+        raise
+
+
+def _read_settings():
+    """-> dict, {} when absent, None when present but unreadable."""
+    f = home() / "settings.json"
+    if not f.exists(): return {}
+    try: d = json.loads(f.read_text(encoding="utf-8"))
+    except (OSError, ValueError): return None
+    return d if isinstance(d, dict) else None
+
+
+def _settings(): return _read_settings() or {}
 
 
 def save_setting(key, value):
-    d = _settings(); d[key] = value; home().mkdir(parents=True, exist_ok=True)
-    (home() / "settings.json").write_text(json.dumps(d, indent=2, ensure_ascii=False), encoding="utf-8")
+    f = home() / "settings.json"; d = _read_settings()
+    if d is None:                                   # unreadable: keep it aside as settings.json.bak instead of silently dropping every other setting
+        from . import errlog
+        bak = f.with_name(f.name + ".bak")
+        try: os.replace(f, bak); errlog.warning(f"Réglages illisibles mis de côté : {bak}")
+        except OSError as e: errlog.warning(f"Réglages illisibles, mise de côté impossible : {e!r}")
+        d = {}
+    d[key] = value; write_text_atomic(f, json.dumps(d, indent=2, ensure_ascii=False))
 
 
 def get_setting(key, default=None):

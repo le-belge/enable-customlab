@@ -19,6 +19,6 @@ def scale_stl_python(src, dst, percent):
 def scale_stl_openscad(src, dst, percent):
     with tempfile.TemporaryDirectory() as d:
         scad = Path(d) / "s.scad"
-        scad.write_text(f'scale({percent / 100.0!r}) import("{Path(src).resolve().as_posix()}");\n')
+        scad.write_text(f'scale({percent / 100.0!r}) import("{Path(src).resolve().as_posix()}");\n', encoding="utf-8")
         openscad.render(scad, dst, {})
     return Path(dst)
