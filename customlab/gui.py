@@ -656,7 +656,7 @@ class MainWindow(QMainWindow):
         defines = defines or getattr(self, "_gdefs", None)
         if gen != self._ggen or defines is None: return
         if res[0] == "err":
-            self.custom.set_gen_status(self.custom.t("gen_fail").format(err=str(res[1])[:200]), enabled=True); return
+            self.custom.set_gen_status(self.custom.t("gen_fail").format(err=M.localize(str(res[1]), self.lang)[1][:400]), enabled=True); return
         path, cached = res[1]; self.arm_gen = {"defines": defines, "path": path}
         self.custom.set_part(str(path)); self.refresh_arm_bar()
         a = getattr(self, "_pending_preset", None)
@@ -681,7 +681,7 @@ class MainWindow(QMainWindow):
             else:
                 self.view.message = "Fournir le .scad officiel / Provide the official .scad"; self.view.update(); return
         except Exception as e:
-            QMessageBox.warning(self, self.t("err"), str(e)); return
+            QMessageBox.warning(self, self.t("err"), M.localize(str(e), self.lang)[1]); return
         self.view.set_basis(None); self.view.set_triangles(self.out_tris); self.b_exp.setEnabled(True)
 
     def scale_for_part(self, path):
@@ -752,7 +752,7 @@ class MainWindow(QMainWindow):
             d = QFileDialog.getExistingDirectory(self, self.t("export_dir"))
             if not d: return
             try: out = self.export_to(d)
-            except Exception as e: QMessageBox.warning(self, self.t("err"), str(e)); return
+            except Exception as e: QMessageBox.warning(self, self.t("err"), M.localize(str(e), self.lang)[1]); return
             self.res.append(f"\n{self.t('exported')}: {out}" + (f"\n→ {self.last_3mf.name} (prêt pour Bambu Studio, filaments déjà assignés)" if self.last_3mf else "")); return
         f, _ = QFileDialog.getSaveFileName(self, "STL", f"{self.dev}.stl", "STL (*.stl)")
         if f and self.out_tris: write_stl(f, self.out_tris)

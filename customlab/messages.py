@@ -60,6 +60,10 @@ RULES = [
     (r"^Mesures manquantes ou hors plage", BLOCK, "Mesures manquantes ou hors plage : corrigez-les à l'étape 2.", "Missing or out-of-range measures: fix them in step 2."),
     (r"^La pièce générée ne correspond pas", BLOCK, "La pièce générée ne correspond pas aux mesures actuelles : générez-la à l'étape 3.", "The generated part does not match the current measures: generate it in step 3."),
     (r"^Choisissez d'abord|^Choose the part", BLOCK, "Choisissez d'abord la pièce à l'étape 3.", "Choose the part in step 3 first."),
+    # ---- source part defects and OpenSCAD (kept after the rules above: the first match wins)
+    (r"^Pièce source non étanche", CHECK, "Défaut du fichier d'origine : cette pièce n'est pas étanche (non manifold). Bambu Studio peut le réparer (clic droit > Réparer le modèle). La gravure est désactivée pour cette pièce.", "Defect of the original file: this part is not watertight (non-manifold). Bambu Studio can repair it (right-click > Repair model). Engraving is disabled for this part."),
+    (r"(?i)manifold", BLOCK, "La pièce n'est pas étanche (non manifold). S'il s'agit d'une pièce fournie (Paume ou Doigts Phoenix), c'est un défaut du fichier d'origine : Bambu Studio peut le réparer (clic droit > Réparer le modèle). Pour décorer, utilisez le relief ou l'incrustation plutôt que la gravure.", "The part is not watertight (non-manifold). If it is a supplied part (Phoenix Palm or Fingers), this is a defect of the original file: Bambu Studio can repair it (right-click > Repair model). To decorate, use relief or inlay rather than engraving."),
+    (r"^OpenSCAD failed:?\s*(.*)", BLOCK, "OpenSCAD n'a pas pu calculer la pièce. Vérifiez les mesures et les fichiers sources, puis réessayez. Détail technique : {0}", "OpenSCAD could not compute the part. Check the measurements and the source files, then try again. Technical detail: {0}"),
 ]
 _COMPILED = [(re.compile(p, re.S), sev, fr, en) for p, sev, fr, en in RULES]
 
