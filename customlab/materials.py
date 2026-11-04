@@ -21,7 +21,8 @@ DEFAULT_MATERIAL = "PLA"
 COLOURS = {   # name -> hex ; names in French and English
     "white":  ("Blanc", "White", "#FFFFFF"), "black": ("Noir", "Black", "#161616"), "grey": ("Gris", "Grey", "#8E9089"),
     "red":    ("Rouge", "Red", "#C12E1F"), "orange": ("Orange", "Orange", "#FF6A13"), "yellow": ("Jaune", "Yellow", "#F4EE2A"),
-    "green":  ("Vert", "Green", "#00AE42"), "blue": ("Bleu", "Blue", "#0A2989"), "skyblue": ("Bleu ciel", "Sky blue", "#56B7E6"),
+    "green":  ("Vert", "Green", "#00AE42"), "blue": ("Bleu", "Blue", "#0A2989"), "navy": ("Bleu marine", "Navy blue", "#13294B"),
+    "midblue": ("Bleu moyen", "Medium blue", "#4A6FA5"), "skyblue": ("Bleu ciel", "Sky blue", "#56B7E6"),
     "purple": ("Violet", "Purple", "#5E43B7"), "pink": ("Rose", "Pink", "#F55A74"), "skin": ("Beige", "Beige", "#E8C9A8"),
 }
 DEFAULT_COLOUR = {"PLA": "white", "PETG": "white", "ASA": "white", "TPU 95A": "black", "TPU 85A": "black"}
@@ -56,10 +57,13 @@ def colour_hex(c):
 
 
 def colour_name(c, lang="fr"):
+    """Palette name; a motif colour outside the palette gets the nearest one ("≈ Bleu") to help pick a spool."""
     h = colour_hex(c)
     for fr, en, x in COLOURS.values():
         if x == h: return fr if lang == "fr" else en
-    return h
+    rgb = lambda x: tuple(int(x[i:i + 2], 16) for i in (1, 3, 5))
+    fr, en, _ = min(COLOURS.values(), key=lambda t: sum((a - b) ** 2 for a, b in zip(rgb(t[2]), rgb(h))))
+    return "≈ " + (fr if lang == "fr" else en)
 
 
 @dataclass
