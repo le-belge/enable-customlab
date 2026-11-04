@@ -19,9 +19,12 @@ class QuickExport(unittest.TestCase):
                 self.assertTrue(dlg.list.isHidden())
                 t0 = time.time()
                 while not hasattr(dlg, "results") and time.time() - t0 < 30: app.processEvents(); time.sleep(0.05)
-            self.assertEqual([r["status"] for r in dlg.results], ["ok", "ok"])
-            self.assertTrue((d / "dest" / "export_toutes_les_pieces" / "a").is_dir()); self.assertFalse(dlg.b_reveal.isHidden()); self.assertTrue(dlg.b_bambu.isHidden())      # no decorated part here -> no .3mf
-            (d / "dest" / "export_toutes_les_pieces" / "a" / "x_Bambu_pret.3mf").write_bytes(b"0"); dlg._finished(dlg.results); self.assertFalse(dlg.b_bambu.isHidden())
+            self.assertEqual([r["status"] for r in dlg.results], ["ok", "ok", "ok"]); self.assertEqual(dlg.results[-1].get("kind"), "device")   # 2 parts + the whole-device 3MF
+            out = d / "dest" / "export_toutes_les_pieces"
+            self.assertTrue((out / "a").is_dir()); self.assertFalse(dlg.b_reveal.isHidden()); self.assertFalse(dlg.b_bambu.isHidden())
+            self.assertEqual(dlg.bambu_file, out / "APPAREIL_Bambu_pret.3mf"); self.assertIn("2 exportée(s)", dlg.log.toPlainText())      # parts only in the count
+            (out / "APPAREIL_Bambu_pret.3mf").unlink(); dlg._finished(dlg.results); self.assertTrue(dlg.b_bambu.isHidden())                # no 3MF at all -> no button
+            (out / "a" / "x_Bambu_pret.3mf").write_bytes(b"0"); dlg._finished(dlg.results); self.assertFalse(dlg.b_bambu.isHidden())
 
 
 if __name__ == "__main__": unittest.main()

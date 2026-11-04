@@ -751,19 +751,21 @@ def export_result(result: DecoResult, part_path, spec: DecoSpec, out_dir, zones=
     else:
         name = f"{src.stem[:40]}_" + ("EXPERIMENTAL_deco" if result.deco_triangles else "copy_unmodified") + ".stl"
     write_stl(out / name, tris)
+    result.info["export_parts"] = [{"name": Path(name).stem, "triangles": tris, "extruder": 1, "role": "base"}]   # engraved / plain: one piece
     bambu_name, guide_name, pieces_info = None, None, []
     src_watertight = is_watertight(read_stl(src))                         # a defect of the original file is reported, never repaired here
     if spec.mode in ("inlay", "relief") and result.deco_triangles:
         base_tris = list(result.triangles) if spec.mode == "inlay" else (mirror_tris(read_stl(src)) if spec.mirror_x else list(read_stl(src)))
         k = 1.0 if scale_percent in (None, 100, 100.0) else scale_percent / 100.0
         sc = (lambda T: [tuple(tuple(c * k for c in p) for p in t) for t in T]) if k != 1.0 else (lambda T: T)
-        parts = [{"name": "Base (pièce d'origine, inchangée)", "triangles": sc(base_tris), "extruder": 1}]
+        parts = [{"name": "Base (pièce d'origine, inchangée)", "triangles": sc(base_tris), "extruder": 1, "role": "base"}]
         if result.layers:
             for n, L in enumerate(result.layers, start=2):
-                parts.append({"name": f"Couleur {n - 1} {L['hex']}", "triangles": sc(L["triangles"]), "extruder": n})
+                parts.append({"name": f"Couleur {n - 1} {L['hex']}", "triangles": sc(L["triangles"]), "extruder": n, "role": "motif", "colour": L["hex"]})
                 pieces_info.append((n, L["hex"], L["cells"]))
         else:
-            parts.append({"name": "Décoration", "triangles": sc(result.deco_triangles), "extruder": 2}); pieces_info.append((2, None, None))
+            parts.append({"name": "Décoration", "triangles": sc(result.deco_triangles), "extruder": 2, "role": "motif", "colour": None}); pieces_info.append((2, None, None))
+        result.info["export_parts"] = parts            # reused by the whole-device 3MF (export_all), already at the export scale
         bambu_name = f"{src.stem[:40]}_Bambu_pret.3mf"
         cols = ((["#FFFFFF"] + [L["hex"] for L in result.layers]) if result.layers else None) if bambu3mf.WITH_FILAMENT_CONFIG else None
         write_bambu_3mf(out / bambu_name, parts, object_name=src.stem[:40], filament_colours=cols)

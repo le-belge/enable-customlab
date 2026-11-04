@@ -94,3 +94,88 @@ def write_bambu_3mf(path, parts, object_name="CustomLab", bed=(256.0, 256.0), fi
         z.writestr("Metadata/model_settings.config", settings)
         if filament_colours: z.writestr("Metadata/project_settings.config", project_settings_json(filament_colours))
     return path
+
+
+def project_settings_materials_json(filaments):
+    """filaments: [(bambu_type, '#RRGGBB')]. Declares count, colours and material types ("PLA", "TPU"...). The filament_type key is NOT
+    verified in Bambu Studio yet (only filament_colour was): if Bambu ignores it, pick the presets by hand (see the LISEZ-MOI)."""
+    import json
+    return json.dumps({"filament_colour": [c for _, c in filaments], "filament_type": [t for t, _ in filaments],
+                       "filament_diameter": ["1.75"] * len(filaments), "from": "project"}, indent=2)
+
+
+def _bbox(tris):
+    pts = [p for t in tris for p in t]
+    return [min(p[i] for p in pts) for i in range(3)], [max(p[i] for p in pts) for i in range(3)]
+
+
+def pack(objects, bed, gap=8.0):
+    """Shelf packing of the objects' footprints on the bed. objects: [{"name", "parts": [{"triangles", ...}]}].
+    Returns ([[(object, tx, ty, tz)], ...] one list per plate, [names too big for the bed]). Biggest first; nothing is rotated."""
+    sized = []
+    for o in objects:
+        lo, hi = _bbox([t for p in o["parts"] for t in p["triangles"]]); sized.append((o, lo, hi, hi[0] - lo[0], hi[1] - lo[1]))
+    too_big = [o["name"] for o, lo, hi, w, d in sized if w > bed[0] or d > bed[1]]
+    sized = sorted((s for s in sized if s[0]["name"] not in too_big), key=lambda s: -s[4])
+    plates, x, y, row_d = [[]], 0.0, 0.0, 0.0
+    for o, lo, hi, w, d in sized:
+        if x > 0 and x + w > bed[0]: x, y, row_d = 0.0, y + row_d + gap, 0.0           # next row
+        if y > 0 and y + d > bed[1]: plates.append([]); x, y, row_d = 0.0, 0.0, 0.0     # next plate
+        plates[-1].append((o, x - lo[0], y - lo[1], -lo[2])); x += w + gap; row_d = max(row_d, d)
+    plates = [pl for pl in plates if pl]
+    box = {id(o): (lo, hi) for o, lo, hi, w, d in sized}
+    for pl in plates:                                                                    # centre each plate's layout on the bed
+        x0 = min(tx + box[id(o)][0][0] for o, tx, ty, tz in pl); x1 = max(tx + box[id(o)][1][0] for o, tx, ty, tz in pl)
+        y0 = min(ty + box[id(o)][0][1] for o, tx, ty, tz in pl); y1 = max(ty + box[id(o)][1][1] for o, tx, ty, tz in pl)
+        dx, dy = bed[0] / 2 - (x0 + x1) / 2, bed[1] / 2 - (y0 + y1) / 2
+        pl[:] = [(o, tx + dx, ty + dy, tz) for o, tx, ty, tz in pl]
+    return plates, too_big
+
+
+def write_bambu_plate(path, placed, filaments, title="CustomLab"):
+    """One plate: several objects, each made of parts with their own filament. placed: [(object, tx, ty, tz)] from pack().
+    filaments: [(bambu_type, '#RRGGBB')] (filament k+1). Same layout as write_bambu_3mf, with one parent object per device part."""
+    if not placed: raise ValueError("no objects")
+    files, mesh_id, objs_xml, build, cfg, rels = {}, 0, [], [], [], []
+    n_mesh = sum(len(o["parts"]) for o, *_ in placed)
+    for j, (o, tx, ty, tz) in enumerate(placed):
+        parent = n_mesh + 1 + j; comps, pxml = [], []
+        for part in o["parts"]:
+            mesh_id += 1; xml, faces = _mesh_xml(mesh_id, part["triangles"]); files[f"3D/Objects/object_{mesh_id}.model"] = xml
+            rels.append(f' <Relationship Target="/3D/Objects/object_{mesh_id}.model" Id="rel-{mesh_id}" Type="http://schemas.microsoft.com/3dmanufacturing/2013/01/3dmodel"/>\n')
+            comps.append(f'<component p:path="/3D/Objects/object_{mesh_id}.model" objectid="{mesh_id}" p:UUID="{uuid.uuid4()}" transform="1 0 0 0 1 0 0 0 1 0 0 0"/>')
+            pxml.append(f'''    <part id="{mesh_id}" subtype="normal_part">
+      <metadata key="name" value="{escape(part["name"], {'"': "&quot;"})}"/>
+      <metadata key="matrix" value="1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"/>
+      <metadata key="extruder" value="{int(part["extruder"])}"/>
+      <mesh_stat face_count="{faces}" edges_fixed="0" degenerate_facets="0" facets_removed="0" facets_reversed="0" backwards_edges="0"/>
+    </part>''')
+        objs_xml.append(f'  <object id="{parent}" p:UUID="{uuid.uuid4()}" type="model">\n   <components>\n    ' + "\n    ".join(comps) + '\n   </components>\n  </object>')
+        build.append(f'  <item objectid="{parent}" p:UUID="{uuid.uuid4()}" transform="1 0 0 0 1 0 0 0 1 {tx:.5f} {ty:.5f} {tz:.5f}" printable="1"/>')
+        cfg.append(f'  <object id="{parent}">\n    <metadata key="name" value="{escape(o["name"], {chr(34): "&quot;"})}"/>\n'
+                   f'    <metadata key="extruder" value="{int(o["parts"][0]["extruder"])}"/>\n' + "\n".join(pxml) + '\n  </object>')
+    model = (f'<?xml version="1.0" encoding="UTF-8"?>\n<model unit="millimeter" xml:lang="en-US" {NS}>\n'
+             ' <metadata name="Application">CustomLab</metadata>\n <metadata name="BambuStudio:3mfVersion">1</metadata>\n'
+             f' <metadata name="Title">{escape(title)}</metadata>\n <resources>\n' + "\n".join(objs_xml) + f'\n </resources>\n <build p:UUID="{uuid.uuid4()}">\n'
+             + "\n".join(build) + '\n </build>\n</model>\n')
+    inst = "".join(f'''    <model_instance>
+      <metadata key="object_id" value="{n_mesh + 1 + j}"/>
+      <metadata key="instance_id" value="0"/>
+      <metadata key="identify_id" value="{(n_mesh + 1 + j) * 7}"/>
+    </model_instance>
+''' for j in range(len(placed)))
+    settings = ('<?xml version="1.0" encoding="UTF-8"?>\n<config>\n' + "\n".join(cfg) + '\n  <plate>\n    <metadata key="plater_id" value="1"/>\n'
+                '    <metadata key="plater_name" value=""/>\n    <metadata key="locked" value="false"/>\n' + inst + '  </plate>\n  <assemble>\n  </assemble>\n</config>\n')
+    ct = ('<?xml version="1.0" encoding="UTF-8"?>\n<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">\n'
+          ' <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>\n'
+          ' <Default Extension="model" ContentType="application/vnd.ms-package.3dmanufacturing-3dmodel+xml"/>\n</Types>\n')
+    root_rels = ('<?xml version="1.0" encoding="UTF-8"?>\n<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">\n'
+                 ' <Relationship Target="/3D/3dmodel.model" Id="rel-1" Type="http://schemas.microsoft.com/3dmanufacturing/2013/01/3dmodel"/>\n</Relationships>\n')
+    mrels = '<?xml version="1.0" encoding="UTF-8"?>\n<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">\n' + "".join(rels) + '</Relationships>\n'
+    with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED) as z:
+        z.writestr("[Content_Types].xml", ct); z.writestr("_rels/.rels", root_rels)
+        z.writestr("3D/3dmodel.model", model); z.writestr("3D/_rels/3dmodel.model.rels", mrels)
+        for name, xml in files.items(): z.writestr(name, xml)
+        z.writestr("Metadata/model_settings.config", settings)
+        if WITH_FILAMENT_CONFIG: z.writestr("Metadata/project_settings.config", project_settings_materials_json(filaments))
+    return path
