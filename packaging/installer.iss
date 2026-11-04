@@ -1,7 +1,7 @@
 ; Inno Setup : installateur Windows de e-NABLE CustomLab (construit par .github/workflows/build.yml, après PyInstaller -> dist\CustomLab\)
 [Setup]
 AppName=e-NABLE CustomLab
-AppVersion=1.0.0-beta.1
+AppVersion=1.0.0-beta.2
 AppPublisher=e-NABLE France
 AppPublisherURL=https://e-nable.fr
 AppComments=e-NABLE CustomLab, par e-NABLE France
