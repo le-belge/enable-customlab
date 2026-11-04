@@ -25,14 +25,14 @@ TX = {
         "zone": "Tracer une zone interdite", "clear": "Effacer les zones", "bold": "Gras", "inv": "Inverser (image)", "white": "Blanc = vide", "thr": "Seuil image (0-255)", "ncol": "Couleurs (1 = une pièce)", "qual": "Qualité (finesse)",
         "warn": "EXPÉRIMENTAL : les zones fonctionnelles (articulations, trous de broches, passages de câbles, contact avec la peau) ne sont PAS détectées. Tracez les zones à protéger et faites relire le résultat par un bénévole compétent.",
         "lic": "Licence de la source", "unknown": "Provenance/licence INCONNUES — ne pas redistribuer.", "nc": "usage NON commercial",
-        "busy": "⏳ Calcul en cours…", "analysing": "⏳ Analyse de la pièce (choix de la face)…", "axis_auto": "Vue choisie automatiquement : {axis} (face la plus plane). Vous pouvez la changer dans « Vue (axe) ».", "gen": "Générer la pièce depuis le SCAD officiel", "gen_ready": "Pièce « {part} » à générer pour ces mesures", "gen_busy": "⏳ Génération de « {part} » par OpenSCAD en cours… (ne fermez pas la fenêtre)", "gen_done": "✓ Pièce « {part} » générée pour ces mesures", "gen_need": "Saisissez d'abord des mesures valides (étape 2).", "gen_noscad": "Fichier SCAD officiel introuvable : placez-le dans sources/unlimbited_arm/part2/files/ (voir docs/UNLIMBITED_ARM.md).", "gen_fail": "Échec de la génération : {err}", "preparing": "⏳ Préparation de la pièce…", "hint": "Cliquez dans la vue pour placer le motif ; en mode zone, glissez un rectangle.", "spot_center": "Centre", "spot_top": "Haut", "spot_bottom": "Bas", "spot_left": "Gauche", "spot_right": "Droite", "spots": "Placer", "pad": "Déplacer / pivoter la vue", "thick": "Épaissir les traits fins (< 0,8 mm)", "model_dims": "Taille standard (100 %) : {x:.1f} × {y:.1f} × {z:.1f} mm", "model_final": "taille finale à {pct:g} % : {x:.1f} × {y:.1f} × {z:.1f} mm (le motif suit l'échelle)", "hint2": "Glisser : déplacer · molette : taille · Maj+molette : rotation · Ctrl+molette : zoom · clic droit : déplacer la vue · flèches : ajuster", "prot": "Marge auto autour des trous", "inl_off": "Dépassement de l'incrustation (mm)"},
+        "busy": "⏳ Calcul en cours…", "analysing": "⏳ Analyse de la pièce (choix de la face)…", "axis_auto": "Vue choisie automatiquement : {axis} (face la plus plane). Vous pouvez la changer dans « Vue (axe) ».", "gen": "Générer la pièce depuis le SCAD officiel", "gen_ready": "Pièce « {part} » à générer pour ces mesures", "gen_busy": "⏳ Génération de « {part} » par OpenSCAD en cours… (ne fermez pas la fenêtre)", "gen_done": "✓ Pièce « {part} » générée pour ces mesures", "gen_need": "Saisissez d'abord des mesures valides (étape 2).", "gen_noscad": "Fichier SCAD officiel (UnLimbited_Arm_v2.1.scad) introuvable. Il est dans la partie 2 sur 2 de l'archive Thingiverse : ajoutez-la avec le menu Aide > Fichiers sources.", "gen_fail": "Échec de la génération : {err}", "preparing": "⏳ Préparation de la pièce…", "hint": "Cliquez dans la vue pour placer le motif ; en mode zone, glissez un rectangle.", "spot_center": "Centre", "spot_top": "Haut", "spot_bottom": "Bas", "spot_left": "Gauche", "spot_right": "Droite", "spots": "Placer", "pad": "Déplacer / pivoter la vue", "thick": "Épaissir les traits fins (< 0,8 mm)", "model_dims": "Taille standard (100 %) : {x:.1f} × {y:.1f} × {z:.1f} mm", "model_final": "taille finale à {pct:g} % : {x:.1f} × {y:.1f} × {z:.1f} mm (le motif suit l'échelle)", "hint2": "Glisser : déplacer · molette : taille · Maj+molette : rotation · Ctrl+molette : zoom · clic droit : déplacer la vue · flèches : ajuster", "prot": "Marge auto autour des trous", "inl_off": "Dépassement de l'incrustation (mm)"},
  "en": {"part": "Or choose another STL file…", "lib": "— Choose a part —", "none": "No part loaded. Decoration is applied at the STL's original size; the original is never modified.",
         "axis": "View (axis)", "mode": "Mode", "relief": "Relief", "engrave": "Engrave", "inlay": "Inlay (flush)", "kind": "Content", "camo": "Camouflage (whole part)", "camo_style": "Camouflage", "camo_seed": "Variant (no.)", "camo_scale": "Patch size", "camo_fr": "French (Central Europe style)", "camo_winter": "Winter (snow)", "camo_all": "Apply the camouflage to several parts…", "camo_base": "Suggested part colour: {c} (filament 1).", "text": "Text", "svg": "SVG", "image": "Image (PNG/JPEG)",
         "txt": "Text", "file": "File…", "size": "Size (mm)", "rot": "Rotation (°)", "u": "Position u (mm)", "v": "Position v (mm)", "depth": "Depth (mm)",
         "zone": "Draw a forbidden zone", "clear": "Clear zones", "bold": "Bold", "inv": "Invert (image)", "white": "White = empty", "thr": "Image threshold (0-255)", "ncol": "Colours (1 = one piece)", "qual": "Quality (resolution)",
         "warn": "EXPERIMENTAL: functional zones (joints, pin holes, cable channels, skin contact) are NOT detected. Draw the zones to protect and have a qualified volunteer review the result.",
         "lic": "Source licence", "unknown": "Provenance/licence UNKNOWN — do not redistribute.", "nc": "NON-commercial use",
-        "busy": "⏳ Computing…", "analysing": "⏳ Analysing the part (choosing the face)…", "axis_auto": "View chosen automatically: {axis} (flattest face). You can change it in “View (axis)”.", "gen": "Generate the part from the official SCAD", "gen_ready": "Part “{part}” to generate for these measures", "gen_busy": "⏳ Generating “{part}” with OpenSCAD… (do not close the window)", "gen_done": "✓ Part “{part}” generated for these measures", "gen_need": "Enter valid measures first (step 2).", "gen_noscad": "Official SCAD file not found: place it in sources/unlimbited_arm/part2/files/ (see docs/UNLIMBITED_ARM.md).", "gen_fail": "Generation failed: {err}", "preparing": "⏳ Preparing the part…", "hint": "Click in the view to place the motif; in zone mode, drag a rectangle.", "spot_center": "Centre", "spot_top": "Top", "spot_bottom": "Bottom", "spot_left": "Left", "spot_right": "Right", "spots": "Place", "pad": "Move / turn the view", "thick": "Thicken thin strokes (< 0.8 mm)", "model_dims": "Standard size (100 %): {x:.1f} × {y:.1f} × {z:.1f} mm", "model_final": "final size at {pct:g} %: {x:.1f} × {y:.1f} × {z:.1f} mm (the motif follows the scale)", "hint2": "Drag: move · wheel: size · Shift+wheel: rotate · Ctrl+wheel: zoom · right-drag: pan · arrows: nudge", "prot": "Auto margin around holes", "inl_off": "Inlay protrusion (mm)"},
+        "busy": "⏳ Computing…", "analysing": "⏳ Analysing the part (choosing the face)…", "axis_auto": "View chosen automatically: {axis} (flattest face). You can change it in “View (axis)”.", "gen": "Generate the part from the official SCAD", "gen_ready": "Part “{part}” to generate for these measures", "gen_busy": "⏳ Generating “{part}” with OpenSCAD… (do not close the window)", "gen_done": "✓ Part “{part}” generated for these measures", "gen_need": "Enter valid measures first (step 2).", "gen_noscad": "Official SCAD file (UnLimbited_Arm_v2.1.scad) not found. It is in part 2 of 2 of the Thingiverse archive: add it with the menu Help > Source files.", "gen_fail": "Generation failed: {err}", "preparing": "⏳ Preparing the part…", "hint": "Click in the view to place the motif; in zone mode, drag a rectangle.", "spot_center": "Centre", "spot_top": "Top", "spot_bottom": "Bottom", "spot_left": "Left", "spot_right": "Right", "spots": "Place", "pad": "Move / turn the view", "thick": "Thicken thin strokes (< 0.8 mm)", "model_dims": "Standard size (100 %): {x:.1f} × {y:.1f} × {z:.1f} mm", "model_final": "final size at {pct:g} %: {x:.1f} × {y:.1f} × {z:.1f} mm (the motif follows the scale)", "hint2": "Drag: move · wheel: size · Shift+wheel: rotate · Ctrl+wheel: zoom · right-drag: pan · arrows: nudge", "prot": "Auto margin around holes", "inl_off": "Inlay protrusion (mm)"},
 }
 TX["fr"].update({"motifs": "Motifs", "motif_add": "＋ Ajouter un motif", "motif_del": "✕ Retirer", "motif_n": "Motif {n}", "motif_empty": "(vide)"})
 TX["en"].update({"motifs": "Motifs", "motif_add": "＋ Add a motif", "motif_del": "✕ Remove", "motif_n": "Motif {n}", "motif_empty": "(empty)"})
@@ -269,7 +269,7 @@ class CustomizePage(QWidget):
         self._sig = _Signals(); self._sig.done.connect(self._on_done); self._pool = QThreadPool(); self._pool.setMaxThreadCount(1)
         self._timer = QTimer(self); self._timer.setSingleShot(True); self._timer.setInterval(120); self._timer.timeout.connect(self._start_job)
         self.part_path = None; self.tris = None; self.hm = None; self.zones = []; self.lic = None; self.svg_path = ""
-        self.mask = None; self.errors = []; self.warns = []; self.advanced = False; self.view_rot = 0; self._rots = {}
+        self.mask = None; self.errors = []; self.warns = []; self.advanced = False; self.view_rot = 0; self._rots = {}; self.source_watertight = True
         h = QHBoxLayout(self); left = QVBoxLayout(); h.setContentsMargins(0, 0, 0, 0)
         panel = QWidget(); panel.setObjectName("page"); panel.setLayout(left); scroll = QScrollArea(); scroll.setWidget(panel); scroll.setWidgetResizable(True)      # the form may be taller than the screen
         scroll.setFrameShape(QFrame.NoFrame); scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff); h.addWidget(scroll, 2)
@@ -341,6 +341,7 @@ class CustomizePage(QWidget):
             cur = combo.currentData(); combo.blockSignals(True); combo.clear()
             for it in items: combo.addItem(self.t("camo_" + it if combo is self.camo_style else it), it)
             combo.setCurrentIndex(max(0, combo.findData(cur))); combo.blockSignals(False)
+        self._update_engrave()
         for k, b in self.spot_btns.items(): b.setText(self.t("spot_" + k))
         self.b_addm.setText(self.t("motif_add")); self.b_delm.setText(self.t("motif_del")); self._motif_names(); self.b_all.setText(self.t("camo_all")); self.b_zone.setText(self.t("zone")); self.b_clear.setText(self.t("clear")); self.warnbox.setText(self.t("warn"))
         self.view.msg = self.t("none"); self.show_prov(); self.view.update(); self.update_model()
@@ -372,7 +373,19 @@ class CustomizePage(QWidget):
         if l and l.get("known"):
             txt += f"{self.t('lic')}: <b>{l['license']}</b>" + (f" — {self.t('nc')}" if l["non_commercial"] else "") + f"<br>{l['title']} / {l['author']}"
         else: txt += f"<span style='color:#b00020'>{self.t('unknown')}</span>"
+        if not self.source_watertight:
+            from . import messages as M
+            txt += f"<br><span style='color:#8a4b00'>⚠ {M.localize(deco.SOURCE_NOT_WATERTIGHT, self.lang)[1]}</span>"
         self.prov.setText(txt)
+
+    def _update_engrave(self):
+        """Engraving (a subtraction) needs a watertight part: greyed out for a part whose original file is not (never repaired here)."""
+        i = self.mode.findData("engrave")
+        if i < 0: return
+        from . import messages as M
+        it = self.mode.model().item(i); it.setEnabled(self.source_watertight)
+        it.setToolTip("" if self.source_watertight else M.localize(deco.SOURCE_NOT_WATERTIGHT, self.lang)[1])
+        if not self.source_watertight and self.mode.currentData() == "engrave": self.mode.setCurrentIndex(max(0, self.mode.findData("relief")))
 
     def set_device(self, dev):
         arm = dev == "unlimbited_arm"; self.device = dev
@@ -413,10 +426,12 @@ class CustomizePage(QWidget):
     def clear_part(self):
         self._lgen += 1; self.lib.setEnabled(True); self.b_part.setEnabled(True); self.busy.setText("")       # a load still running for the previous device must not land here
         self.part_path = None; self.tris = None; self.hm = None; self.zones = []; self.mask = None; self.layers = None; self.errors = []; self.warns = []
+        self.source_watertight = True; self._update_engrave()
         self.view.hm = None; self.view.base = None; self.view.mask = None; self.view.layers = None; self.view.protected = None; self.view.update(); self.show_prov(); self.log.setHtml(""); self.update_model()
 
     def reload_library(self, root=None):
-        self.items = library.scan(root) if root else [i for i in library.scan_all() if i.get("device") == getattr(self, "device", "phoenix_hand")]
+        side = getattr(self, "side_filter", None)          # Phoenix: only the parts of the chosen side (files of unknown side are kept)
+        self.items = library.scan(root) if root else [i for i in library.scan_all() if i.get("device") == getattr(self, "device", "phoenix_hand") and (not side or i.get("side") in (side, ""))]
         self.lib.blockSignals(True); self.lib.clear(); self.lib.addItem(self.t("lib"), None); self.lib.setIconSize(QSize(44, 33)); self.lib.setMaxVisibleItems(30)
         if not isinstance(self.lib.view(), QListView) or self.lib.view().iconSize().width() < 110:      # grid of pictures in the pop-up, small one in the closed box
             v = QListView(); v.setViewMode(QListView.IconMode); v.setIconSize(QSize(100, 75)); v.setGridSize(QSize(150, 126)); v.setWordWrap(True); v.setWrapping(True); v.setMovement(QListView.Static)
@@ -544,7 +559,9 @@ class CustomizePage(QWidget):
             self.busy.setText(self.t("analysing")); QApplication.processEvents()
             ax = self._axis_for(self.part_path, self.mirror_x, self.tris); self.axis.blockSignals(True); self.axis.setCurrentIndex(max(0, self.axis.findData(ax))); self.axis.blockSignals(False)
             self.axis_note = self.t("axis_auto").format(axis=ax)
-        self.zones = []; self.hm = None; self.show_prov(); self.update_model(); self.rebuild_heightmap(center=True); self.load_zones()
+        self.zones = []; self.hm = None
+        self.source_watertight = self._is_watertight(); self._update_engrave()       # checked on loading (cached per mesh): original-file defects are shown at once
+        self.show_prov(); self.update_model(); self.rebuild_heightmap(center=True); self.load_zones()
 
     @staticmethod
     def _axis_for(path, mirror, tris):
@@ -736,8 +753,7 @@ class CustomizePage(QWidget):
 
     # ---- recomputation: debounced and run in a worker thread so the window never freezes
     def _is_watertight(self):
-        key = id(self.tris)
-        if getattr(self, "_wt_key", None) != key: self._wt = deco.is_watertight(self.tris); self._wt_key = key
+        if getattr(self, "_wt_tris", None) is not self.tris: self._wt = deco.is_watertight(self.tris); self._wt_tris = self.tris      # holds the mesh: an id() could be reused by the next part
         return self._wt
 
     def refresh(self, *_):

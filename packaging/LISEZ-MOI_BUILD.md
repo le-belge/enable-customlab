@@ -17,8 +17,12 @@ Résultat : `dist/e-NABLE_CustomLab_mac.zip` (signature ad hoc, sans compte dév
 2. Dans le dossier du projet :
 ```
 py -3 -m venv .venv
-.venv\Scripts\python -m pip install PySide6-Essentials numpy pyinstaller
+.venv\Scripts\python -m pip install "PySide6-Essentials<6.12" numpy pyinstaller
 packaging\build_windows.bat
 ```
+PySide6 6.12.0 est exclu : avec Python 3.9 à 3.11, il fait planter l'appli (« Fatal Python error: none_dealloc »). La CI utilise 6.11.3.
 Résultat : `dist\e-NABLE_CustomLab_windows.zip` (dossier `CustomLab\` avec `CustomLab.exe`). Non signé : Windows SmartScreen affichera « Windows a protégé votre ordinateur » → « Informations complémentaires » → « Exécuter quand même ».
 **La version Windows n'a jamais été lancée** : elle est à tester par un testeur sur PC.
+
+Auto-test sans fenêtre (imports, profils, mise à l'échelle et export d'une pièce Phoenix incluse dans un dossier temporaire), code de sortie 0 = OK, 1 = échec :
+`CustomLab.exe --selftest --report selftest.txt` (Windows, le rapport est dans le fichier) ou `"e-NABLE CustomLab.app/Contents/MacOS/CustomLab" --selftest` (macOS). La CI (`.github/workflows/build.yml`) le lance sur chaque application construite.

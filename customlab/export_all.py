@@ -10,7 +10,7 @@ from datetime import datetime
 from pathlib import Path
 
 from . import deco
-from .meshio import read_stl, write_stl
+from .meshio import is_watertight, read_stl, write_stl
 from .placement import zones_for
 
 
@@ -24,7 +24,7 @@ def _plain(path, folder, mirror, scale, extra):
     name = f"{src.stem[:40]}" + (f"_{scale:g}pct" if scale not in (None, 100, 100.0) else "") + ("_miroir" if mirror else "") + ".stl"
     write_stl(folder / name, tris); lic = deco.read_license_info(src)
     side = {"generated": datetime.now().isoformat(timespec="seconds"), "status": "pièce non décorée", "source_file": str(src), "source_sha256": hashlib.sha256(src.read_bytes()).hexdigest(),
-            "source_license": lic, "mirrored_x": mirror, "scale_percent_applied": scale, "triangles": len(tris), **(extra or {}),
+            "source_license": lic, "mirrored_x": mirror, "scale_percent_applied": scale, "source_watertight": is_watertight(tris), "triangles": len(tris), **(extra or {}),
             "disclaimer": "Aucune impression ni validation physique n'a été faite pour cette pièce."}
     (folder / (Path(name).stem + ".json")).write_text(json.dumps(side, indent=2, ensure_ascii=False), encoding="utf-8")
     lines = ["Pièce dérivée (mise à l'échelle/miroir) — voir le fichier JSON associé."]

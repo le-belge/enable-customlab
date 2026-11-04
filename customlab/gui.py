@@ -12,7 +12,7 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QDoubleSpinBo
                                QHBoxLayout, QLabel, QMainWindow, QMessageBox, QPushButton, QStackedWidget,
                                QTextEdit, QVBoxLayout, QWidget)
 
-from . import kinetic_arm, openscad, phoenix, theme
+from . import kinetic_arm, kinetic_hand, library, openscad, phoenix, theme
 from .meshio import is_watertight, read_stl, write_stl
 from .meshscale import scale_stl_python
 from .profiles import SizingError, compute_phoenix_sizing, compute_sizing, list_profiles
@@ -20,14 +20,14 @@ from . import armgen, deco
 from .profiles import compute_kinetic_arm_sizing, compute_kinetic_sizing
 from . import messages as M
 from .placement import CustomizePage
-from . import thumbs
+from . import errlog, thumbs
 from .paths import get_setting, save_setting
 from .glview import make_view, set_default_format
 from .placement import _Job, _Signals
 
 ASSETS = Path(__file__).resolve().parent / "assets" / "schemas"
 SCHEMA = {"phoenix_hand": "poignet", "unlimbited_arm": "bras"}
-SCALE_RANGE = {"phoenix_hand": (100.0, 160.0), "kinetic_hand": (50.0, 100.0), "kinetic_arm": (50.0, 100.0)}      # documented ranges: a value outside is refused, never corrected
+SCALE_RANGE = {"phoenix_hand": (100.0, 160.0), "kinetic_hand": (50.0, 100.0), "kinetic_arm": (50.0, 100.0)}      # documented ranges: a value outside is refused, never corrected (Kinetic Arm: per group of parts, see kinetic_arm.GROUP_RANGE)
 SCALABLE = ("phoenix_hand", "kinetic_hand", "kinetic_arm")            # uniform scale applied by CustomLab at export (the arm is scaled by its own SCAD)
 DECO_DEVICES = ("phoenix_hand", "unlimbited_arm", "kinetic_hand", "kinetic_arm")      # devices for which the customisation page works (arm parts are generated from the official SCAD)
 
@@ -42,7 +42,7 @@ T = {
         "disclaimer": "Aucune validation médicale ni d'impression : à faire contrôler par un bénévole e-NABLE compétent.",
         "scale": "Échelle", "usable": "Largeurs de poignet utilisables", "err": "Erreur",
         "kcheck": "Contrôle de cohérence Kinetic Arm (documenté NIH 3D) — ce n'est pas un dimensionnement",
-        "resid": "Longueur du moignon", "forearm": "Avant-bras valide", "pick": "Choisissez un appareil.", "hello": "Quel appareil voulez-vous adapter ?", "hello2": "Dimensionnez-le à partir des mesures du bénéficiaire, personnalisez-le, puis exportez les pièces pour l'impression.", "select": "Sélectionner", "scale_cb": "Appliquer l'échelle calculée à l'export (uniforme, vérifiée sur le SCAD officiel)", "scale_cb_kinetic": "Appliquer l'échelle du tableau du manuel à l'export (uniforme, toutes les pièces)", "nocustom": "Personnalisation disponible pour la Phoenix uniquement.", "nopart": "Choisissez d'abord la pièce à l'étape 3.", "export_dir": "Exporter la pièce (STL + fiche)…", "export_all": "Exporter toutes les pièces à cette échelle…", "m_help": "Aide", "m_scale": "Mettre à l'échelle : pas à pas (appareil choisi)…", "scale_btn": "ℹ️ Comment calculer l'échelle ? (pas à pas)", "photo_btn": "📷 Mesurer sur une photo (avec un mètre ou une carte bancaire à côté)…", "export_one": "Exporter tout, prêt pour Bambu…", "m_view": "Affichage", "m_adv": "Mode avancé (tous les réglages)", "m_sources": "Fichiers sources (SCAD / STL)…", "m_tuto": "Tuto : mesures, échelles et personnalisation…", "tuto_btn": "📖 Lire le tuto avant de commencer", "exported": "Exporté", "open_slicer": "Ouvrir dans le trancheur (Bambu Studio)", "m_file": "Fichier", "m_new": "Nouveau projet", "m_open": "Ouvrir un projet…", "m_save": "Enregistrer le projet…", "m_recent": "Projets récents", "m_prof": "Profils bénéficiaires…", "m_people": "Bénéficiaires", "proj_filter": "Projet CustomLab (*.customlab.json)", "saved": "Projet enregistré", "none_recent": "(aucun)", "load_problems": "Projet ouvert avec des éléments introuvables"},
+        "resid": "Longueur du moignon", "forearm": "Avant-bras valide", "pick": "Choisissez un appareil.", "hello": "Quel appareil voulez-vous adapter ?", "hello2": "Dimensionnez-le à partir des mesures du bénéficiaire, personnalisez-le, puis exportez les pièces pour l'impression.", "select": "Sélectionner", "scale_cb": "Appliquer l'échelle calculée à l'export (uniforme, vérifiée sur le SCAD officiel)", "scale_cb_kinetic": "Appliquer l'échelle du tableau du manuel à l'export (uniforme, toutes les pièces)", "nocustom": "Personnalisation disponible pour la Phoenix uniquement.", "nopart": "Choisissez d'abord la pièce à l'étape 3.", "export_dir": "Exporter la pièce (STL + fiche)…", "export_all": "Exporter toutes les pièces à cette échelle…", "m_help": "Aide", "m_scale": "Mettre à l'échelle : pas à pas (appareil choisi)…", "scale_btn": "ℹ️ Comment calculer l'échelle ? (pas à pas)", "photo_btn": "📷 Mesurer sur une photo (avec un mètre ou une carte bancaire à côté)…", "export_one": "Exporter tout, prêt pour Bambu…", "m_view": "Affichage", "m_adv": "Mode avancé (tous les réglages)", "m_sources": "Fichiers sources (SCAD / STL)…", "m_tuto": "Tuto : mesures, échelles et personnalisation…", "tuto_btn": "📖 Lire le tuto avant de commencer", "exported": "Exporté", "open_slicer": "Ouvrir dans le trancheur (Bambu Studio)", "m_file": "Fichier", "m_new": "Nouveau projet", "m_open": "Ouvrir un projet…", "m_save": "Enregistrer le projet…", "m_recent": "Projets récents", "m_prof": "Profils bénéficiaires…", "m_people": "Bénéficiaires", "proj_filter": "Projet CustomLab (*.customlab.json)", "saved": "Projet enregistré", "none_recent": "(aucun)", "load_problems": "Projet ouvert avec des éléments introuvables", "open_failed": "Impossible d'ouvrir ce projet (fichier illisible ou abîmé)", "m_logs": "Ouvrir le dossier des journaux d'erreurs"},
  "en": {"title": "e-NABLE CustomLab", "catalog": "1 · Device", "measures": "2 · Measures & sizing", "custom": "3 · Customisation", "result": "4 · 3D preview & export",
         "next": "Next →", "back": "← Back", "side": "Side", "part": "Part", "left": "Left", "right": "Right",
         "status_experimental": "EXPERIMENTAL", "status_unavailable": "UNAVAILABLE", "status_verified": "VERIFIED",
@@ -53,7 +53,7 @@ T = {
         "disclaimer": "No medical or print validation: have a qualified e-NABLE volunteer check it.",
         "scale": "Scale", "usable": "Usable wrist widths", "err": "Error",
         "kcheck": "Kinetic Arm consistency check (NIH 3D documented) — not a sizing method",
-        "resid": "Residual limb length", "forearm": "Sound forearm length", "pick": "Choose a device.", "hello": "Which device would you like to adapt?", "hello2": "Size it from the beneficiary's measurements, personalise it, then export the parts for printing.", "select": "Select", "scale_cb": "Apply the computed scale on export (uniform, checked against the official SCAD)", "scale_cb_kinetic": "Apply the manual's chart scale on export (uniform, all parts)", "nocustom": "Customisation is available for the Phoenix only.", "nopart": "Choose the part in step 3 first.", "export_dir": "Export the part (STL + sheet)…", "export_all": "Export all parts at this scale…", "m_help": "Help", "m_scale": "Scaling: step by step (chosen device)…", "scale_btn": "ℹ️ How is the scale computed? (step by step)", "photo_btn": "📷 Measure on a photo (with a ruler or bank card beside it)…", "export_one": "Export everything, ready for Bambu…", "m_view": "View", "m_adv": "Advanced mode (all settings)", "m_sources": "Source files (SCAD / STL)…", "m_tuto": "Tutorial: measuring, scaling and customising (in French)…", "tuto_btn": "📖 Read the tutorial before starting (in French)", "exported": "Exported", "open_slicer": "Open in the slicer (Bambu Studio)", "m_file": "File", "m_new": "New project", "m_open": "Open a project…", "m_save": "Save the project…", "m_recent": "Recent projects", "m_prof": "Beneficiary profiles…", "m_people": "Beneficiaries", "proj_filter": "CustomLab project (*.customlab.json)", "saved": "Project saved", "none_recent": "(none)", "load_problems": "Project opened with items not found"},
+        "resid": "Residual limb length", "forearm": "Sound forearm length", "pick": "Choose a device.", "hello": "Which device would you like to adapt?", "hello2": "Size it from the beneficiary's measurements, personalise it, then export the parts for printing.", "select": "Select", "scale_cb": "Apply the computed scale on export (uniform, checked against the official SCAD)", "scale_cb_kinetic": "Apply the manual's chart scale on export (uniform, all parts)", "nocustom": "Customisation is available for the Phoenix only.", "nopart": "Choose the part in step 3 first.", "export_dir": "Export the part (STL + sheet)…", "export_all": "Export all parts at this scale…", "m_help": "Help", "m_scale": "Scaling: step by step (chosen device)…", "scale_btn": "ℹ️ How is the scale computed? (step by step)", "photo_btn": "📷 Measure on a photo (with a ruler or bank card beside it)…", "export_one": "Export everything, ready for Bambu…", "m_view": "View", "m_adv": "Advanced mode (all settings)", "m_sources": "Source files (SCAD / STL)…", "m_tuto": "Tutorial: measuring, scaling and customising (in French)…", "tuto_btn": "📖 Read the tutorial before starting (in French)", "exported": "Exported", "open_slicer": "Open in the slicer (Bambu Studio)", "m_file": "File", "m_new": "New project", "m_open": "Open a project…", "m_save": "Save the project…", "m_recent": "Recent projects", "m_prof": "Beneficiary profiles…", "m_people": "Beneficiaries", "proj_filter": "CustomLab project (*.customlab.json)", "saved": "Project saved", "none_recent": "(none)", "load_problems": "Project opened with items not found", "open_failed": "This project cannot be opened (unreadable or damaged file)", "m_logs": "Open the error logs folder"},
 }
 BADGE = theme.STATUS
 
@@ -79,7 +79,7 @@ class MainWindow(QMainWindow):
     def __init__(self, lang="fr"):
         super().__init__()
         self.advanced = bool(get_setting("advanced_mode", False))
-        self.lang = lang; self.profiles = {p["id"]: p for p in list_profiles()}
+        self.lang = errlog.lang = lang; self.profiles = {p["id"]: p for p in list_profiles()}
         self.dev = None; self.scad = None; self.base_tris = None; self.out_tris = None; self.sizing = None
         self.resize(1320, 760)
         root = QWidget(); self.setCentralWidget(root); v = QVBoxLayout(root); v.setContentsMargins(18, 14, 18, 14); v.setSpacing(12)
@@ -120,6 +120,7 @@ class MainWindow(QMainWindow):
         mb = self.menuBar(); self.m_file = mb.addMenu(""); self.m_people = mb.addMenu(""); self.m_help = mb.addMenu(""); self.a_tuto = QAction(self); self.a_tuto.triggered.connect(self.show_tuto); self.m_help.addAction(self.a_tuto)
         self.a_scale = QAction(self); self.a_scale.triggered.connect(self.show_scale_guide); self.m_help.insertAction(self.a_tuto, self.a_scale)
         self.a_src = QAction(self); self.a_src.triggered.connect(self.show_sources); self.m_help.addAction(self.a_src)
+        self.a_logs = QAction(self); self.a_logs.triggered.connect(self.open_logs); self.m_help.addAction(self.a_logs)
         self.a_new = QAction(self); self.a_new.triggered.connect(self.new_project)
         self.a_open = QAction(self); self.a_open.triggered.connect(lambda: self.open_project_dialog())
         self.a_save = QAction(self); self.a_save.triggered.connect(lambda: self.save_project_dialog())
@@ -149,7 +150,7 @@ class MainWindow(QMainWindow):
 
     def state_dict(self):
         st = {"version": 1, "device": self.dev, "side": self.side.currentData(), "part": self.part.currentText(), "measures": self.values(),
-              "scale_on_export": self.scale_cb.isChecked(), "scale_override": self.scale_override, "step": self.stack.currentIndex()}
+              "scale_on_export": self.scale_cb.isChecked(), "scale_override": self.scale_override, "scale_override_group": self.scale_override_group, "step": self.stack.currentIndex()}
         if self.dev in DECO_DEVICES and self.custom.part_path: st["custom"] = self.custom.state_dict()
         if self.dev == "unlimbited_arm" and self.arm_gen: st["arm_gen"] = {"defines": self.arm_gen["defines"], "path": str(self.arm_gen["path"])}
         return st
@@ -162,7 +163,7 @@ class MainWindow(QMainWindow):
         j = self.part.findText(d.get("part", "")); self.part.setCurrentIndex(max(0, j))
         for k, v in d.get("measures", {}).items():
             if k in self.fields: self.fields[k].setValue(v)
-        self.scale_cb.setChecked(bool(d.get("scale_on_export", False))); self.scale_override = d.get("scale_override")
+        self.scale_cb.setChecked(bool(d.get("scale_on_export", False))); self.scale_override = d.get("scale_override"); self.scale_override_group = d.get("scale_override_group"); self._dropped_override = None
         self.sync_direct()
         self.update_mirror(reload=False)
         problems = self.custom.load_state(d["custom"]) if d.get("custom") else []
@@ -177,7 +178,13 @@ class MainWindow(QMainWindow):
         Path(path).write_text(json.dumps(self.state_dict(), indent=2, ensure_ascii=False), encoding="utf-8"); self._remember(path); return path
 
     def open_project(self, path):
-        problems = self.load_state(json.loads(Path(path).read_text(encoding="utf-8"))); self._remember(path)
+        try:
+            d = json.loads(Path(path).read_text(encoding="utf-8"))
+            if not isinstance(d, dict): raise ValueError("pas un projet CustomLab / not a CustomLab project")
+        except (OSError, ValueError) as e:                          # unreadable / damaged / not a project: tell the user, keep the window as it is
+            errlog.warning(f"Projet illisible {path} : {e!r}"); msg = f"{self.t('open_failed')} :\n{path}\n\n{e}"
+            QMessageBox.warning(self, self.t("m_open"), msg); return [msg]
+        problems = self.load_state(d); self._remember(path)
         if problems: QMessageBox.warning(self, self.t("m_open"), self.t("load_problems") + " :\n" + "\n".join(problems))
         return problems
 
@@ -191,7 +198,7 @@ class MainWindow(QMainWindow):
         if f: self.open_project(f)
 
     def new_project(self):
-        self.dev = None; self.sizing = None; self.scale_override = None; self.out_tris = None; self.deco_result = None; self.go(0)
+        self.dev = None; self.sizing = None; self.scale_override = None; self.scale_override_group = None; self._dropped_override = None; self.out_tris = None; self.deco_result = None; self.go(0)
 
     def show_sources(self):
         from .sources_dialog import SourcesDialog
@@ -205,6 +212,11 @@ class MainWindow(QMainWindow):
         if paths.get_setting("sources_prompt_done"): return
         paths.save_setting("sources_prompt_done", True)
         if any(status(pid)[0] is False for pid in ("kinetic_hand", "kinetic_arm", "unlimbited_arm")): self.show_sources()
+
+    def open_logs(self):
+        from PySide6.QtCore import QUrl
+        from PySide6.QtGui import QDesktopServices
+        errlog.log_dir().mkdir(parents=True, exist_ok=True); QDesktopServices.openUrl(QUrl.fromLocalFile(str(errlog.log_dir())))
 
     def show_tuto(self):
         from .tuto_dialog import TutoDialog
@@ -251,7 +263,7 @@ class MainWindow(QMainWindow):
         pm = QPixmap(str(path)); self.pics[pid].setPixmap(pm.scaled(self.pics[pid].width() or 300, 150, Qt.KeepAspectRatio, Qt.SmoothTransformation)); self.pics[pid].setText("") if not pm.isNull() else None
 
     def _direct_edited(self):
-        v = round(self.direct_spin.value(), 1); self.scale_override = v if v > 0 else None
+        v = round(self.direct_spin.value(), 1); self.scale_override = v if v > 0 else None; self.scale_override_group = None; self._dropped_override = None
         self.sync_direct(); self.recompute()
         if self.stack.currentIndex() == 3: self.show_result()
 
@@ -287,7 +299,7 @@ class MainWindow(QMainWindow):
         self.b_photo = QPushButton(); self.b_photo.clicked.connect(self.measure_on_photo); self.field_labels = {}; self.b_guide = QPushButton(); self.b_guide.clicked.connect(self.show_scale_guide)
         brow = QHBoxLayout(); brow.addWidget(self.b_photo); brow.addWidget(self.b_guide); brow.addStretch(1)
         lay.addLayout(top); lay.addLayout(brow); lay.addWidget(self.direct_row); lay.addWidget(self.help); lay.addWidget(self.live, 1)
-        self.side.currentIndexChanged.connect(self.recompute); self.part.currentIndexChanged.connect(self.recompute)
+        self.side.currentIndexChanged.connect(self._side_changed); self.part.currentIndexChanged.connect(self.recompute)
         self.stack.addWidget(w)
 
     def build_result(self):
@@ -297,7 +309,7 @@ class MainWindow(QMainWindow):
         self.b_scad.clicked.connect(self.import_scad)
         self.b_gen.clicked.connect(self.generate); self.b_exp.clicked.connect(self.export_stl)
         self.b_open = QPushButton(); self.b_open.setEnabled(False); self.b_open.clicked.connect(self.open_in_slicer); self.last_3mf = None; self.last_export_dir = None
-        self.scale_override = None
+        self.scale_override = None; self.scale_override_group = None; self._dropped_override = None      # group: Kinetic Arm, group of parts the forced size applies to
         self.scale_row = QWidget(); sr = QHBoxLayout(self.scale_row); sr.setContentsMargins(0, 0, 0, 0)
         self.scale_lab = QLabel(); self.scale_spin = QDoubleSpinBox(); self.scale_spin.setRange(1, 300); self.scale_spin.setDecimals(1); self.scale_spin.setSingleStep(2.5); self.scale_spin.setSuffix(" %")
         self.scale_reset = QPushButton(); self.scale_reset.setObjectName("chip")
@@ -310,11 +322,11 @@ class MainWindow(QMainWindow):
         self.view = make_view(); h.addLayout(left, 1); h.addWidget(self.view, 2); self.stack.addWidget(w)
 
     # --- logic
-    def toggle_lang(self): self.lang = "en" if self.lang == "fr" else "fr"; self.retranslate()
+    def toggle_lang(self): self.lang = errlog.lang = "en" if self.lang == "fr" else "fr"; self.retranslate()
 
     def retranslate(self):
         self.setWindowTitle(self.t("title")); self.langbtn.setText(self.t("lang"))
-        self.m_file.setTitle(self.t("m_file")); self.m_people.setTitle(self.t("m_people")); self.m_help.setTitle(self.t("m_help")); self.a_tuto.setText(self.t("m_tuto")); self.a_scale.setText(self.t("m_scale")); self.a_src.setText(self.t("m_sources")); self.b_tuto.setText(self.t("tuto_btn")); self.m_recent.setTitle(self.t("m_recent"))
+        self.m_file.setTitle(self.t("m_file")); self.m_people.setTitle(self.t("m_people")); self.m_help.setTitle(self.t("m_help")); self.a_tuto.setText(self.t("m_tuto")); self.a_scale.setText(self.t("m_scale")); self.a_src.setText(self.t("m_sources")); self.a_logs.setText(self.t("m_logs")); self.b_tuto.setText(self.t("tuto_btn")); self.m_recent.setTitle(self.t("m_recent"))
         self.a_new.setText(self.t("m_new")); self.a_open.setText(self.t("m_open")); self.a_save.setText(self.t("m_save")); self.a_prof.setText(self.t("m_prof")); self.m_view.setTitle(self.t("m_view")); self.a_adv.setText(self.t("m_adv")); self.refresh_recent_menu()
         self.hello.setText(f"<span style='font-size:20px;font-weight:700;color:{theme.NAVY}'>{self.t('hello')}</span><br><span style='color:{theme.MUTED}'>{self.t('hello2')}</span>")
         self.disc.setText(self.t("disclaimer")); self.bback.setText(self.t("back")); self.bnext.setText(self.t("next"))
@@ -329,8 +341,8 @@ class MainWindow(QMainWindow):
         self.b_scad.setText(self.t("import_scad")); self.scale_cb.setText(self.t("scale_cb"))
         self.b_open.setText(self.t("open_slicer")); self.b_gen.setText(self.t("generate")); self.b_exp.setText(self.t("export_dir") if self.dev in DECO_DEVICES else self.t("export")); self.b_expall.setText(self.t("export_all"))
         self.custom.retranslate(self.lang)
-        self.side.blockSignals(True); self.side.clear()
-        self.side.addItem(self.t("left"), "left"); self.side.addItem(self.t("right"), "right"); self.side.blockSignals(False)
+        self.side.blockSignals(True); cur = self.side.currentData(); self.side.clear()
+        self.side.addItem(self.t("left"), "left"); self.side.addItem(self.t("right"), "right"); self.side.setCurrentIndex(max(0, self.side.findData(cur))); self.side.blockSignals(False)      # the chosen side survives a change of language
         if self.dev: self.fill_measures()
         self.go(self.stack.currentIndex())
 
@@ -349,7 +361,8 @@ class MainWindow(QMainWindow):
         if i == 3: self.show_result()
 
     def select(self, pid):
-        if pid != self.dev: self.custom.clear_part(); self.arm_gen = None; self.scale_override = None
+        if pid != self.dev: self.custom.clear_part(); self.arm_gen = None; self.scale_override = None; self.scale_override_group = None; self._dropped_override = None
+        self.custom.side_filter = self.side.currentData() if pid == "phoenix_hand" else None
         self.custom.set_device(pid)
         self.dev = pid; self.scad = None; self.out_tris = None; self.deco_result = None
         self.fill_measures(); self.go(1)
@@ -364,6 +377,36 @@ class MainWindow(QMainWindow):
         else: self.custom.mirror_rule = None; flag = False
         if reload: self.custom.set_mirror(flag)
         else: self.custom.mirror_x = flag
+
+    def _side_changed(self, *_):
+        self.sync_library_side(); self.recompute()
+
+    def sync_library_side(self):
+        """Phoenix: the parts library, and so the full export, only lists the parts of the chosen side (8 of the 16 bundled parts)."""
+        want = self.side.currentData() if self.dev == "phoenix_hand" else None
+        if getattr(self.custom, "side_filter", None) == want: return
+        self.custom.side_filter = want
+        if self.dev == "phoenix_hand": self.custom.reload_library()
+
+    def part_side_mismatch(self):
+        """Phoenix: (side of the customised part, chosen side) when they differ, else None."""
+        if self.dev != "phoenix_hand" or not self.custom.part_path: return None
+        ps = library.side_of(self.custom.part_path); want = self.side.currentData()
+        return (ps, want) if ps and want and ps != want else None
+
+    def side_mismatch_text(self):
+        m = self.part_side_mismatch()
+        if m is None: return None
+        n = {"fr": {"left": "gauche", "right": "droite"}, "en": {"left": "left", "right": "right"}}[self.lang]
+        return (f"La pièce personnalisée est une pièce {n[m[0]]} alors que le côté choisi est {n[m[1]]} : choisissez la même pièce côté {n[m[1]]} à l'étape 3, ou changez le côté à l'étape 2." if self.lang == "fr"
+                else f"The customised part is a {n[m[0]]} part but the chosen side is {n[m[1]]}: choose the same part on the {n[m[1]]} side in step 3, or change the side in step 2.")
+
+    def _measure_changed(self, *_):
+        """A measure changed: a size forced by hand no longer matches the beneficiary. It is dropped (the size computed from the new
+        measures is used) and the measures page says so."""
+        if self.scale_override is not None:
+            self._dropped_override = self.scale_override; self.scale_override = None; self.scale_override_group = None; self.sync_direct()
+        self.recompute()
 
     def arm_part(self):
         """Per-file rules of the selected Kinetic Arm part, or None."""
@@ -388,7 +431,7 @@ class MainWindow(QMainWindow):
         specs = p.get("wizard_inputs") or p["inputs"]
         helps = []
         for s in specs:
-            sp = spin(val=s.get("default") or 0.0); sp.valueChanged.connect(self.recompute)
+            sp = spin(val=s.get("default") or 0.0); sp.valueChanged.connect(self._measure_changed)
             self.fields[s["id"]] = sp; self.form.addRow(s[f"label_{L}"], sp); self.field_labels[s["id"]] = s[f"label_{L}"]
             if s.get(f"help_{L}"): helps.append(f"<b>{s[f'label_{L}']}</b>: {s[f'help_{L}']}")
         self.help.setText("<br>".join(helps)); self.b_photo.setText(self.t("photo_btn")); self.b_guide.setText(self.t("scale_btn")); self.b_guide.setVisible(True); self.b_photo.setVisible(any(k.endswith("_mm") for k in self.fields)); self.update_schema(); self.recompute()
@@ -416,11 +459,66 @@ class MainWindow(QMainWindow):
 
     def scale_percent(self):
         """Scale CustomLab applies at export: the volunteer's own value if any (also without measures for the Phoenix and the Kinetic Hand),
-        else the computed one. None if the device is not scaled here or nothing gives a scale."""
+        else the computed one. None if the device is not scaled here or nothing gives a scale. Kinetic Arm: scale of the selected part's group."""
+        if self.dev == "kinetic_arm":
+            a = self.arm_part(); return None if a is None or a["prescaled"] else self.arm_group_scale(a["group"])
         if self.scale_override is not None and (self.dev in self.DIRECT or (self.dev in SCALABLE and self.computed_scale() is not None)): return self.scale_override
         return self.computed_scale()
 
-    def scale_range(self): return SCALE_RANGE.get(self.dev)
+    def arm_override_group(self):
+        """Kinetic Arm: group of parts ('lower'/'upper') the forced size applies to (the group of the part it was typed for), or None."""
+        if self.dev != "kinetic_arm" or self.scale_override is None: return None
+        if self.scale_override_group: return self.scale_override_group
+        a = self.arm_part(); return a["group"] if a is not None and not a["prescaled"] else None
+
+    def arm_group_scale(self, group):
+        """Kinetic Arm: scale applied on export to the scalable parts of `group`, the same for the single-part and the full export:
+        the forced size for its group, else the chart value (manual steps 3 and 5)."""
+        if self.sizing is None: return None
+        return self.scale_override if self.arm_override_group() == group else self.sizing.derived[f"{group}_scale"]
+
+    def scale_range(self, path=None):
+        """Documented range of the scale. Kinetic Arm: per group of parts (lower 50-100 %, upper 47.5-120 % from chart B2)."""
+        if self.dev == "kinetic_arm":
+            p = path or self.custom.part_path
+            if p: return kinetic_arm.GROUP_RANGE[kinetic_arm.part_group(Path(p).name)]
+        return SCALE_RANGE.get(self.dev)
+
+    def export_scale_percent(self):
+        """Scale the part really gets on export: 100 % when the option is unticked."""
+        return (self.scale_percent() if self.scale_cb.isChecked() else 100.0) if self.dev in SCALABLE else None
+
+    def kinetic_insert(self):
+        """Kinetic Hand: (insert, thickness mm, problem) for the size really exported. A forced size takes the insert of its own chart row;
+        a size that is not a chart row gives no insert (nothing is interpolated)."""
+        d = self.sizing.derived; v = self.export_scale_percent()
+        if v is None or abs(v - d["scale_percent"]) < 1e-6: return d["insert"], d["insert_mm"], None
+        try: ins, mm, _ = kinetic_hand.insert_for_scale(v, self.sizing.measurements["palm_mm"]); return ins, mm, None
+        except kinetic_hand.OutOfRange as e: return None, None, str(e)
+
+    def export_scale_html(self):
+        """Measures page: the scale(s) really applied on export, forced size included."""
+        if self.dev not in SCALABLE or self.sizing is None: return ""
+        fr = self.lang == "fr"; lab = "Échelle appliquée à l'export" if fr else "Scale applied on export"; forced = " (taille forcée à la main)" if fr else " (size forced by hand)"
+        if not self.scale_cb.isChecked(): txt = "aucune : taille d'origine (100 %)" if fr else "none: original size (100 %)"
+        elif self.dev == "kinetic_arm":
+            g = self.arm_override_group()
+            txt = " · ".join(f"{n} {self.arm_group_scale(k):g} %" + (forced if g == k else "") for k, n in (("lower", "composants inférieurs" if fr else "lower components"), ("upper", "composants supérieurs" if fr else "upper components")))
+        else:
+            v = self.scale_percent(); txt = f"{v:g} %" + (forced if (self.scale_override is not None and v == self.scale_override) else "")
+        return f"<p style='margin:2px 0;color:{theme.NAVY}'><b>{lab} :</b> {txt}</p>"
+
+    def arm_forced_warning(self):
+        """Kinetic Arm: a size forced by hand outside the tested range 50-100 % (accepted for the upper parts up to chart B2) gets the same warning as the chart."""
+        g = self.arm_override_group() if self.scale_cb.isChecked() else None; lo, hi = kinetic_arm.TESTED_SCALE
+        if not g or lo - 1e-9 <= self.scale_override <= hi + 1e-9: return None
+        return f"Forced {g} components scale {self.scale_override:g} % lies outside the tested range {lo:g}-{hi:g} %"
+
+    def dropped_override_text(self):
+        v = self._dropped_override
+        if v is None: return None
+        return (f"La taille forcée de {v:g} % a été annulée parce qu'une mesure a changé : l'échelle calculée d'après les nouvelles mesures est utilisée. Saisissez-la de nouveau à l'étape 4 si besoin." if self.lang == "fr"
+                else f"The size forced to {v:g} % was cancelled because a measure changed: the scale computed from the new measures is used. Enter it again in step 4 if needed.")
 
     def scale_out_of_range(self):
         r = self.scale_range(); v = self.scale_percent()
@@ -461,11 +559,11 @@ class MainWindow(QMainWindow):
 
     def describe(self, r, msg):
         """HTML for the measures page: key figures first, then the messages sorted by severity (block / check / info)."""
-        L = self.lang
+        L = self.lang; dropped = [(self.dropped_override_text(), M.CHECK)] if self._dropped_override is not None else []
         if r is None:
-            if msg: return M.messages_html([(msg, M.BLOCK)], L)
+            if msg: return M.messages_html([(msg, M.BLOCK)] + dropped, L)
             hint = "Saisissez les mesures ci-dessus (en mm) : l'échelle calculée et les pièces conseillées s'afficheront ici." if L == "fr" else "Enter the measures above (in mm): the computed scale and the suggested parts will appear here."
-            return f"<p style='color:{theme.MUTED};font-size:14px;margin:18px'>👆 {hint}</p>"
+            return f"<p style='color:{theme.MUTED};font-size:14px;margin:18px'>👆 {hint}</p>" + M.messages_html(dropped, L)
         head = ""
         if self.dev == "phoenix_hand":
             lo, hi = phoenix.wrist_range_mm(r.measurements["margin_mm"])
@@ -478,9 +576,11 @@ class MainWindow(QMainWindow):
                     f"<p style='margin:2px 0'>{'Fichiers pré-échelonnés' if fr else 'Pre-scaled files'} : {'paume et verrouillage' if fr else 'palm and locking mechanism'} {d['palm_scale']:g} % · {'tendeurs' if fr else 'tensioners'} {d['tensioner_scale']:g} % · "
                     f"{'bras gauche : symétrie de certaines pièces (manuel)' if (fr and r.side == 'left') else ('left arm: some parts mirrored (manual)' if r.side == 'left' else ('bras droit : fichiers tels quels' if fr else 'right arm: files as supplied'))}</p>")
         elif self.dev == "kinetic_hand":
-            d = r.derived; row = d["design"]
+            d = r.derived; row = d["design"]; ins, ins_mm, ins_err = self.kinetic_insert(); ev = self.export_scale_percent()
+            if ins_err: dropped.append((ins_err, M.CHECK))
+            ins_txt = (f"{ins} ({ins_mm} mm)" if ins else ("à déterminer" if L == "fr" else "to be determined")) + ((f" — {'pour la taille exportée de' if L == 'fr' else 'for the exported size of'} {ev:g} %") if abs(ev - d["scale_percent"]) > 1e-6 else "")
             head = (f"<h3 style='margin:2px 0'>{self.t('scale')} : {d['scale_percent']:g} % ({'uniforme, toutes les pièces' if L == 'fr' else 'uniform, all parts'})</h3>"
-                    f"<h3 style='margin:2px 0'>{'Insert souple' if L == 'fr' else 'Soft insert'} : {d['insert']} ({d['insert_mm']} mm)</h3>"
+                    f"<h3 style='margin:2px 0'>{'Insert souple' if L == 'fr' else 'Soft insert'} : {ins_txt}</h3>"
                     f"<p style='margin:2px 0'>{'Poignet mesuré' if L == 'fr' else 'Measured wrist'} {r.measurements['wrist_mm']:g} + 3 = {d['padded_wrist_mm']:g} mm · "
                     f"{'espace libre dans la paume' if L == 'fr' else 'free palm space'} {d['space_mm']:g} mm · {'main gauche : symétrie en X' if (L == 'fr' and r.side == 'left') else ('left hand: mirrored in X' if r.side == 'left' else ('main droite : fichiers tels quels' if L == 'fr' else 'right hand: files as supplied'))}</p>"
                     f"<p style='margin:2px 0;color:#555'>{'Modèle à cette échelle' if L == 'fr' else 'Design at this scale'} : " + " · ".join(f"{k.replace('_', ' ')} {row[k]:g}" for k in ("palm_length", "wrist_width", "max_palm_width", "overall_hand_length")) + " mm</p>")
@@ -493,8 +593,8 @@ class MainWindow(QMainWindow):
                 head += (f"<h3 style='margin:2px 0'>{'Échelle de la main' if L == 'fr' else 'Hand scale'} : {r.derived['HandPerc']} %</h3>"
                          f"<p style='margin:2px 0'>{'calculée par le SCAD : HandLen / 135 × 100 (la main, les doigts et les broches sont mis à cette échelle)' if L == 'fr' else 'computed by the SCAD: HandLen / 135 × 100 (hand, fingers and pins use this scale)'}</p>")
         badge = f"<p><span style='color:white;background:{BADGE.get(r.status, '#555')};padding:2px 6px'>{self.t('status_' + r.status)}</span></p>"
-        items = [(w, None) for w in r.warnings]
-        return head + badge + M.messages_html(items, L)
+        items = dropped + [(w, None) for w in r.warnings]
+        return head + self.export_scale_html() + badge + M.messages_html(items, L)
 
     def recompute(self, *_):
         if not self.dev: return
@@ -509,7 +609,8 @@ class MainWindow(QMainWindow):
             h.append(f"<p style='margin:2px 0'><b>{self.sizing.part} :</b> " + " · ".join(f"{k} = {x}" for k, x in self.sizing.measurements.items()) + f" — {'échelle de la main' if L == 'fr' else 'hand scale'} {self.sizing.derived['HandPerc']} %</p>")
         if self.sizing is not None and self.dev == "kinetic_hand":
             d = self.sizing.derived
-            h.append(f"<p style='margin:2px 0'><b>{self.t('scale')} :</b> {self.scale_percent():g} % — " + (("appliquée à l'export" if L == "fr" else "applied on export") if self.scale_cb.isChecked() else ("non appliquée : taille d'origine (100 %)" if L == "fr" else "not applied: original size (100 %)")) + f" · {'insert' if L == 'fr' else 'insert'} {d['insert']} ({d['insert_mm']} mm)</p>")
+            ins, ins_mm, _ = self.kinetic_insert()
+            h.append(f"<p style='margin:2px 0'><b>{self.t('scale')} :</b> {self.scale_percent():g} % — " + (("appliquée à l'export" if L == "fr" else "applied on export") if self.scale_cb.isChecked() else ("non appliquée : taille d'origine (100 %)" if L == "fr" else "not applied: original size (100 %)")) + f" · {'insert' if L == 'fr' else 'insert'} " + (f"{ins} ({ins_mm} mm)" if ins else ("à déterminer" if L == "fr" else "to be determined")) + "</p>")
         elif self.sizing is not None and self.dev == "kinetic_arm":
             d = self.sizing.derived; a = self.arm_part()
             if a is not None:
@@ -550,11 +651,13 @@ class MainWindow(QMainWindow):
         return "".join(h)
 
     def _scale_edited(self):
-        c = self.computed_scale(); v = round(self.scale_spin.value(), 1)
-        self.scale_override = None if (c is not None and abs(v - c) < 0.05) else v
+        c = self.computed_scale(); v = round(self.scale_spin.value(), 1); cur = self.scale_percent()
+        if cur is not None and abs(v - round(cur, 1)) < 0.05: return      # editingFinished without a change (focus out, Enter): keep the forced size (Kinetic Arm: the one of the other group)
+        self.scale_override = None if (c is not None and abs(v - c) < 0.05) else v; self._dropped_override = None
+        a = self.arm_part(); self.scale_override_group = a["group"] if (self.scale_override is not None and a is not None and not a["prescaled"]) else None      # Kinetic Arm: the forced size applies to this part's group only
         self.sync_direct(); self.show_result()
 
-    def _scale_reset(self): self.scale_override = None; self.sync_direct(); self.show_result()
+    def _scale_reset(self): self.scale_override = None; self.scale_override_group = None; self.sync_direct(); self.show_result()
 
     def refresh_scale_row(self):
         """Final size control: the motif is drawn at standard size (100 %) and follows the device scale on export."""
@@ -562,7 +665,7 @@ class MainWindow(QMainWindow):
         self.scale_row.setVisible(show); self.scale_note.setVisible(show)
         if not show: return
         r = self.scale_range(); v = self.scale_percent(); sp = self.custom.spec() if self.custom.part_path else None
-        self.scale_lab.setText("Taille finale de l'appareil :" if L == "fr" else "Final device size:"); self.scale_reset.setText(f"{'Valeur calculée' if L == 'fr' else 'Computed value'} ({c:g} %)" if c is not None else ""); self.scale_reset.setVisible(self.scale_override is not None and c is not None)
+        self.scale_lab.setText("Taille finale de l'appareil :" if L == "fr" else "Final device size:"); self.scale_reset.setText(f"{'Valeur calculée' if L == 'fr' else 'Computed value'} ({c:g} %)" if c is not None else ""); self.scale_reset.setVisible(c is not None and v is not None and abs(v - c) > 1e-9)
         self.scale_spin.blockSignals(True); self.scale_spin.setValue(v); self.scale_spin.blockSignals(False)
         motif = (f" {'Un motif de' if L == 'fr' else 'A motif of'} {sp.size_mm:g} mm {'devient' if L == 'fr' else 'becomes'} {sp.size_mm * v / 100:.1f} mm." if sp is not None and sp.kind != "camo" and not self.custom.is_empty() else "")
         rng = f"{r[0]:g}–{r[1]:g} %" if r else ""
@@ -580,6 +683,9 @@ class MainWindow(QMainWindow):
         base = []
         if self.sizing is not None: base += [(w, None) for w in self.sizing.warnings]
         elif self.live.toPlainText(): base.append((self.live.toPlainText(), M.BLOCK))
+        if self.side_mismatch_text(): base.append((self.side_mismatch_text(), M.BLOCK))
+        if self.dev == "kinetic_hand" and self.sizing is not None and self.kinetic_insert()[2]: base.append((self.kinetic_insert()[2], M.CHECK))
+        if self.arm_forced_warning(): base.append((self.arm_forced_warning(), M.CHECK))
         self._rgen += 1; self.out_tris = None; self.deco_result = None
         if not dd: self._render_result(base); return
         self.custom.ensure_fresh(); self.b_exp.setEnabled(False)
@@ -605,7 +711,7 @@ class MainWindow(QMainWindow):
             msgs = msgs + [("Échelle demandée mais non calculable : saisissez les mesures (étape 2), choisissez l'échelle directement (%) ou décochez l'option.", M.BLOCK)]
         if self.scale_out_of_range():
             r = self.scale_range(); msgs = msgs + [((f"Échelle {self.scale_percent():g} % hors de la plage documentée ({r[0]:g}–{r[1]:g} %) : refusée, aucune correction automatique." if self.lang == "fr" else f"Scale {self.scale_percent():g} % is outside the documented range ({r[0]:g}–{r[1]:g} %): refused, no automatic correction."), M.BLOCK)]
-        blocked = (self.dev in SCALABLE and self.scale_cb.isChecked() and self.scale_percent() is None) or self.scale_out_of_range()
+        blocked = (self.dev in SCALABLE and self.scale_cb.isChecked() and self.scale_percent() is None) or self.scale_out_of_range() or self.part_side_mismatch() is not None
         self.res.setHtml(self.result_html(msgs) if self.dev else ""); self.b_gen.setEnabled(self.sizing is not None); self.b_exp.setEnabled(self.out_tris is not None and not blocked)
         if self.out_tris is None:
             self.view.message = ""; self.view.set_triangles([])
@@ -656,7 +762,7 @@ class MainWindow(QMainWindow):
         defines = defines or getattr(self, "_gdefs", None)
         if gen != self._ggen or defines is None: return
         if res[0] == "err":
-            self.custom.set_gen_status(self.custom.t("gen_fail").format(err=str(res[1])[:200]), enabled=True); return
+            self.custom.set_gen_status(self.custom.t("gen_fail").format(err=M.localize(str(res[1]), self.lang)[1][:400]), enabled=True); return
         path, cached = res[1]; self.arm_gen = {"defines": defines, "path": path}
         self.custom.set_part(str(path)); self.refresh_arm_bar()
         a = getattr(self, "_pending_preset", None)
@@ -681,7 +787,7 @@ class MainWindow(QMainWindow):
             else:
                 self.view.message = "Fournir le .scad officiel / Provide the official .scad"; self.view.update(); return
         except Exception as e:
-            QMessageBox.warning(self, self.t("err"), str(e)); return
+            QMessageBox.warning(self, self.t("err"), M.localize(str(e), self.lang)[1]); return
         self.view.set_basis(None); self.view.set_triangles(self.out_tris); self.b_exp.setEnabled(True)
 
     def scale_for_part(self, path):
@@ -689,11 +795,11 @@ class MainWindow(QMainWindow):
         if self.dev not in SCALABLE or not self.scale_cb.isChecked(): return None, None
         if self.dev == "kinetic_arm":
             if self.sizing is None: return None, "Échelle demandée mais non calculable : saisissez les mesures (étape 2) ou décochez l'option."
-            a = kinetic_arm.part_info(Path(path).name, self.sizing.derived); v = None if a["prescaled"] else a["scale_percent"]
+            a = kinetic_arm.part_info(Path(path).name, self.sizing.derived); v = None if a["prescaled"] else self.arm_group_scale(a["group"])      # same rule as the single-part export (forced size included)
         else:
             v = self.scale_percent()
             if v is None: return None, "Échelle demandée mais non calculable : saisissez les mesures (étape 2), choisissez l'échelle directement (%) ou décochez l'option."
-        r = self.scale_range()
+        r = self.scale_range(path)
         if v is not None and r is not None and not (r[0] - 1e-9 <= v <= r[1] + 1e-9): return None, f"Échelle {v:g} % hors de la plage documentée ({r[0]:g}–{r[1]:g} %)."
         return v, None
 
@@ -708,7 +814,9 @@ class MainWindow(QMainWindow):
         from .export_all_dialog import ExportAllDialog
         c = self.custom
         if not c.items: return
-        ctx = {"mirror_for": (lambda p: bool(c.mirror_rule(p)) if c.mirror_rule else c.mirror_x), "scale_for": self.scale_for_part, "extra": self.export_extra}
+        if self.side_mismatch_text(): QMessageBox.warning(self, self.t("err"), self.side_mismatch_text()); return
+        ctx = {"mirror_for": (lambda p: bool(c.mirror_rule(p)) if c.mirror_rule else c.mirror_x), "scale_for": self.scale_for_part, "extra": self.export_extra,
+               "folder_suffix": {"left": "_gauche", "right": "_droite"}.get(self.side.currentData(), "")}
         s = c.spec(); dec = (c.part_path, s, list(c.zones)) if (c.part_path and not c._no_artwork(s)) else None
         pct = self.scale_percent() if self.scale_cb.isChecked() and self.dev != "kinetic_arm" else None
         txt = (f" ({pct:g} %)" if pct else (" (selon chaque pièce)" if self.lang == "fr" else " (per part)") if (self.scale_cb.isChecked() and self.dev == "kinetic_arm") else (" (échelle d'export non cochée : 100 %)" if self.lang == "fr" else " (export scale unticked: 100 %)"))
@@ -720,12 +828,15 @@ class MainWindow(QMainWindow):
         return {"device": self.dev, "arm_generation": arm, "sizing": {"measurements": self.sizing.measurements, "scad_defines": self.sizing.scad_defines, "status": self.sizing.status,
                             "warnings": self.sizing.warnings} if self.sizing else None,
                  "sizing_rule_confirmed_for_this_source": True,
+                 "scale_forced_by_volunteer": self.scale_override, **({"scale_forced_for_group": self.arm_override_group()} if self.dev == "kinetic_arm" else {}),
+                 **({"kinetic_insert_for_exported_scale": self.kinetic_insert()[0]} if (self.dev == "kinetic_hand" and self.sizing is not None) else {}),
                  "note": ("Échelle uniforme (HandPerc) vérifiée sur le SCAD officiel 1674320 ; la valeur de 43 mm vient de la page e-NABLE France (non mesurée). Essayer le gabarit Phoenix avant impression." if self.dev == "phoenix_hand" else "Kinetic Hand : échelle uniforme du tableau « Hand Scaling Chart » (manuel Free 3D Hands, annexe 1) ; main gauche = symétrie en X des fichiers RH100 %. Imprimer une paume d'essai avant tout assemblage. Aucun essayage ni impression : à valider par un bénévole compétent." if self.dev == "kinetic_hand" else "Kinetic Arm : sélection et échelles du manuel Free 3D Hands (étapes 3 à 8) ; fichiers pré-échelonnés non remis à l'échelle ; pièces RH symétrisées en X pour un bras gauche. Imprimer un bras d'essai avant le bras final. Aucun essayage ni impression : à valider par un bénévole compétent." if self.dev == "kinetic_arm" else "Pièce générée par le SCAD officiel UnLimbited Arm v2.1 aux mesures indiquées (A = BicepCircum, B = ForearmLen, C = HandLen). Aucun essayage ni impression : à valider par un bénévole e-NABLE compétent.")}
 
     def export_to(self, out_dir):
         """Phoenix export: STL + JSON sheet + attribution, outside the source folder."""
         self.wait_result()
         if self.deco_result is None or self.deco_result.errors: raise deco.DecoError("Nothing valid to export")
+        if self.side_mismatch_text(): raise deco.DecoError(self.side_mismatch_text())
         scale = None
         if self.dev in SCALABLE and self.scale_cb.isChecked():
             scale = self.scale_percent()
@@ -752,7 +863,7 @@ class MainWindow(QMainWindow):
             d = QFileDialog.getExistingDirectory(self, self.t("export_dir"))
             if not d: return
             try: out = self.export_to(d)
-            except Exception as e: QMessageBox.warning(self, self.t("err"), str(e)); return
+            except Exception as e: QMessageBox.warning(self, self.t("err"), M.localize(str(e), self.lang)[1]); return
             self.res.append(f"\n{self.t('exported')}: {out}" + (f"\n→ {self.last_3mf.name} (prêt pour Bambu Studio, filaments déjà assignés)" if self.last_3mf else "")); return
         f, _ = QFileDialog.getSaveFileName(self, "STL", f"{self.dev}.stl", "STL (*.stl)")
         if f and self.out_tris: write_stl(f, self.out_tris)
@@ -816,7 +927,7 @@ def main(argv=None):
     ap.add_argument("--colors", type=int, default=1); ap.add_argument("--mode", default="inlay", choices=["relief", "engrave", "inlay"])
     ap.add_argument("--res", type=float, default=0.15, choices=[0.25, 0.15, 0.10])
     a = ap.parse_args(sys.argv[1:] if argv is None else argv)
-    set_default_format(); app = QApplication(sys.argv[:1]); theme.apply(app); app.setWindowIcon(QIcon(str(theme.LOGO))); w = MainWindow(); w.show()
+    set_default_format(); app = QApplication(sys.argv[:1]); errlog.install(); theme.apply(app); app.setWindowIcon(QIcon(str(theme.LOGO))); w = MainWindow(); w.show()
     if os.environ.get("CUSTOMLAB_SYNC") != "1" and not os.environ.get("CUSTOMLAB_NO_FIRST_RUN"): w.first_run_check()
     if a.device == "unlimbited_arm": preset_arm(w, a)
     elif a.device == "kinetic_hand": preset_kinetic(w, a)

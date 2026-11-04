@@ -43,8 +43,11 @@ def render(scad_file, out_file, defines, timeout=600):
     binary = find_openscad()
     if not binary:
         raise OpenSCADUnavailable("OpenSCAD not found; install it and retry.")
-    r = subprocess.run(build_command(binary, scad_file, out_file, defines),
-                       capture_output=True, text=True, timeout=timeout)
+    try:   # OpenSCAD writes UTF-8: decode it as such, never with the Windows code page (cp1252 would garble or raise)
+        r = subprocess.run(build_command(binary, scad_file, out_file, defines),
+                           capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=timeout)
+    except subprocess.TimeoutExpired:
+        raise RuntimeError(f"OpenSCAD n'a pas terminé en {timeout:g} s : rendu abandonné. Réessayez avec une résolution plus grossière ou vérifiez le fichier SCAD.") from None
     if r.returncode != 0 or not Path(out_file).exists():
         raise RuntimeError(f"OpenSCAD failed: {r.stderr[-500:]}")
     return Path(out_file)

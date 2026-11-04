@@ -57,7 +57,7 @@ class FinalScale(unittest.TestCase):
     def test_override_is_used_and_out_of_range_is_refused_not_corrected(self):
         w = self.window(); self.assertEqual(w.scale_percent(), 70.0); self.assertFalse(w.scale_out_of_range())
         w.scale_override = 60.0; self.assertEqual(w.scale_percent(), 60.0); self.assertFalse(w.scale_out_of_range())
-        w.scale_override = 120.0; self.assertEqual(w.scale_percent(), 120.0); self.assertTrue(w.scale_out_of_range())          # not clamped to 100
+        w.scale_override = 125.0; self.assertEqual(w.scale_percent(), 125.0); self.assertTrue(w.scale_out_of_range())          # upper part: chart B2 goes up to 120 %, beyond is refused, not clamped
         w.scale_override = 40.0; self.assertTrue(w.scale_out_of_range())
         w.scale_cb.setChecked(False); self.assertFalse(w.scale_out_of_range())                                            # nothing applied -> nothing to refuse
 

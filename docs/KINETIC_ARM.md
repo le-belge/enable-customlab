@@ -8,7 +8,7 @@
 3. (échelle inférieure, type) → échelle des composants supérieurs (1 décimale).
 4. Longueur du moignon, même ligne → insert A–Q, arrondi vers le **haut**.
 5. (insert, type) → languette 1–4 et doublure néoprène 1–12.
-Paume et mécanisme de verrouillage : fichiers pré-échelonnés à l'échelle inférieure ; tendeurs : fichier le plus proche de l'échelle supérieure ; jamais mis à l'échelle dans le trancheur. Bras gauche : symétrie de certaines pièces. Contrôle documenté : moignon = 15–70 % de l'avant-bras valide. Échelle testée 50–100 %.
+Paume et mécanisme de verrouillage : fichiers pré-échelonnés à l'échelle inférieure ; tendeurs : fichier le plus proche de l'échelle supérieure ; jamais mis à l'échelle dans le trancheur. Bras gauche : symétrie de certaines pièces. Contrôle documenté : moignon = 15–70 % de l'avant-bras valide. Échelle testée 50–100 %. Plages acceptées à l'export : composants inférieurs 50–100 % (tableau B1) ; composants supérieurs 47,5–120 % (tableau B2), avec un avertissement hors de la plage testée 50–100 % (à faire confirmer par un bénévole avant impression réelle).
 
 ## Vérifications faites
 - Exemple de Jake du manuel reproduit : 70 %, type B, supérieur 70 %, insert D, languette 2, doublure 4.
