@@ -126,7 +126,8 @@ def read_3mf(path):
     those stored in other model files (Bambu Studio / production extension). Colours and materials are ignored."""
     import posixpath
     import xml.etree.ElementTree as ET
-    z = zipfile.ZipFile(path); names = set(z.namelist()); docs = {}
+    import io
+    z = zipfile.ZipFile(io.BytesIO(Path(path).read_bytes())); names = set(z.namelist()); docs = {}      # in memory: the user's file is never left open (locked on Windows)
 
     def doc(p):
         p = p.lstrip("/")
