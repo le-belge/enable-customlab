@@ -7,7 +7,7 @@ import numpy as np
 from PySide6.QtCore import QSize, QObject, QPointF, QRect, QRectF, QRunnable, Qt, QThreadPool, QTimer, Signal
 from PySide6.QtGui import QIcon, QColor, QImage, QPainter, QPen
 from PySide6.QtWidgets import (QStyledItemDelegate, QListView, QProgressBar, QScrollArea, QSlider, QFrame, QApplication, QCheckBox, QComboBox, QDoubleSpinBox, QSpinBox, QFileDialog, QFontComboBox, QFormLayout, QHBoxLayout,
-                               QLabel, QLineEdit, QPushButton, QTextEdit, QVBoxLayout, QWidget)
+                               QLabel, QLineEdit, QMessageBox, QPushButton, QTextEdit, QVBoxLayout, QWidget)
 
 from . import deco
 from . import cache, library, thumbs
@@ -19,14 +19,14 @@ SHOW_CAMO = False        # camouflage mode is built and tested (docs/CAMOUFLAGE.
 DRAFT_RES = 0.25         # mm: grid used while placing the motif (finer grids are only built for the result/export)
 
 TX = {
- "fr": {"part": "Ou choisir un autre fichier STL…", "lib": "— Choisir une pièce —", "none": "Aucune pièce chargée. La décoration s'applique à la taille d'origine du STL ; l'original n'est jamais modifié.",
+ "fr": {"part": "Ou ouvrir un autre fichier (STL ou 3MF)…", "pick_obj": "Ce fichier 3MF contient {n} objets : lequel personnaliser ?", "all_objs": "Tous (fusionnés en une pièce)", "from_3mf": "3MF converti en STL ({n} objet(s) dans le fichier) : {f}", "bad_3mf": "Lecture du 3MF impossible : {e}", "lib": "— Choisir une pièce —", "none": "Aucune pièce chargée. La décoration s'applique à la taille d'origine du STL ; l'original n'est jamais modifié.",
         "axis": "Vue (axe)", "mode": "Mode", "relief": "Relief", "engrave": "Gravure", "inlay": "Incrustation (affleurant)", "kind": "Contenu", "camo": "Camouflage (toute la pièce)", "camo_style": "Camouflage", "camo_seed": "Variante (n°)", "camo_scale": "Taille des taches", "camo_fr": "Français (style Centre Europe)", "camo_winter": "Hiver (neige)", "camo_all": "Appliquer le camouflage à plusieurs pièces…", "camo_base": "Couleur de la pièce conseillée : {c} (filament 1).", "text": "Texte", "svg": "SVG", "image": "Image (PNG/JPEG)",
         "txt": "Texte", "file": "Fichier…", "size": "Taille (mm)", "rot": "Rotation (°)", "u": "Position u (mm)", "v": "Position v (mm)", "depth": "Profondeur (mm)",
         "zone": "Tracer une zone interdite", "zone_ok": "Tracer une zone conseillée", "clear": "Effacer les zones", "zone_ref": "Enregistrer comme zones de référence (pour tous)", "zone_ref_done": "✓ Zones de référence enregistrées : {f}", "zone_ref_fail": "Enregistrement impossible : {e}", "force": "Valider malgré les zones interdites", "zones_from_ref": "Zones de référence de cette pièce chargées.", "bold": "Gras", "inv": "Inverser (image)", "white": "Blanc = vide", "thr": "Seuil image (0-255)", "ncol": "Couleurs (1 = une pièce)", "qual": "Qualité (finesse)",
         "warn": "EXPÉRIMENTAL : les zones fonctionnelles (articulations, trous de broches, passages de câbles, contact avec la peau) ne sont PAS détectées. Tracez en rouge les zones à protéger, en vert celles où placer le motif, et vérifiez le résultat.",
         "lic": "Licence de la source", "unknown": "Provenance/licence INCONNUES — ne pas redistribuer.", "nc": "usage NON commercial",
         "busy": "⏳ Calcul en cours…", "analysing": "⏳ Analyse de la pièce (choix de la face)…", "axis_auto": "Vue choisie automatiquement : {axis} (face la plus plane). Vous pouvez la changer dans « Vue (axe) ».", "gen": "Générer la pièce depuis le SCAD officiel", "gen_ready": "Pièce « {part} » à générer pour ces mesures", "gen_busy": "⏳ Génération de « {part} » par OpenSCAD en cours… (ne fermez pas la fenêtre)", "gen_done": "✓ Pièce « {part} » générée pour ces mesures", "gen_need": "Saisissez d'abord des mesures valides (étape 2).", "gen_noscad": "Fichier SCAD officiel (UnLimbited_Arm_v2.1.scad) introuvable. Il est dans la partie 2 sur 2 de l'archive Thingiverse : ajoutez-la avec le menu Aide > Fichiers sources.", "gen_fail": "Échec de la génération : {err}", "preparing": "⏳ Préparation de la pièce…", "hint": "Cliquez dans la vue pour placer le motif ; en mode zone, glissez un rectangle.", "spot_center": "Centre", "spot_top": "Haut", "spot_bottom": "Bas", "spot_left": "Gauche", "spot_right": "Droite", "spots": "Placer", "pad": "Déplacer / pivoter la vue", "thick": "Épaissir les traits fins (< 0,8 mm)", "model_dims": "Taille standard (100 %) : {x:.1f} × {y:.1f} × {z:.1f} mm", "model_final": "taille finale à {pct:g} % : {x:.1f} × {y:.1f} × {z:.1f} mm (le motif suit l'échelle)", "hint2": "Glisser : déplacer · molette : taille · Maj+molette : rotation · Ctrl+molette : zoom · clic droit : déplacer la vue · flèches : ajuster", "prot": "Marge auto autour des trous", "inl_off": "Dépassement de l'incrustation (mm)"},
- "en": {"part": "Or choose another STL file…", "lib": "— Choose a part —", "none": "No part loaded. Decoration is applied at the STL's original size; the original is never modified.",
+ "en": {"part": "Or open another file (STL or 3MF)…", "pick_obj": "This 3MF file holds {n} objects: which one to customise?", "all_objs": "All (merged into one part)", "from_3mf": "3MF converted to STL ({n} object(s) in the file): {f}", "bad_3mf": "Cannot read the 3MF: {e}", "lib": "— Choose a part —", "none": "No part loaded. Decoration is applied at the STL's original size; the original is never modified.",
         "axis": "View (axis)", "mode": "Mode", "relief": "Relief", "engrave": "Engrave", "inlay": "Inlay (flush)", "kind": "Content", "camo": "Camouflage (whole part)", "camo_style": "Camouflage", "camo_seed": "Variant (no.)", "camo_scale": "Patch size", "camo_fr": "French (Central Europe style)", "camo_winter": "Winter (snow)", "camo_all": "Apply the camouflage to several parts…", "camo_base": "Suggested part colour: {c} (filament 1).", "text": "Text", "svg": "SVG", "image": "Image (PNG/JPEG)",
         "txt": "Text", "file": "File…", "size": "Size (mm)", "rot": "Rotation (°)", "u": "Position u (mm)", "v": "Position v (mm)", "depth": "Depth (mm)",
         "zone": "Draw a forbidden zone", "zone_ok": "Draw an advised zone", "clear": "Clear zones", "zone_ref": "Save as reference zones (for everyone)", "zone_ref_done": "✓ Reference zones saved: {f}", "zone_ref_fail": "Could not save: {e}", "force": "Validate despite the forbidden zones", "zones_from_ref": "Reference zones of this part loaded.", "bold": "Bold", "inv": "Invert (image)", "white": "White = empty", "thr": "Image threshold (0-255)", "ncol": "Colours (1 = one piece)", "qual": "Quality (resolution)",
@@ -494,12 +494,30 @@ class CustomizePage(QWidget):
         if path: self.load_part(path)
 
     def choose_part(self):
-        f, _ = QFileDialog.getOpenFileName(self, "STL", "", "STL (*.stl)")
-        if f: self.load_part(f)
+        f, _ = QFileDialog.getOpenFileName(self, "", "", "STL / 3MF (*.stl *.3mf);;STL (*.stl);;3MF (*.3mf)")
+        if f: self.load_part(self.part_from_3mf(f) if f.lower().endswith(".3mf") else f)
+
+    def part_from_3mf(self, f, ask=True):
+        """A 3MF becomes an STL in the app's folder (the original is untouched); with several objects, the user picks one or all of them.
+        Returns the STL path, or None (cancelled / unreadable)."""
+        from .meshio import read_3mf, stl_from_3mf
+        root = Path(os.environ.get("CUSTOMLAB_HOME") or Path.home() / ".customlab") / "imported"
+        try:
+            objs = read_3mf(f); pick = None
+            if len(objs) > 1 and ask:
+                from PySide6.QtWidgets import QInputDialog
+                labels = [self.t("all_objs")] + [f"{i + 1}. {n} ({len(t)} triangles)" for i, (n, t) in enumerate(objs)]
+                choice, ok = QInputDialog.getItem(self, "3MF", self.t("pick_obj").format(n=len(objs)), labels, 0, False)
+                if not ok: return None
+                pick = None if choice == labels[0] else labels.index(choice) - 1
+            out, n = stl_from_3mf(f, root, pick); self.log.append(self.t("from_3mf").format(n=n, f=out)); return str(out)
+        except Exception as e:
+            QMessageBox.warning(self, "3MF", self.t("bad_3mf").format(e=e)); return None
 
     def load_part(self, path):
         """User-driven loading: the slow, cacheable steps (reading, face choice, height map) run in a worker so the window stays alive;
         set_part then finds them in the cache. Synchronous in tests."""
+        if not path: return
         if self.sync or not cache.enabled(): self.set_part(path); return
         mirror = bool(self.mirror_rule(path)) if self.mirror_rule else self.mirror_x; self._lgen += 1; gen = self._lgen
         self.busy.setText(self.t("preparing")); self.view.msg = self.t("preparing"); self.view.update(); self.lib.setEnabled(False); self.b_part.setEnabled(False)

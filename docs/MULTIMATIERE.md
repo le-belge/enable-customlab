@@ -18,3 +18,11 @@ Le mode d'emploi `APPAREIL_LISEZ-MOI_Bambu.txt` liste les filaments dans l'ordre
 
 Non fait : zones souples dans une même pièce (ex. bouts de doigts en TPU sur une paume en PLA), placement avec rotation,
 plusieurs plateaux dans un seul 3MF. **Aucune impression ni essayage** : souplesse, tenue et adhérence entre matières non vérifiées.
+
+## Ouvrir un 3MF, choix de l'export
+- Étape de personnalisation : « Ou ouvrir un autre fichier (STL ou 3MF)… ». Un 3MF est converti en STL dans `~/.customlab/imported`
+  (l'original n'est pas modifié) ; s'il contient plusieurs objets, l'appli demande lequel personnaliser (ou tous, fusionnés).
+  Les noms des objets sont lus comme Bambu Studio les enregistre ; couleurs et matières du 3MF ne sont pas reprises.
+  README.txt + LICENSE.txt trouvés à côté du 3MF sont recopiés pour que la licence reste reconnue.
+  Testé sur les 3MF écrits par CustomLab ; un 3MF enregistré par Bambu Studio lui-même n'a pas encore été essayé.
+- Mode Simple : deux boutons d'export, « Exporter tout, prêt pour Bambu… » et « Exporter seulement la pièce en cours… ».

@@ -5,6 +5,7 @@ Bambu Studio yet — see docs/FABRICATION_X1C.md.
 """
 import struct
 import zipfile
+from pathlib import Path
 
 Tri = tuple  # ((x,y,z),(x,y,z),(x,y,z))
 
@@ -99,3 +100,96 @@ def write_3mf(path, objects, colors):
         z.writestr("[Content_Types].xml", ct)
         z.writestr("_rels/.rels", rels)
         z.writestr("3D/3dmodel.model", model)
+
+
+# ---------------------------------------------------------------- 3MF reading
+_NS3 = "{http://schemas.microsoft.com/3dmanufacturing/core/2015/02}"
+_NSP = "{http://schemas.microsoft.com/3dmanufacturing/production/2015/06}"
+
+
+def _m3(s):
+    """3MF transform "m00 m01 m02 m10 m11 m12 m20 m21 m22 m30 m31 m32" (row vectors: p' = p . M + t) -> (3x3 rows, t)."""
+    v = [float(x) for x in s.split()] if s else [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0]
+    return [v[0:3], v[3:6], v[6:9]], v[9:12]
+
+
+def _compose(a, b):
+    """Transform a then b."""
+    (ra, ta), (rb, tb) = a, b
+    r = [[sum(ra[i][k] * rb[k][j] for k in range(3)) for j in range(3)] for i in range(3)]
+    t = [sum(ta[k] * rb[k][j] for k in range(3)) + tb[j] for j in range(3)]
+    return r, t
+
+
+def read_3mf(path):
+    """Objects placed on the build plate of a 3MF file: [(name, triangles)] in plate coordinates (mm). Follows components, including
+    those stored in other model files (Bambu Studio / production extension). Colours and materials are ignored."""
+    import posixpath
+    import xml.etree.ElementTree as ET
+    z = zipfile.ZipFile(path); names = set(z.namelist()); docs = {}
+
+    def doc(p):
+        p = p.lstrip("/")
+        if p not in docs:
+            if p not in names: raise ValueError(f"3MF : fichier interne absent ({p})")
+            docs[p] = ET.fromstring(z.read(p))
+        return docs[p]
+
+    root = "3D/3dmodel.model"
+    if "_rels/.rels" in names:
+        rel = ET.fromstring(z.read("_rels/.rels"))
+        for r in rel:
+            if r.get("Type", "").endswith("/3dmodel"): root = r.get("Target", root).lstrip("/"); break
+
+    def obj(p, oid):
+        for o in doc(p).iter(_NS3 + "object"):
+            if o.get("id") == oid: return o
+        raise ValueError(f"3MF : objet {oid} introuvable dans {p}")
+
+    def tris_of(p, oid, tr, depth=0):
+        if depth > 16: raise ValueError("3MF : composants imbriqués trop profondément")
+        o = obj(p, oid); out = []; mesh = o.find(_NS3 + "mesh")
+        if mesh is not None:
+            vs = [(float(v.get("x")), float(v.get("y")), float(v.get("z"))) for v in mesh.find(_NS3 + "vertices")]
+            (r, t) = tr; w = [tuple(sum(x[k] * r[k][j] for k in range(3)) + t[j] for j in range(3)) for x in vs]
+            for f in mesh.find(_NS3 + "triangles"): out.append((w[int(f.get("v1"))], w[int(f.get("v2"))], w[int(f.get("v3"))]))
+        comps = o.find(_NS3 + "components")
+        if comps is not None:
+            for c in comps:
+                sub = c.get(_NSP + "path") or p
+                out += tris_of(sub.lstrip("/"), c.get("objectid"), _compose(_m3(c.get("transform")), tr), depth + 1)
+        return out
+
+    bambu_names = {}                                                     # Bambu Studio keeps object names in Metadata/model_settings.config
+    if "Metadata/model_settings.config" in names:
+        try:
+            for o in ET.fromstring(z.read("Metadata/model_settings.config")).iter("object"):
+                n = next((m.get("value") for m in o.iter("metadata") if m.get("key") == "name"), None)
+                if n: bambu_names[o.get("id")] = n
+        except ET.ParseError: pass
+    objects = []
+    for k, it in enumerate(doc(root).iter(_NS3 + "item"), start=1):
+        oid = it.get("objectid"); o = obj(root, oid); t = tris_of(root, oid, _m3(it.get("transform")))
+        if t: objects.append((o.get("name") or bambu_names.get(oid) or f"objet {k}", t))
+    if not objects: raise ValueError("3MF : aucun objet sur le plateau")
+    return objects
+
+
+def stl_from_3mf(path, out_root, pick=None):
+    """Converts a 3MF to an STL the app can work on: out_root/<stem>_<hash>/<stem>.stl (the original is never touched). pick: index of the
+    object to keep, None = all objects merged. README.txt + LICENSE.txt found beside the 3MF (or in a parent folder) are copied so the
+    licence is still recognised. Returns (stl path, number of objects in the file)."""
+    import hashlib
+    import shutil
+    src = Path(path); objs = read_3mf(src); chosen = objs if pick is None else [objs[pick]]
+    tris = [t for _, ts in chosen for t in ts]
+    tag = hashlib.sha256(src.read_bytes()).hexdigest()[:10] + ("" if pick is None else f"_o{pick + 1}")
+    stem = src.stem if pick is None else f"{src.stem}_{chosen[0][0]}"
+    stem = "".join(ch if ch.isalnum() or ch in "-_ " else "_" for ch in stem)[:60]
+    folder = Path(out_root) / f"{stem}_{tag}"; folder.mkdir(parents=True, exist_ok=True); out = folder / f"{stem}.stl"
+    if not out.is_file(): write_stl(out, tris)
+    for d in [src.parent, *list(src.parents)[:6]]:
+        if (d / "README.txt").is_file() and (d / "LICENSE.txt").is_file():
+            for n in ("README.txt", "LICENSE.txt"): shutil.copyfile(d / n, folder / n)
+            break
+    return out, len(objs)
