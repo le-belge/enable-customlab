@@ -22,15 +22,15 @@ TX = {
  "fr": {"part": "Ou choisir un autre fichier STL…", "lib": "— Choisir une pièce —", "none": "Aucune pièce chargée. La décoration s'applique à la taille d'origine du STL ; l'original n'est jamais modifié.",
         "axis": "Vue (axe)", "mode": "Mode", "relief": "Relief", "engrave": "Gravure", "inlay": "Incrustation (affleurant)", "kind": "Contenu", "camo": "Camouflage (toute la pièce)", "camo_style": "Camouflage", "camo_seed": "Variante (n°)", "camo_scale": "Taille des taches", "camo_fr": "Français (style Centre Europe)", "camo_winter": "Hiver (neige)", "camo_all": "Appliquer le camouflage à plusieurs pièces…", "camo_base": "Couleur de la pièce conseillée : {c} (filament 1).", "text": "Texte", "svg": "SVG", "image": "Image (PNG/JPEG)",
         "txt": "Texte", "file": "Fichier…", "size": "Taille (mm)", "rot": "Rotation (°)", "u": "Position u (mm)", "v": "Position v (mm)", "depth": "Profondeur (mm)",
-        "zone": "Tracer une zone interdite", "clear": "Effacer les zones", "bold": "Gras", "inv": "Inverser (image)", "white": "Blanc = vide", "thr": "Seuil image (0-255)", "ncol": "Couleurs (1 = une pièce)", "qual": "Qualité (finesse)",
-        "warn": "EXPÉRIMENTAL : les zones fonctionnelles (articulations, trous de broches, passages de câbles, contact avec la peau) ne sont PAS détectées. Tracez les zones à protéger et faites relire le résultat par un bénévole compétent.",
+        "zone": "Tracer une zone interdite", "zone_ok": "Tracer une zone conseillée", "clear": "Effacer les zones", "zone_ref": "Enregistrer comme zones de référence (pour tous)", "zone_ref_done": "✓ Zones de référence enregistrées : {f}", "zone_ref_fail": "Enregistrement impossible : {e}", "force": "Valider malgré les zones interdites", "zones_from_ref": "Zones de référence de cette pièce chargées.", "bold": "Gras", "inv": "Inverser (image)", "white": "Blanc = vide", "thr": "Seuil image (0-255)", "ncol": "Couleurs (1 = une pièce)", "qual": "Qualité (finesse)",
+        "warn": "EXPÉRIMENTAL : les zones fonctionnelles (articulations, trous de broches, passages de câbles, contact avec la peau) ne sont PAS détectées. Tracez en rouge les zones à protéger, en vert celles où placer le motif, et vérifiez le résultat.",
         "lic": "Licence de la source", "unknown": "Provenance/licence INCONNUES — ne pas redistribuer.", "nc": "usage NON commercial",
         "busy": "⏳ Calcul en cours…", "analysing": "⏳ Analyse de la pièce (choix de la face)…", "axis_auto": "Vue choisie automatiquement : {axis} (face la plus plane). Vous pouvez la changer dans « Vue (axe) ».", "gen": "Générer la pièce depuis le SCAD officiel", "gen_ready": "Pièce « {part} » à générer pour ces mesures", "gen_busy": "⏳ Génération de « {part} » par OpenSCAD en cours… (ne fermez pas la fenêtre)", "gen_done": "✓ Pièce « {part} » générée pour ces mesures", "gen_need": "Saisissez d'abord des mesures valides (étape 2).", "gen_noscad": "Fichier SCAD officiel (UnLimbited_Arm_v2.1.scad) introuvable. Il est dans la partie 2 sur 2 de l'archive Thingiverse : ajoutez-la avec le menu Aide > Fichiers sources.", "gen_fail": "Échec de la génération : {err}", "preparing": "⏳ Préparation de la pièce…", "hint": "Cliquez dans la vue pour placer le motif ; en mode zone, glissez un rectangle.", "spot_center": "Centre", "spot_top": "Haut", "spot_bottom": "Bas", "spot_left": "Gauche", "spot_right": "Droite", "spots": "Placer", "pad": "Déplacer / pivoter la vue", "thick": "Épaissir les traits fins (< 0,8 mm)", "model_dims": "Taille standard (100 %) : {x:.1f} × {y:.1f} × {z:.1f} mm", "model_final": "taille finale à {pct:g} % : {x:.1f} × {y:.1f} × {z:.1f} mm (le motif suit l'échelle)", "hint2": "Glisser : déplacer · molette : taille · Maj+molette : rotation · Ctrl+molette : zoom · clic droit : déplacer la vue · flèches : ajuster", "prot": "Marge auto autour des trous", "inl_off": "Dépassement de l'incrustation (mm)"},
  "en": {"part": "Or choose another STL file…", "lib": "— Choose a part —", "none": "No part loaded. Decoration is applied at the STL's original size; the original is never modified.",
         "axis": "View (axis)", "mode": "Mode", "relief": "Relief", "engrave": "Engrave", "inlay": "Inlay (flush)", "kind": "Content", "camo": "Camouflage (whole part)", "camo_style": "Camouflage", "camo_seed": "Variant (no.)", "camo_scale": "Patch size", "camo_fr": "French (Central Europe style)", "camo_winter": "Winter (snow)", "camo_all": "Apply the camouflage to several parts…", "camo_base": "Suggested part colour: {c} (filament 1).", "text": "Text", "svg": "SVG", "image": "Image (PNG/JPEG)",
         "txt": "Text", "file": "File…", "size": "Size (mm)", "rot": "Rotation (°)", "u": "Position u (mm)", "v": "Position v (mm)", "depth": "Depth (mm)",
-        "zone": "Draw a forbidden zone", "clear": "Clear zones", "bold": "Bold", "inv": "Invert (image)", "white": "White = empty", "thr": "Image threshold (0-255)", "ncol": "Colours (1 = one piece)", "qual": "Quality (resolution)",
-        "warn": "EXPERIMENTAL: functional zones (joints, pin holes, cable channels, skin contact) are NOT detected. Draw the zones to protect and have a qualified volunteer review the result.",
+        "zone": "Draw a forbidden zone", "zone_ok": "Draw an advised zone", "clear": "Clear zones", "zone_ref": "Save as reference zones (for everyone)", "zone_ref_done": "✓ Reference zones saved: {f}", "zone_ref_fail": "Could not save: {e}", "force": "Validate despite the forbidden zones", "zones_from_ref": "Reference zones of this part loaded.", "bold": "Bold", "inv": "Invert (image)", "white": "White = empty", "thr": "Image threshold (0-255)", "ncol": "Colours (1 = one piece)", "qual": "Quality (resolution)",
+        "warn": "EXPERIMENTAL: functional zones (joints, pin holes, cable channels, skin contact) are NOT detected. Draw the zones to protect in red, where to place the motif in green, and check the result.",
         "lic": "Source licence", "unknown": "Provenance/licence UNKNOWN — do not redistribute.", "nc": "NON-commercial use",
         "busy": "⏳ Computing…", "analysing": "⏳ Analysing the part (choosing the face)…", "axis_auto": "View chosen automatically: {axis} (flattest face). You can change it in “View (axis)”.", "gen": "Generate the part from the official SCAD", "gen_ready": "Part “{part}” to generate for these measures", "gen_busy": "⏳ Generating “{part}” with OpenSCAD… (do not close the window)", "gen_done": "✓ Part “{part}” generated for these measures", "gen_need": "Enter valid measures first (step 2).", "gen_noscad": "Official SCAD file (UnLimbited_Arm_v2.1.scad) not found. It is in part 2 of 2 of the Thingiverse archive: add it with the menu Help > Source files.", "gen_fail": "Generation failed: {err}", "preparing": "⏳ Preparing the part…", "hint": "Click in the view to place the motif; in zone mode, drag a rectangle.", "spot_center": "Centre", "spot_top": "Top", "spot_bottom": "Bottom", "spot_left": "Left", "spot_right": "Right", "spots": "Place", "pad": "Move / turn the view", "thick": "Thicken thin strokes (< 0.8 mm)", "model_dims": "Standard size (100 %): {x:.1f} × {y:.1f} × {z:.1f} mm", "model_final": "final size at {pct:g} %: {x:.1f} × {y:.1f} × {z:.1f} mm (the motif follows the scale)", "hint2": "Drag: move · wheel: size · Shift+wheel: rotate · Ctrl+wheel: zoom · right-drag: pan · arrows: nudge", "prot": "Auto margin around holes", "inl_off": "Inlay protrusion (mm)"},
 }
@@ -177,9 +177,12 @@ class PlacementView(QWidget):
             ii, jj = np.nonzero(self.mask); a = self._to_px(self.hm.u0 + ii.min() * self.hm.res, self.hm.v0 + (jj.max() + 1) * self.hm.res)
             b = self._to_px(self.hm.u0 + (ii.max() + 1) * self.hm.res, self.hm.v0 + jj.min() * self.hm.res)
             p.setPen(QPen(QColor(0, 120, 215), 1, Qt.DashLine)); p.setBrush(Qt.NoBrush); p.drawRect(QRectF(a, b).normalized())   # motif frame
-        p.setPen(QPen(QColor("#e07000"), 2)); p.setBrush(QColor(224, 112, 0, 70))
-        for a, b, c, d in self.zones: p.drawRect(QRectF(self._to_px(a, b), self._to_px(c, d)).normalized())
-        if self._drag: p.drawRect(QRectF(self._drag[0], self._drag[1]).normalized())
+        for kind, pen, brush in (("advised", QColor("#1e8e3e"), QColor(30, 142, 62, 55)), ("forbidden", QColor("#c62828"), QColor(198, 40, 40, 70))):
+            p.setPen(QPen(pen, 2)); p.setBrush(brush)
+            for a, b, c, d in deco.zone_rects(self.zones, kind): p.drawRect(QRectF(self._to_px(a, b), self._to_px(c, d)).normalized())
+        if self._drag:
+            ok = self.zone_mode == "advised"; p.setPen(QPen(QColor("#1e8e3e" if ok else "#c62828"), 2, Qt.DashLine)); p.setBrush(Qt.NoBrush)
+            p.drawRect(QRectF(self._drag[0], self._drag[1]).normalized())
         p.restore()
         if self.hint:
             p.setPen(QColor("#334")); p.setBrush(QColor(255, 255, 255, 205)); box = QRectF(6, self.height() - 54, self.width() - 12, 50)
@@ -203,11 +206,33 @@ def zone_file_for(part_path, axis, mirror):
     return root / f"{h}_{axis}{'_m' if mirror else ''}.json"
 
 
-def zones_for(part_path, axis, mirror):
-    try:
-        f = zone_file_for(part_path, axis, mirror)
-        return [tuple(z) for z in json.loads(f.read_text(encoding="utf-8"))] if f.is_file() else []
-    except Exception: return []
+REF_ZONES = Path(__file__).resolve().parent / "zone_refs"     # reference zones shipped with the app (one file per official part, view, mirroring)
+
+
+def ref_zone_file_for(part_path, axis, mirror):
+    """Reference zones of a part: same key as the user's file (content hash of the STL), kept in customlab/zone_refs."""
+    return REF_ZONES / zone_file_for(part_path, axis, mirror).name
+
+
+def normalise_zones(raw):
+    """[{"kind", "rect"}] from a saved list; a bare [u0, v0, u1, v1] (older files) is a forbidden zone."""
+    out = []
+    for z in raw or []:
+        if isinstance(z, dict) and len(z.get("rect", [])) == 4: out.append({"kind": "advised" if z.get("kind") == "advised" else "forbidden", "rect": [float(x) for x in z["rect"]]})
+        elif isinstance(z, (list, tuple)) and len(z) == 4: out.append({"kind": "forbidden", "rect": [float(x) for x in z]})
+    return out
+
+
+def zones_for(part_path, axis, mirror, with_source=False):
+    """The user's zones of this part if any were saved, else the reference zones, else none. with_source: also "user" | "ref" | None."""
+    for src, f in (("user", lambda: zone_file_for(part_path, axis, mirror)), ("ref", lambda: ref_zone_file_for(part_path, axis, mirror))):
+        try:
+            g = f()
+            if g.is_file():
+                d = json.loads(g.read_text(encoding="utf-8")); z = normalise_zones(d.get("zones") if isinstance(d, dict) else d)
+                return (z, src) if with_source else z
+        except Exception: continue
+    return ([], None) if with_source else []
 
 
 class _Signals(QObject):
@@ -268,7 +293,7 @@ class CustomizePage(QWidget):
         self._lsig = _Signals(); self._lsig.done.connect(self._on_loaded); self._lgen = 0; self._lpool = QThreadPool(); self._lpool.setMaxThreadCount(1)
         self._sig = _Signals(); self._sig.done.connect(self._on_done); self._pool = QThreadPool(); self._pool.setMaxThreadCount(1)
         self._timer = QTimer(self); self._timer.setSingleShot(True); self._timer.setInterval(120); self._timer.timeout.connect(self._start_job)
-        self.part_path = None; self.tris = None; self.hm = None; self.zones = []; self.lic = None; self.svg_path = ""
+        self.part_path = None; self.tris = None; self.hm = None; self.zones = []; self.lic = None; self.svg_path = ""; self.zone_source = None
         self.mask = None; self.errors = []; self.warns = []; self.advanced = False; self.view_rot = 0; self._rots = {}; self.source_watertight = True
         h = QHBoxLayout(self); left = QVBoxLayout(); h.setContentsMargins(0, 0, 0, 0)
         panel = QWidget(); panel.setObjectName("page"); panel.setLayout(left); scroll = QScrollArea(); scroll.setWidget(panel); scroll.setWidgetResizable(True)      # the form may be taller than the screen
@@ -307,12 +332,20 @@ class CustomizePage(QWidget):
                      ("file", self.file_box), ("white", self.white), ("thick", self.thick), ("thr", self.thr), ("ncol", self.ncol), ("qual", self.qual), ("prot", self.prot), ("inv", self.inv), ("size", self.size_w), ("rot", self.rot_w), ("spots", self.spots), ("pad", self.pad), ("u", self.u), ("v", self.v), ("depth", self.depth), ("inl_off", self.inl_off)):
             lab = QLabel(); self.rows[k] = lab; self.form.addRow(lab, w)
         self.b_all = QPushButton(); self.b_all.clicked.connect(lambda: self.batch_requested.emit())
-        self.b_zone = QPushButton(); self.b_zone.setCheckable(True); self.b_zone.toggled.connect(self.set_zone_mode)
+        self.b_zone = QPushButton(); self.b_zone.setCheckable(True); self.b_zone.toggled.connect(lambda on: self.set_zone_mode(on, "forbidden"))
+        self.b_zone_ok = QPushButton(); self.b_zone_ok.setCheckable(True); self.b_zone_ok.toggled.connect(lambda on: self.set_zone_mode(on, "advised"))
         self.b_clear = QPushButton(); self.b_clear.clicked.connect(self.clear_zones)
+        self.b_ref = QPushButton(); self.b_ref.clicked.connect(self.save_ref_zones)
+        self.force = QCheckBox(); self.force.toggled.connect(self.refresh)
+        self.zone_rows = []
+        for pair in ((self.b_zone, self.b_zone_ok), (self.b_clear, self.b_ref)):
+            row = QWidget(); hl = QHBoxLayout(row); hl.setContentsMargins(0, 0, 0, 0); hl.setSpacing(4)
+            for b_ in pair: hl.addWidget(b_, 1)
+            self.zone_rows.append(row)
         self.warnbox = QLabel(); self.warnbox.setWordWrap(True); self.warnbox.setStyleSheet("color:#8a4b00;font-size:11px")
         self.log = QTextEdit(); self.log.setReadOnly(True); self.log.setMaximumHeight(110)
         self.busy = QLabel(""); self.busy.setStyleSheet("color:#0b314d")
-        for x in (self.gen_box, self.lib, self.b_part, self.prov, self.form, self.b_all, self.b_zone, self.b_clear, self.warnbox, self.busy, self.log):
+        for x in (self.gen_box, self.lib, self.b_part, self.prov, self.form, self.b_all, *self.zone_rows, self.force, self.warnbox, self.busy, self.log):
             (left.addLayout if hasattr(x, "addRow") else left.addWidget)(x)
         self.view = PlacementView(); right = QVBoxLayout(); h.addWidget(self.view, 1); self.side = QWidget(); self.side.setLayout(right); right.setContentsMargins(0, 0, 0, 0); self.side.setFixedWidth(230); h.addWidget(self.side); scroll.setMinimumWidth(615); scroll.setMaximumWidth(650)      # form | placement | 3D, the two views side by side with equal room
         self.model = make_view(); self.model.setMinimumSize(200, 160); self.dims = QLabel(); self.dims.setWordWrap(True); self.dims.setStyleSheet("font-size:11px;color:%s" % "#5b6b78")
@@ -343,7 +376,7 @@ class CustomizePage(QWidget):
             combo.setCurrentIndex(max(0, combo.findData(cur))); combo.blockSignals(False)
         self._update_engrave()
         for k, b in self.spot_btns.items(): b.setText(self.t("spot_" + k))
-        self.b_addm.setText(self.t("motif_add")); self.b_delm.setText(self.t("motif_del")); self._motif_names(); self.b_all.setText(self.t("camo_all")); self.b_zone.setText(self.t("zone")); self.b_clear.setText(self.t("clear")); self.warnbox.setText(self.t("warn"))
+        self.b_addm.setText(self.t("motif_add")); self.b_delm.setText(self.t("motif_del")); self._motif_names(); self.b_all.setText(self.t("camo_all")); self.b_zone.setText(self.t("zone")); self.b_zone_ok.setText(self.t("zone_ok")); self.b_ref.setText(self.t("zone_ref")); self.force.setText(self.t("force")); self.b_clear.setText(self.t("clear")); self.warnbox.setText(self.t("warn"))
         self.view.msg = self.t("none"); self.show_prov(); self.view.update(); self.update_model()
 
     # --- state
@@ -359,7 +392,8 @@ class CustomizePage(QWidget):
                              font_family=self.font.currentFont().family(), bold=self.bold.isChecked(), size_mm=self.size.value(),
                              rotation_deg=self._part_rot(self.rot.value()), u=self.u.value(), v=self.v.value(), depth_mm=self.depth.value(),
                              mode=self.mode.currentData() or "relief", axis=self.axis.currentData() or "+z", invert_image=self.inv.isChecked(), mirror_x=self.mirror_x, thicken_thin=self.thick.isChecked(), white_is_empty=self.white.isChecked(), threshold=int(self.thr.value()), ncolors=int(self.ncol.value()), res_mm=float(self.qual.currentData() or 0.15), protect_margin_mm=float(self.prot.value()), inlay_offset_mm=float(self.inl_off.value()),
-                             camo_style=self.camo_style.currentData() or "fr", camo_seed=int(self.camo_seed.value()), camo_scale_mm=float(self.camo_scale.value()))
+                             camo_style=self.camo_style.currentData() or "fr", camo_seed=int(self.camo_seed.value()), camo_scale_mm=float(self.camo_scale.value()),
+                             allow_forbidden_zones=self.force.isChecked())
 
     @staticmethod
     def _no_artwork(s): return all(deco.spec_empty(x) for x in (s,) + tuple(s.extra))
@@ -561,7 +595,7 @@ class CustomizePage(QWidget):
             self.axis_note = self.t("axis_auto").format(axis=ax)
         self.zones = []; self.hm = None
         self.source_watertight = self._is_watertight(); self._update_engrave()       # checked on loading (cached per mesh): original-file defects are shown at once
-        self.show_prov(); self.update_model(); self.rebuild_heightmap(center=True); self.load_zones()
+        self.show_prov(); self.update_model(); self.rebuild_heightmap(center=True); self.load_zones(); self.place_in_advised()
 
     @staticmethod
     def _axis_for(path, mirror, tris):
@@ -591,7 +625,7 @@ class CustomizePage(QWidget):
 
     def state_dict(self):
         sp = deco._spec_dict(self.spec()); sp.pop("extra", None); self.motif_list[self.cur] = self._cur_fields()
-        return {"part_path": self.part_path, "spec": sp, "zones": [list(z) for z in self.zones], "view_rot": self.view_rot, "motifs": [dict(m) for m in self.motif_list], "motif_cur": self.cur}
+        return {"part_path": self.part_path, "spec": sp, "zones": [dict(z) for z in self.zones], "view_rot": self.view_rot, "motifs": [dict(m) for m in self.motif_list], "motif_cur": self.cur}
 
     def load_state(self, d):
         """Restore a saved customisation. Returns a list of problems (missing files) instead of raising."""
@@ -624,7 +658,7 @@ class CustomizePage(QWidget):
             self.motif_list = [dict(m) for m in ms]; self.cur = min(max(0, int(d.get("motif_cur", 0))), len(ms) - 1); self._apply_fields(self.motif_list[self.cur])
         else: self.motif_list = [{}]; self.cur = 0
         self._motif_names()
-        if "zones" in d: self.zones = [tuple(z) for z in d["zones"]]; self.save_zones(); self.refresh()
+        if "zones" in d: self.zones = normalise_zones(d["zones"]); self.save_zones(); self.refresh()
         return problems
 
     def find_free_spot(self, step=None):
@@ -675,24 +709,46 @@ class CustomizePage(QWidget):
             finally: self._loading = False
             self.rebuild_heightmap(center=False)
 
-    def set_zone_mode(self, on): self.view.zone_mode = on
+    def set_zone_mode(self, on, kind="forbidden"):
+        """Drawing mode: "forbidden" (red) or "advised" (green); the two buttons are exclusive."""
+        other = self.b_zone_ok if kind == "forbidden" else self.b_zone
+        if on and other.isChecked(): other.blockSignals(True); other.setChecked(False); other.blockSignals(False)
+        self.view.zone_mode = kind if on else False
 
     def _zone_file(self):
         return zone_file_for(self.part_path, self.axis.currentData() or "+z", self.mirror_x) if self.part_path else None
 
     def load_zones(self):
-        try:
-            f = self._zone_file()
-            if f and f.is_file(): self.zones = [tuple(z) for z in json.loads(f.read_text(encoding="utf-8"))]; self.refresh()
-        except Exception: pass                                   # a missing/corrupt zone file never blocks the app
+        """The user's zones of this part, else its reference zones (a missing/corrupt file never blocks the app)."""
+        if not self.part_path: return
+        z, src = zones_for(self.part_path, self.axis.currentData() or "+z", self.mirror_x, with_source=True)
+        if src: self.zones = z; self.zone_source = src; self.refresh()
+        else: self.zone_source = None
 
     def save_zones(self):
         try:
             f = self._zone_file()
-            if f: f.parent.mkdir(parents=True, exist_ok=True); f.write_text(json.dumps(self.zones), encoding="utf-8")
+            if f: f.parent.mkdir(parents=True, exist_ok=True); f.write_text(json.dumps(self.zones), encoding="utf-8"); self.zone_source = "user"
         except Exception: pass
 
-    def add_zone(self, a, b, c, d): self.zones.append((a, b, c, d)); self.save_zones(); self.refresh()
+    def add_zone(self, a, b, c, d, kind=None):
+        kind = kind or (self.view.zone_mode if self.view.zone_mode in ("forbidden", "advised") else "forbidden")
+        self.zones.append({"kind": kind, "rect": [a, b, c, d]}); self.save_zones(); self.refresh()
+
+    def save_ref_zones(self):
+        """Current zones become the reference zones of this part (customlab/zone_refs, to commit with the app). Returns the file or None."""
+        if not self.part_path: return None
+        try:
+            f = ref_zone_file_for(self.part_path, self.axis.currentData() or "+z", self.mirror_x); f.parent.mkdir(parents=True, exist_ok=True)
+            f.write_text(json.dumps({"part": Path(self.part_path).name, "axis": self.axis.currentData() or "+z", "mirror": self.mirror_x, "zones": self.zones}, indent=1, ensure_ascii=False), encoding="utf-8")
+            self.log.append(self.t("zone_ref_done").format(f=f)); return f
+        except Exception as e: self.log.append(self.t("zone_ref_fail").format(e=e)); return None
+
+    def place_in_advised(self):
+        """Centre the motif in the largest advised zone, if the part has one. Returns True when moved."""
+        rects = deco.zone_rects(self.zones, "advised")
+        if not rects: return False
+        a, b, c, d = max(rects, key=lambda r: abs(r[2] - r[0]) * abs(r[3] - r[1])); self.place((a + c) / 2, (b + d) / 2); return True
 
     def clear_zones(self): self.zones = []; self.save_zones(); self.refresh()
 
@@ -732,7 +788,7 @@ class CustomizePage(QWidget):
         self.b_all.setVisible(camo)
         for k, w in (("axis", self.axis), ("qual", self.qual)):
             self.rows[k].setVisible(self.advanced); w.setVisible(self.advanced)
-        for w in (self.b_zone, self.b_clear, self.log): w.setVisible(self.advanced)
+        for w in (*self.zone_rows, self.b_zone, self.b_zone_ok, self.b_clear, self.b_ref, self.log): w.setVisible(self.advanced)
 
     def set_advanced(self, flag):
         """Simple mode hides the technical settings (they keep their defaults); advanced mode shows them all."""
@@ -771,7 +827,7 @@ class CustomizePage(QWidget):
         if self._no_artwork(s): r["warns"] = ["(aucune décoration)"]; return r
         try:
             r["mask"], r["layers"] = deco.render_spec_masks(s, hm, prot, zones)
-            r["errors"], w, info = deco.check_placement(hm, r["mask"], zones, s.depth_mm, s.mode, prot)
+            r["errors"], w, info = deco.check_placement(hm, r["mask"], zones, s.depth_mm, s.mode, prot, s.allow_forbidden_zones)
             r["warns"] = [x for x in w if not x.startswith("Zones fonctionnelles")]
             if s.mode == "engrave" and not watertight:
                 r["errors"].append("Gravure impossible : pièce non étanche (soustraction non fiable). Utiliser le relief.")

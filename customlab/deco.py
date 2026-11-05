@@ -76,6 +76,7 @@ class DecoSpec:
     white_is_empty: bool = True   # SVG/image: near-white fills (logos drawn on white) are NOT decorated
     extra: tuple = ()             # further motifs (DecoSpec), sharing mode/depth/axis/quality of this one: several texts / logos on the same part
     thicken_thin: bool = False    # SVG/image: strokes thinner than MIN_FEATURE_MM are widened (by THICKEN_MM each side) so the slicer keeps them
+    allow_forbidden_zones: bool = False   # the user confirmed the motif may cover drawn forbidden zones: refusal -> warning, recorded in the export sheet
 
 
 @dataclass
@@ -417,7 +418,7 @@ def camo_valid_mask(spec: DecoSpec, hm: "HeightMap", protected=None, zones=()):
     bad = ~cell_ok | (slope > SLOPE_WARN_DEG)
     if protected is not None: bad = bad | protected
     ii, jj = np.mgrid[0:cell_ok.shape[0], 0:cell_ok.shape[1]]; cu = hm.u0 + (ii + 0.5) * hm.res; cv = hm.v0 + (jj + 0.5) * hm.res
-    for a, b, c, d in zones: bad = bad | ((cu >= min(a, c)) & (cu <= max(a, c)) & (cv >= min(b, d)) & (cv <= max(b, d)))
+    bad = bad | _in_rects(cu, cv, zone_rects(zones))
     return cell_ok & ~_dilate_mm(bad, CAMO_EDGE_MM, hm.res)
 
 
@@ -496,12 +497,28 @@ def render_spec_masks(spec: DecoSpec, hm: "HeightMap", protected=None, zones=())
     return union, out
 
 
+def zone_rects(zones, kind="forbidden"):
+    """Rectangles (u0, v0, u1, v1) of the drawn zones of one kind. A zone is {"kind": "forbidden"|"advised", "rect": [4 floats]};
+    a bare 4-tuple (older files) is a forbidden zone."""
+    out = []
+    for z in zones or ():
+        if isinstance(z, dict):
+            if z.get("kind", "forbidden") == kind: out.append(tuple(float(x) for x in z["rect"]))
+        elif kind == "forbidden": out.append(tuple(float(x) for x in z))
+    return out
+
+
+def _in_rects(cu, cv, rects):
+    m = np.zeros(np.shape(cu), bool)
+    for a, b, c, d in rects: m |= (cu >= min(a, c)) & (cu <= max(a, c)) & (cv >= min(b, d)) & (cv <= max(b, d))
+    return m
+
+
 def _forbidden_cells(hm, protected, zones, shape):
     """Cells the motif must not enter (automatic protection, drawn zones): thickening never grows into them."""
     bad = np.zeros(shape, bool) if protected is None else protected.copy()
     ii, jj = np.mgrid[0:shape[0], 0:shape[1]]; cu = hm.u0 + (ii + 0.5) * hm.res; cv = hm.v0 + (jj + 0.5) * hm.res
-    for a, b, c, d in zones: bad |= (cu >= min(a, c)) & (cu <= max(a, c)) & (cv >= min(b, d)) & (cv <= max(b, d))
-    return bad
+    return bad | _in_rects(cu, cv, zone_rects(zones))
 
 
 def _render_one(spec: DecoSpec, hm: "HeightMap", protected=None, zones=()):
@@ -591,8 +608,9 @@ def thin_feature_report(mask, res, min_mm=MIN_FEATURE_MM):
     closed = _erode(_dilate(pad, k), k)[k:-k, k:-k] if k else mask
     gaps = float((closed & ~mask).sum()) / max(1, int(mask.sum()))
     return {"thin_fraction": thin, "narrow_gap_fraction": gaps, "min_mm": min_mm}
-def check_placement(hm: HeightMap, mask, zones=(), depth_mm=0.6, mode="relief", protected=None):
-    """Returns (errors, warnings, info). Errors forbid generation; nothing is ever clamped silently."""
+def check_placement(hm: HeightMap, mask, zones=(), depth_mm=0.6, mode="relief", protected=None, allow_forbidden=False):
+    """Returns (errors, warnings, info). Errors forbid generation; nothing is ever clamped silently. Drawn forbidden zones refuse the motif
+    unless allow_forbidden (the user confirmed): then each one hit is a warning. Advised zones: a warning when part of the motif lies outside them."""
     errors, warns = [], []
     nu, nv = hm.shape
     if mask is None or not mask.any(): return ["Décoration vide ou hors de la zone affichée."], [], {}
@@ -610,9 +628,15 @@ def check_placement(hm: HeightMap, mask, zones=(), depth_mm=0.6, mode="relief", 
     # exclusion zones (u0,v0,u1,v1) in mm
     ii, jj = np.nonzero(mask)
     cu = hm.u0 + (ii + 0.5) * hm.res; cv = hm.v0 + (jj + 0.5) * hm.res
-    for k, (a, b, c, d) in enumerate(zones):
+    forced = []
+    for k, (a, b, c, d) in enumerate(zone_rects(zones)):
         hit = int(((cu >= min(a, c)) & (cu <= max(a, c)) & (cv >= min(b, d)) & (cv <= max(b, d))).sum())
-        if hit: errors.append(f"La décoration entre dans la zone interdite n°{k + 1} ({hit} cellules).")
+        if hit and allow_forbidden: warns.append(f"ZONE INTERDITE n°{k + 1} recouverte ({hit} cellules) : validé quand même par l'utilisateur."); forced.append(k + 1)
+        elif hit: errors.append(f"La décoration entre dans la zone interdite n°{k + 1} ({hit} cellules). Déplacez le motif, ou cochez « Valider malgré les zones interdites ».")
+    adv = zone_rects(zones, "advised")
+    if adv:
+        out = int((~_in_rects(cu, cv, adv)).sum())
+        if out: warns.append(f"{out * 100 // max(1, len(cu))} % du motif est hors des zones conseillées.")
     H = np.where(corner_ok, hm.H, 0.0)
     gu, gv = np.gradient(H, hm.res)
     slope = np.degrees(np.arctan(np.hypot(gu, gv)))[:-1, :-1]
@@ -625,7 +649,7 @@ def check_placement(hm: HeightMap, mask, zones=(), depth_mm=0.6, mode="relief", 
     if tf["narrow_gap_fraction"] > 0.02:
         warns.append(f"Des fentes/espaces plus étroits que {MIN_FEATURE_MM:g} mm (≈ {tf['narrow_gap_fraction']*100:.0f} % de la surface du motif) risquent de se refermer à l'impression.")
     warns.append("Zones fonctionnelles non détectées automatiquement : vérifier à la main qu'aucune articulation, trou de broche, passage de câble ou surface de contact n'est touché.")
-    return errors, warns, {"cells": int(mask.sum()), "max_slope_deg": smax}
+    return errors, warns, {"cells": int(mask.sum()), "max_slope_deg": smax, "forbidden_zones_overridden": forced}
 
 
 # ---------------------------------------------------------------- solid
@@ -676,7 +700,7 @@ def apply_decoration(part_path, spec: DecoSpec, zones=(), hm: HeightMap = None, 
         raise DecoError(f"Dépassement de l'incrustation hors plage ({INLAY_OFFSET_RANGE[0]} à {INLAY_OFFSET_RANGE[1]} mm) : {spec.inlay_offset_mm} mm refusé.")
     protected = auto_protected_mask(hm, spec.protect_margin_mm) if spec.protect_margin_mm > 0 else None
     mask, color_layers = render_spec_masks(spec, hm, protected, zones)
-    errors, warns, info = check_placement(hm, mask, zones, spec.depth_mm, spec.mode, protected)
+    errors, warns, info = check_placement(hm, mask, zones, spec.depth_mm, spec.mode, protected, spec.allow_forbidden_zones)
     if spec.mode == "engrave" and not is_watertight(tris):
         errors.append("Gravure impossible : cette pièce n'est pas étanche/manifold (soustraction non fiable). Utiliser le relief.")
     if errors: return DecoResult(tris, [], errors, warns, info)
@@ -786,7 +810,8 @@ def export_result(result: DecoResult, part_path, spec: DecoSpec, out_dir, zones=
     lic = read_license_info(src)
     side = {"generated": datetime.now().isoformat(timespec="seconds"), "status": "EXPERIMENTAL",
             "disclaimer": DISCLAIMER, "source_file": str(src), "source_sha256": hashlib.sha256(src.read_bytes()).hexdigest(),
-            "source_license": lic, "spec": _spec_dict(spec), "exclusion_zones_mm": [list(z) for z in zones],
+            "source_license": lic, "spec": _spec_dict(spec), "exclusion_zones_mm": [list(z) for z in zone_rects(zones)], "advised_zones_mm": [list(z) for z in zone_rects(zones, "advised")],
+            "forbidden_zones_overridden": result.info.get("forbidden_zones_overridden") or [],
             "scale_percent_applied": scale_percent, "source_watertight": src_watertight, "triangles": len(tris), "warnings": result.warnings,
             "color_pieces": piece_files if result.layers else None, "bambu_3mf": bambu_name, "guide": guide_name,
             "how_to_use": ("Charger <1_base_unmodified> puis <2_incrustation> ensemble comme pièces d'un même objet ; l'incrustation doit être la DERNIÈRE pièce de la liste (hypothèse non vérifiée : la dernière pièce l'emporte dans le volume commun) et avoir un filament différent." if spec.mode == "inlay" else None), **(extra or {})}

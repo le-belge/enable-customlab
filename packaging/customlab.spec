@@ -6,7 +6,7 @@ from pathlib import Path
 
 ROOT = Path(SPECPATH).parent
 VERSION = "1.0.0-beta.2"
-datas = [(str(ROOT / "customlab" / "assets"), "customlab/assets"), (str(ROOT / "customlab" / "profiles"), "customlab/profiles"),
+datas = [(str(ROOT / "customlab" / "assets"), "customlab/assets"), (str(ROOT / "customlab" / "profiles"), "customlab/profiles"), (str(ROOT / "customlab" / "zone_refs"), "customlab/zone_refs"),
          (str(ROOT / "customlab" / "bundled_parts"), "customlab/bundled_parts"), (str(ROOT / "docs" / "TUTO_ECHELLES.md"), "docs"),
          (str(ROOT / "examples" / "star.svg"), "examples")]
 excludes = ["tkinter", "unittest", "PySide6.QtWebEngineCore", "PySide6.QtWebEngineWidgets", "PySide6.QtQml", "PySide6.QtQuick", "PySide6.Qt3DCore", "PySide6.QtMultimedia", "PySide6.QtPdf"]
