@@ -22,14 +22,14 @@ TX = {
  "fr": {"part": "Ou ouvrir un autre fichier (STL ou 3MF)…", "pick_obj": "Ce fichier 3MF contient {n} objets : lequel personnaliser ?", "all_objs": "Tous (fusionnés en une pièce)", "from_3mf": "3MF converti en STL ({n} objet(s) dans le fichier) : {f}", "bad_3mf": "Lecture du 3MF impossible : {e}", "lib": "— Choisir une pièce —", "none": "Aucune pièce chargée. La décoration s'applique à la taille d'origine du STL ; l'original n'est jamais modifié.",
         "axis": "Vue (axe)", "mode": "Mode", "relief": "Relief", "engrave": "Gravure", "inlay": "Incrustation (affleurant)", "kind": "Contenu", "camo": "Camouflage (toute la pièce)", "camo_style": "Camouflage", "camo_seed": "Variante (n°)", "camo_scale": "Taille des taches", "camo_fr": "Français (style Centre Europe)", "camo_winter": "Hiver (neige)", "camo_all": "Appliquer le camouflage à plusieurs pièces…", "camo_base": "Couleur de la pièce conseillée : {c} (filament 1).", "text": "Texte", "svg": "SVG", "image": "Image (PNG/JPEG)",
         "txt": "Texte", "file": "Fichier…", "size": "Taille (mm)", "rot": "Rotation (°)", "u": "Position u (mm)", "v": "Position v (mm)", "depth": "Profondeur (mm)",
-        "face": "Face à décorer", "f+z": "▲ Dessus", "f-z": "▼ Dessous", "f-y": "Devant", "f+y": "Derrière", "f-x": "◀ Gauche", "f+x": "Droite ▶", "flip": "⟲ Retourner", "flip_tip": "Passer à la face opposée (dessus ↔ dessous, devant ↔ derrière, gauche ↔ droite)", "face_tip": "Faces de la pièce telle qu'elle est dans le fichier (orientation d'impression, comme sur le plateau Bambu)", "zone": "Tracer une zone interdite", "zone_ok": "Tracer une zone conseillée", "clear": "Effacer les zones", "zone_ref": "Enregistrer comme zones de référence (pour tous)", "zone_ref_done": "✓ Zones de référence enregistrées : {f}", "zone_ref_fail": "Enregistrement impossible : {e}", "force": "Valider malgré les zones interdites", "zones_from_ref": "Zones de référence de cette pièce chargées.", "bold": "Gras", "inv": "Inverser (image)", "white": "Blanc = vide", "thr": "Seuil image (0-255)", "ncol": "Couleurs (1 = une pièce)", "qual": "Qualité (finesse)",
+        "face": "Face à décorer", "f+z": "▲ Dessus", "f-z": "▼ Dessous", "f-y": "Devant", "f+y": "Derrière", "f-x": "◀ Gauche", "f+x": "Droite ▶", "flip": "⟲ Retourner", "flip_tip": "Passer à la face opposée (dessus ↔ dessous, devant ↔ derrière, gauche ↔ droite)", "face_tip": "Faces de la pièce telle qu'elle est dans le fichier (orientation d'impression, comme sur le plateau Bambu)", "zone": "Tracer une zone interdite", "zone_ok": "Tracer une zone conseillée", "undo_zone": "↶ Annuler la dernière zone", "zone_hint": "Zone : glissez pour tracer ; attrapez un coin ou un bord d'une zone pour la redimensionner.", "clear": "Effacer les zones", "zone_ref": "Enregistrer comme zones de référence (pour tous)", "zone_ref_done": "✓ Zones de référence enregistrées : {f}", "zone_ref_fail": "Enregistrement impossible : {e}", "force": "Valider malgré les zones interdites", "zones_from_ref": "Zones de référence de cette pièce chargées.", "bold": "Gras", "inv": "Inverser (image)", "white": "Blanc = vide", "thr": "Seuil image (0-255)", "ncol": "Couleurs (1 = une pièce)", "qual": "Qualité (finesse)",
         "warn": "EXPÉRIMENTAL : les zones fonctionnelles (articulations, trous de broches, passages de câbles, contact avec la peau) ne sont PAS détectées. Tracez en rouge les zones à protéger, en vert celles où placer le motif, et vérifiez le résultat.",
         "lic": "Licence de la source", "unknown": "Provenance/licence INCONNUES — ne pas redistribuer.", "nc": "usage NON commercial",
         "busy": "⏳ Calcul en cours…", "analysing": "⏳ Analyse de la pièce (choix de la face)…", "axis_auto": "Vue choisie automatiquement : {axis} (face la plus plane). Vous pouvez la changer dans « Vue (axe) ».", "gen": "Générer la pièce depuis le SCAD officiel", "gen_ready": "Pièce « {part} » à générer pour ces mesures", "gen_busy": "⏳ Génération de « {part} » par OpenSCAD en cours… (ne fermez pas la fenêtre)", "gen_done": "✓ Pièce « {part} » générée pour ces mesures", "gen_need": "Saisissez d'abord des mesures valides (étape 2).", "gen_noscad": "Fichier SCAD officiel (UnLimbited_Arm_v2.1.scad) introuvable. Il est dans la partie 2 sur 2 de l'archive Thingiverse : ajoutez-la avec le menu Aide > Fichiers sources.", "gen_fail": "Échec de la génération : {err}", "preparing": "⏳ Préparation de la pièce…", "hint": "Cliquez dans la vue pour placer le motif ; en mode zone, glissez un rectangle.", "spot_center": "Centre", "spot_top": "Haut", "spot_bottom": "Bas", "spot_left": "Gauche", "spot_right": "Droite", "spots": "Placer", "pad": "Déplacer / pivoter la vue", "thick": "Épaissir les traits fins (< 0,8 mm)", "model_dims": "Taille standard (100 %) : {x:.1f} × {y:.1f} × {z:.1f} mm", "model_final": "taille finale à {pct:g} % : {x:.1f} × {y:.1f} × {z:.1f} mm (le motif suit l'échelle)", "hint2": "Glisser : déplacer · molette : taille · Maj+molette : rotation · Ctrl+molette : zoom · clic droit : déplacer la vue · flèches : ajuster", "prot": "Marge auto autour des trous", "inl_off": "Dépassement de l'incrustation (mm)"},
  "en": {"part": "Or open another file (STL or 3MF)…", "pick_obj": "This 3MF file holds {n} objects: which one to customise?", "all_objs": "All (merged into one part)", "from_3mf": "3MF converted to STL ({n} object(s) in the file): {f}", "bad_3mf": "Cannot read the 3MF: {e}", "lib": "— Choose a part —", "none": "No part loaded. Decoration is applied at the STL's original size; the original is never modified.",
         "axis": "View (axis)", "mode": "Mode", "relief": "Relief", "engrave": "Engrave", "inlay": "Inlay (flush)", "kind": "Content", "camo": "Camouflage (whole part)", "camo_style": "Camouflage", "camo_seed": "Variant (no.)", "camo_scale": "Patch size", "camo_fr": "French (Central Europe style)", "camo_winter": "Winter (snow)", "camo_all": "Apply the camouflage to several parts…", "camo_base": "Suggested part colour: {c} (filament 1).", "text": "Text", "svg": "SVG", "image": "Image (PNG/JPEG)",
         "txt": "Text", "file": "File…", "size": "Size (mm)", "rot": "Rotation (°)", "u": "Position u (mm)", "v": "Position v (mm)", "depth": "Depth (mm)",
-        "face": "Face to decorate", "f+z": "▲ Top", "f-z": "▼ Bottom", "f-y": "Front", "f+y": "Back", "f-x": "◀ Left", "f+x": "Right ▶", "flip": "⟲ Turn over", "flip_tip": "Go to the opposite face (top ↔ bottom, front ↔ back, left ↔ right)", "face_tip": "Faces of the part as it is in the file (print orientation, as on the Bambu plate)", "zone": "Draw a forbidden zone", "zone_ok": "Draw an advised zone", "clear": "Clear zones", "zone_ref": "Save as reference zones (for everyone)", "zone_ref_done": "✓ Reference zones saved: {f}", "zone_ref_fail": "Could not save: {e}", "force": "Validate despite the forbidden zones", "zones_from_ref": "Reference zones of this part loaded.", "bold": "Bold", "inv": "Invert (image)", "white": "White = empty", "thr": "Image threshold (0-255)", "ncol": "Colours (1 = one piece)", "qual": "Quality (resolution)",
+        "face": "Face to decorate", "f+z": "▲ Top", "f-z": "▼ Bottom", "f-y": "Front", "f+y": "Back", "f-x": "◀ Left", "f+x": "Right ▶", "flip": "⟲ Turn over", "flip_tip": "Go to the opposite face (top ↔ bottom, front ↔ back, left ↔ right)", "face_tip": "Faces of the part as it is in the file (print orientation, as on the Bambu plate)", "zone": "Draw a forbidden zone", "zone_ok": "Draw an advised zone", "undo_zone": "↶ Undo the last zone", "zone_hint": "Zone: drag to draw; grab a corner or an edge of a zone to resize it.", "clear": "Clear zones", "zone_ref": "Save as reference zones (for everyone)", "zone_ref_done": "✓ Reference zones saved: {f}", "zone_ref_fail": "Could not save: {e}", "force": "Validate despite the forbidden zones", "zones_from_ref": "Reference zones of this part loaded.", "bold": "Bold", "inv": "Invert (image)", "white": "White = empty", "thr": "Image threshold (0-255)", "ncol": "Colours (1 = one piece)", "qual": "Quality (resolution)",
         "warn": "EXPERIMENTAL: functional zones (joints, pin holes, cable channels, skin contact) are NOT detected. Draw the zones to protect in red, where to place the motif in green, and check the result.",
         "lic": "Source licence", "unknown": "Provenance/licence UNKNOWN — do not redistribute.", "nc": "NON-commercial use",
         "busy": "⏳ Computing…", "analysing": "⏳ Analysing the part (choosing the face)…", "axis_auto": "View chosen automatically: {axis} (flattest face). You can change it in “View (axis)”.", "gen": "Generate the part from the official SCAD", "gen_ready": "Part “{part}” to generate for these measures", "gen_busy": "⏳ Generating “{part}” with OpenSCAD… (do not close the window)", "gen_done": "✓ Part “{part}” generated for these measures", "gen_need": "Enter valid measures first (step 2).", "gen_noscad": "Official SCAD file (UnLimbited_Arm_v2.1.scad) not found. It is in part 2 of 2 of the Thingiverse archive: add it with the menu Help > Source files.", "gen_fail": "Generation failed: {err}", "preparing": "⏳ Preparing the part…", "hint": "Click in the view to place the motif; in zone mode, drag a rectangle.", "spot_center": "Centre", "spot_top": "Top", "spot_bottom": "Bottom", "spot_left": "Left", "spot_right": "Right", "spots": "Place", "pad": "Move / turn the view", "thick": "Thicken thin strokes (< 0.8 mm)", "model_dims": "Standard size (100 %): {x:.1f} × {y:.1f} × {z:.1f} mm", "model_final": "final size at {pct:g} %: {x:.1f} × {y:.1f} × {z:.1f} mm (the motif follows the scale)", "hint2": "Drag: move · wheel: size · Shift+wheel: rotate · Ctrl+wheel: zoom · right-drag: pan · arrows: nudge", "prot": "Auto margin around holes", "inl_off": "Inlay protrusion (mm)"},
@@ -50,12 +50,14 @@ class PlacementView(QWidget):
     rotated = Signal(float)               # degrees
     nudged = Signal(float, float)         # mm
     zone_drawn = Signal(float, float, float, float)
+    zone_changed = Signal(int, float, float, float, float)     # index of a drawn zone, its new rectangle (mm)
+    GRIP_PX = 8                                                  # a press this close to a zone's corner/edge resizes it (zone mode)
 
     def __init__(self):
         super().__init__(); self.setMinimumSize(380, 340); self.setFocusPolicy(Qt.StrongFocus); self.setMouseTracking(True)
         self.hm = None; self.mask = None; self.layers = None; self.zones = []; self.protected = None; self.center_uv = None
         self.zone_mode = False; self._drag = None; self.base = None; self.msg = ""; self.zoom = 1.0; self.pan = QPointF(0, 0)
-        self._moving = None; self._panning = None; self.hint = ""; self.rot = 0                      # rot = quarter turns (counter-clockwise) of the displayed part; 0 = as the axis gives it
+        self._moving = None; self._panning = None; self._resize = None; self.hint = ""; self.rot = 0                      # rot = quarter turns (counter-clockwise) of the displayed part; 0 = as the axis gives it
 
     def set_data(self, hm, mask, zones, layers=None, protected=None):
         if hm is not self.hm:
@@ -113,7 +115,10 @@ class PlacementView(QWidget):
         self.setFocus()
         pos = self._loc(e.position())
         if e.button() in (Qt.RightButton, Qt.MiddleButton): self._panning = pos; return
-        if self.zone_mode: self._drag = (pos, pos); return
+        if self.zone_mode:
+            hit = self.zone_grip(pos)
+            if hit: self._resize = hit; return                     # corner/edge of an existing zone: resize it
+            self._drag = (pos, pos); return
         u, v = self._to_uv(pos)
         if self.over_motif(pos) and self.center_uv: self._moving = (self.center_uv[0] - u, self.center_uv[1] - v)
         else: self._moving = (0.0, 0.0); self.clicked.emit(u, v)
@@ -122,6 +127,14 @@ class PlacementView(QWidget):
         pos = self._loc(e.position())
         if self._panning is not None:
             d = pos - self._panning; self._panning = pos; self.pan = QPointF(self.pan.x() + d.x(), self.pan.y() + d.y()); self.update(); return
+        if self._resize:
+            i, su, sv = self._resize; u, v = self._to_uv(pos); z = self.zones[i]; r = self._norm(z["rect"] if isinstance(z, dict) else z)
+            if su is not None: r[su] = u                               # su: 0 = u min, 2 = u max
+            if sv is not None: r[1 + 2 * sv] = v                       # sv: 0 = v min, 1 = v max
+            self.zones[i] = dict(z, rect=r) if isinstance(z, dict) else {"kind": "forbidden", "rect": r}; self.update(); return
+        if self.zone_mode and self.hm is not None and not (e.buttons() & Qt.LeftButton):
+            g = self.zone_grip(pos)
+            self.setCursor((Qt.SizeFDiagCursor if (g[1] is not None and g[2] is not None) else Qt.SizeHorCursor if g[1] is not None else Qt.SizeVerCursor) if g else Qt.CrossCursor)
         if self._drag: self._drag = (self._drag[0], pos); self.update(); return
         if self._moving is not None and self.hm is not None and (e.buttons() & Qt.LeftButton):
             u, v = self._to_uv(pos); self.moved.emit(u + self._moving[0], v + self._moving[1])
@@ -130,10 +143,43 @@ class PlacementView(QWidget):
 
     def mouseReleaseEvent(self, e):
         self._panning = None; self._moving = None
+        if self._resize:
+            i = self._resize[0]; self._resize = None; z = self.zones[i]; a, b, c, d = self._norm(z["rect"] if isinstance(z, dict) else z)
+            if abs(c - a) > 0.5 and abs(d - b) > 0.5: self.zone_changed.emit(i, a, b, c, d)
+            self.update(); return
         if self._drag:
             a, b = self._to_uv(self._drag[0]), self._to_uv(self._loc(e.position())); self._drag = None
             if abs(a[0] - b[0]) > 0.5 and abs(a[1] - b[1]) > 0.5: self.zone_drawn.emit(a[0], a[1], b[0], b[1])
             self.update()
+
+    @staticmethod
+    def _norm(r):
+        """[u_min, v_min, u_max, v_max] of a rectangle given by two opposite corners."""
+        a, b, c, d = (float(x) for x in r); return [min(a, c), min(b, d), max(a, c), max(b, d)]
+
+    def zone_grip(self, pos):
+        """(zone index, u side, v side) when pos is near a corner or an edge of a drawn zone (side: 0 = min, 2 = max for u; 0/1 for v min/max), else None."""
+        import math
+
+        def seg(p, a, b):
+            ax, ay, bx, by = a.x(), a.y(), b.x(), b.y(); dx, dy = bx - ax, by - ay; L = dx * dx + dy * dy
+            t = 0.0 if L == 0 else max(0.0, min(1.0, ((p.x() - ax) * dx + (p.y() - ay) * dy) / L))
+            return math.hypot(p.x() - ax - t * dx, p.y() - ay - t * dy)
+        best = None
+        for i in range(len(self.zones) - 1, -1, -1):                      # last drawn first (it is on top)
+            u0, v0, u1, v1 = self._norm(self.zones[i]["rect"] if isinstance(self.zones[i], dict) else self.zones[i])
+            corners = {(su, sv): self._to_px(u0 if su == 0 else u1, v0 if sv == 0 else v1) for su in (0, 2) for sv in (0, 1)}
+            for (su, sv), q in corners.items():
+                d = math.hypot(pos.x() - q.x(), pos.y() - q.y())
+                if d <= self.GRIP_PX and (best is None or d < best[0]): best = (d, i, su, sv)
+            if best: return best[1:]
+            edges = {(0, None): (corners[(0, 0)], corners[(0, 1)]), (2, None): (corners[(2, 0)], corners[(2, 1)]),
+                     (None, 0): (corners[(0, 0)], corners[(2, 0)]), (None, 1): (corners[(0, 1)], corners[(2, 1)])}
+            for (su, sv), (a, b) in edges.items():
+                d = seg(pos, a, b)
+                if d <= self.GRIP_PX and (best is None or d < best[0]): best = (d, i, su, sv)
+            if best: return best[1:]
+        return None
 
     def mouseDoubleClickEvent(self, e): self.zoom = 1.0; self.pan = QPointF(0, 0); self.update()
 
@@ -189,7 +235,7 @@ class PlacementView(QWidget):
             p.drawRect(box); p.drawText(box.adjusted(4, 0, -4, 0), Qt.AlignCenter | Qt.TextWordWrap, self.hint)
 
 
-ADVANCED_ROWS = {"axis", "thr", "qual", "prot", "inl_off", "camo_seed", "camo_scale"}   # technical rows, shown in advanced mode only
+ADVANCED_ROWS = {"axis", "thr", "qual", "inl_off", "camo_seed", "camo_scale"}   # technical rows, shown in advanced mode only
 
 
 def dspin(lo, hi, val, dec=1, suffix=""):
@@ -341,9 +387,10 @@ class CustomizePage(QWidget):
         self.b_zone_ok = QPushButton(); self.b_zone_ok.setCheckable(True); self.b_zone_ok.toggled.connect(lambda on: self.set_zone_mode(on, "advised"))
         self.b_clear = QPushButton(); self.b_clear.clicked.connect(self.clear_zones)
         self.b_ref = QPushButton(); self.b_ref.clicked.connect(self.save_ref_zones)
+        self.b_undo = QPushButton(); self.b_undo.clicked.connect(self.undo_zone)
         self.force = QCheckBox(); self.force.toggled.connect(self.refresh)
         self.zone_rows = []
-        for pair in ((self.b_zone, self.b_zone_ok), (self.b_clear, self.b_ref)):
+        for pair in ((self.b_zone, self.b_zone_ok), (self.b_undo, self.b_clear), (self.b_ref,)):
             row = QWidget(); hl = QHBoxLayout(row); hl.setContentsMargins(0, 0, 0, 0); hl.setSpacing(4)
             for b_ in pair: hl.addWidget(b_, 1)
             self.zone_rows.append(row)
@@ -362,7 +409,7 @@ class CustomizePage(QWidget):
         self.text.textChanged.connect(self.refresh); self.font.currentFontChanged.connect(self.refresh)
         self.bold.toggled.connect(self.refresh); self.inv.toggled.connect(self.refresh); self.white.toggled.connect(self.refresh); self.thick.toggled.connect(self.refresh); self.thr.valueChanged.connect(self.refresh); self.ncol.valueChanged.connect(self.refresh); self.prot.valueChanged.connect(self.refresh)
         self.axis.currentIndexChanged.connect(self.rebuild_heightmap); self.axis.currentIndexChanged.connect(lambda *_: self.update_model())
-        self.view.clicked.connect(self.place); self.view.moved.connect(self.place); self.view.zone_drawn.connect(self.add_zone)
+        self.view.clicked.connect(self.place); self.view.moved.connect(self.place); self.view.zone_drawn.connect(self.add_zone); self.view.zone_changed.connect(self.edit_zone)
         self.view.scaled.connect(self.scale_by); self.view.rotated.connect(self.rotate_by); self.view.nudged.connect(self.nudge)
         self.gen_btn.clicked.connect(lambda: self.generate_requested.emit())
         self.view.hint = self.t("hint2")
@@ -381,7 +428,7 @@ class CustomizePage(QWidget):
             combo.setCurrentIndex(max(0, combo.findData(cur))); combo.blockSignals(False)
         self._update_engrave()
         for k, b in self.spot_btns.items(): b.setText(self.t("spot_" + k))
-        self.b_addm.setText(self.t("motif_add")); self.b_delm.setText(self.t("motif_del")); self._motif_names(); self.b_all.setText(self.t("camo_all")); [b_.setText(self.t("f" + a_)) for a_, b_ in self.face_btns.items()]; self.b_flip.setText(self.t("flip")); self.b_flip.setToolTip(self.t("flip_tip")); self.face_box.setToolTip(self.t("face_tip")); self.b_zone.setText(self.t("zone")); self.b_zone_ok.setText(self.t("zone_ok")); self.b_ref.setText(self.t("zone_ref")); self.force.setText(self.t("force")); self.b_clear.setText(self.t("clear")); self.warnbox.setText(self.t("warn"))
+        self.b_addm.setText(self.t("motif_add")); self.b_delm.setText(self.t("motif_del")); self._motif_names(); self.b_all.setText(self.t("camo_all")); [b_.setText(self.t("f" + a_)) for a_, b_ in self.face_btns.items()]; self.b_flip.setText(self.t("flip")); self.b_flip.setToolTip(self.t("flip_tip")); self.face_box.setToolTip(self.t("face_tip")); self.b_zone.setText(self.t("zone")); self.b_zone_ok.setText(self.t("zone_ok")); self.b_ref.setText(self.t("zone_ref")); self.b_undo.setText(self.t("undo_zone")); self.force.setText(self.t("force")); self.b_clear.setText(self.t("clear")); self.warnbox.setText(self.t("warn"))
         self.view.msg = self.t("none"); self.show_prov(); self.view.update(); self.update_model()
 
     # --- state
@@ -753,7 +800,7 @@ class CustomizePage(QWidget):
         """Drawing mode: "forbidden" (red) or "advised" (green); the two buttons are exclusive."""
         other = self.b_zone_ok if kind == "forbidden" else self.b_zone
         if on and other.isChecked(): other.blockSignals(True); other.setChecked(False); other.blockSignals(False)
-        self.view.zone_mode = kind if on else False
+        self.view.zone_mode = kind if on else False; self.view.hint = self.t("zone_hint") if on else self.t("hint2"); self.view.update()
 
     def _zone_file(self):
         return zone_file_for(self.part_path, self.axis.currentData() or "+z", self.mirror_x) if self.part_path else None
@@ -774,6 +821,16 @@ class CustomizePage(QWidget):
     def add_zone(self, a, b, c, d, kind=None):
         kind = kind or (self.view.zone_mode if self.view.zone_mode in ("forbidden", "advised") else "forbidden")
         self.zones.append({"kind": kind, "rect": [a, b, c, d]}); self.save_zones(); self.refresh()
+
+    def undo_zone(self):
+        """Remove the zone drawn last."""
+        if self.zones: self.zones.pop(); self.save_zones(); self.refresh()
+
+    def edit_zone(self, i, a, b, c, d):
+        """A zone resized in the view (corner/edge dragged)."""
+        if 0 <= i < len(self.zones):
+            self.zones[i] = {"kind": self.zones[i].get("kind", "forbidden") if isinstance(self.zones[i], dict) else "forbidden", "rect": [a, b, c, d]}
+            self.save_zones(); self.refresh()
 
     def save_ref_zones(self):
         """Current zones become the reference zones of this part (customlab/zone_refs, to commit with the app). Returns the file or None."""
@@ -828,7 +885,7 @@ class CustomizePage(QWidget):
         self.b_all.setVisible(camo)
         for k, w in (("axis", self.axis), ("qual", self.qual)):
             self.rows[k].setVisible(self.advanced); w.setVisible(self.advanced)
-        for w in (*self.zone_rows, self.b_zone, self.b_zone_ok, self.b_clear, self.b_ref, self.log): w.setVisible(self.advanced)
+        for w in (*self.zone_rows, self.b_zone, self.b_zone_ok, self.b_undo, self.b_clear, self.b_ref, self.log): w.setVisible(self.advanced)
 
     def set_advanced(self, flag):
         """Simple mode hides the technical settings (they keep their defaults); advanced mode shows them all."""

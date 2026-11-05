@@ -17,8 +17,8 @@ class SimpleModeTest(unittest.TestCase):
         w = MainWindow(); c = w.custom
         self.assertFalse(w.advanced)
         c.kind.setCurrentIndex(0)
-        for k in ("axis", "qual", "prot", "thr"): self.assertTrue(c.rows[k].isHidden(), k)
-        for k in ("mode", "depth", "u", "v", "pad", "size", "rot"): self.assertFalse(c.rows[k].isHidden(), k)
+        for k in ("axis", "qual", "thr"): self.assertTrue(c.rows[k].isHidden(), k)
+        for k in ("mode", "depth", "u", "v", "pad", "size", "rot", "prot", "face"): self.assertFalse(c.rows[k].isHidden(), k)     # auto margin and face buttons in simple mode too
         self.assertTrue(c.log.isHidden() and c.b_zone.isHidden())
         self.assertFalse(c.rows["size"].isHidden())
         w.a_adv.setChecked(True)

@@ -78,3 +78,33 @@ class Page(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class EditZones(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from PySide6.QtWidgets import QApplication
+        cls.app = QApplication.instance() or QApplication([])
+
+    def test_resize_by_corner_and_edge_undo_and_margin_in_simple_mode(self):
+        from PySide6.QtCore import QPoint, Qt
+        from PySide6.QtTest import QTest
+        from customlab.gui import MainWindow
+        with tempfile.TemporaryDirectory() as d, mock.patch.dict(os.environ, {"CUSTOMLAB_HOME": d, "CUSTOMLAB_SYNC": "1"}):
+            part = Path(d) / "p.stl"; slab(part); w = MainWindow(); w.select("phoenix_hand"); w.load_stl(str(part)); c = w.custom
+            self.assertFalse(c.rows["prot"].isHidden()); self.assertFalse(c.prot.isHidden())                                  # auto margin reachable in simple mode
+            w.a_adv.setChecked(True); c.text.setText("A"); c.view.resize(500, 500); c.view.show(); self.app.processEvents()
+            c.add_zone(10, 10, 30, 30); c.add_zone(40, 40, 50, 50, kind="advised")
+            c.b_zone.setChecked(True); self.assertIn("redimensionner", c.view.hint)
+            px = lambda u, v: QPoint(round(c.view._to_px(u, v).x()), round(c.view._to_px(u, v).y()))
+            self.assertEqual(c.view.zone_grip(c.view._to_px(30, 30))[0], 0)                                                  # corner of zone 1
+            QTest.mousePress(c.view, Qt.LeftButton, Qt.NoModifier, px(30, 30)); QTest.mouseMove(c.view, px(35, 36))
+            QTest.mouseRelease(c.view, Qt.LeftButton, Qt.NoModifier, px(35, 36))
+            r = c.zones[0]["rect"]; self.assertAlmostEqual(r[2], 35, delta=0.6); self.assertAlmostEqual(r[3], 36, delta=0.6); self.assertAlmostEqual(r[0], 10, delta=0.01)
+            self.assertEqual(len(c.zones), 2)                                                                                  # resized, not a new zone
+            QTest.mousePress(c.view, Qt.LeftButton, Qt.NoModifier, px(10, 20)); QTest.mouseMove(c.view, px(5, 20))  # left edge: only u min moves
+            QTest.mouseRelease(c.view, Qt.LeftButton, Qt.NoModifier, px(5, 20))
+            r = c.zones[0]["rect"]; self.assertAlmostEqual(r[0], 5, delta=0.6); self.assertAlmostEqual(r[1], 10, delta=0.01); self.assertEqual(c.zones[1]["kind"], "advised")
+            from customlab import placement
+            self.assertEqual(placement.zones_for(part, c.axis.currentData(), False)[0]["rect"], r)                             # saved
+            c.undo_zone(); self.assertEqual([z["kind"] for z in c.zones], ["forbidden"]); c.undo_zone(); c.undo_zone(); self.assertEqual(c.zones, [])
