@@ -6,7 +6,7 @@ from pathlib import Path
 import numpy as np
 from PySide6.QtCore import QSize, QObject, QPointF, QRect, QRectF, QRunnable, Qt, QThreadPool, QTimer, Signal
 from PySide6.QtGui import QIcon, QColor, QImage, QPainter, QPen
-from PySide6.QtWidgets import (QStyledItemDelegate, QListView, QProgressBar, QScrollArea, QSlider, QFrame, QApplication, QCheckBox, QComboBox, QDoubleSpinBox, QSpinBox, QFileDialog, QFontComboBox, QFormLayout, QHBoxLayout,
+from PySide6.QtWidgets import (QStyledItemDelegate, QListView, QProgressBar, QScrollArea, QSlider, QFrame, QApplication, QCheckBox, QComboBox, QDoubleSpinBox, QSpinBox, QFileDialog, QFontComboBox, QFormLayout, QGridLayout, QHBoxLayout,
                                QLabel, QLineEdit, QMessageBox, QPushButton, QTextEdit, QVBoxLayout, QWidget)
 
 from . import deco
@@ -22,14 +22,14 @@ TX = {
  "fr": {"part": "Ou ouvrir un autre fichier (STL ou 3MF)…", "pick_obj": "Ce fichier 3MF contient {n} objets : lequel personnaliser ?", "all_objs": "Tous (fusionnés en une pièce)", "from_3mf": "3MF converti en STL ({n} objet(s) dans le fichier) : {f}", "bad_3mf": "Lecture du 3MF impossible : {e}", "lib": "— Choisir une pièce —", "none": "Aucune pièce chargée. La décoration s'applique à la taille d'origine du STL ; l'original n'est jamais modifié.",
         "axis": "Vue (axe)", "mode": "Mode", "relief": "Relief", "engrave": "Gravure", "inlay": "Incrustation (affleurant)", "kind": "Contenu", "camo": "Camouflage (toute la pièce)", "camo_style": "Camouflage", "camo_seed": "Variante (n°)", "camo_scale": "Taille des taches", "camo_fr": "Français (style Centre Europe)", "camo_winter": "Hiver (neige)", "camo_all": "Appliquer le camouflage à plusieurs pièces…", "camo_base": "Couleur de la pièce conseillée : {c} (filament 1).", "text": "Texte", "svg": "SVG", "image": "Image (PNG/JPEG)",
         "txt": "Texte", "file": "Fichier…", "size": "Taille (mm)", "rot": "Rotation (°)", "u": "Position u (mm)", "v": "Position v (mm)", "depth": "Profondeur (mm)",
-        "zone": "Tracer une zone interdite", "zone_ok": "Tracer une zone conseillée", "clear": "Effacer les zones", "zone_ref": "Enregistrer comme zones de référence (pour tous)", "zone_ref_done": "✓ Zones de référence enregistrées : {f}", "zone_ref_fail": "Enregistrement impossible : {e}", "force": "Valider malgré les zones interdites", "zones_from_ref": "Zones de référence de cette pièce chargées.", "bold": "Gras", "inv": "Inverser (image)", "white": "Blanc = vide", "thr": "Seuil image (0-255)", "ncol": "Couleurs (1 = une pièce)", "qual": "Qualité (finesse)",
+        "face": "Face à décorer", "f+z": "▲ Dessus", "f-z": "▼ Dessous", "f-y": "Devant", "f+y": "Derrière", "f-x": "◀ Gauche", "f+x": "Droite ▶", "flip": "⟲ Retourner", "flip_tip": "Passer à la face opposée (dessus ↔ dessous, devant ↔ derrière, gauche ↔ droite)", "face_tip": "Faces de la pièce telle qu'elle est dans le fichier (orientation d'impression, comme sur le plateau Bambu)", "zone": "Tracer une zone interdite", "zone_ok": "Tracer une zone conseillée", "clear": "Effacer les zones", "zone_ref": "Enregistrer comme zones de référence (pour tous)", "zone_ref_done": "✓ Zones de référence enregistrées : {f}", "zone_ref_fail": "Enregistrement impossible : {e}", "force": "Valider malgré les zones interdites", "zones_from_ref": "Zones de référence de cette pièce chargées.", "bold": "Gras", "inv": "Inverser (image)", "white": "Blanc = vide", "thr": "Seuil image (0-255)", "ncol": "Couleurs (1 = une pièce)", "qual": "Qualité (finesse)",
         "warn": "EXPÉRIMENTAL : les zones fonctionnelles (articulations, trous de broches, passages de câbles, contact avec la peau) ne sont PAS détectées. Tracez en rouge les zones à protéger, en vert celles où placer le motif, et vérifiez le résultat.",
         "lic": "Licence de la source", "unknown": "Provenance/licence INCONNUES — ne pas redistribuer.", "nc": "usage NON commercial",
         "busy": "⏳ Calcul en cours…", "analysing": "⏳ Analyse de la pièce (choix de la face)…", "axis_auto": "Vue choisie automatiquement : {axis} (face la plus plane). Vous pouvez la changer dans « Vue (axe) ».", "gen": "Générer la pièce depuis le SCAD officiel", "gen_ready": "Pièce « {part} » à générer pour ces mesures", "gen_busy": "⏳ Génération de « {part} » par OpenSCAD en cours… (ne fermez pas la fenêtre)", "gen_done": "✓ Pièce « {part} » générée pour ces mesures", "gen_need": "Saisissez d'abord des mesures valides (étape 2).", "gen_noscad": "Fichier SCAD officiel (UnLimbited_Arm_v2.1.scad) introuvable. Il est dans la partie 2 sur 2 de l'archive Thingiverse : ajoutez-la avec le menu Aide > Fichiers sources.", "gen_fail": "Échec de la génération : {err}", "preparing": "⏳ Préparation de la pièce…", "hint": "Cliquez dans la vue pour placer le motif ; en mode zone, glissez un rectangle.", "spot_center": "Centre", "spot_top": "Haut", "spot_bottom": "Bas", "spot_left": "Gauche", "spot_right": "Droite", "spots": "Placer", "pad": "Déplacer / pivoter la vue", "thick": "Épaissir les traits fins (< 0,8 mm)", "model_dims": "Taille standard (100 %) : {x:.1f} × {y:.1f} × {z:.1f} mm", "model_final": "taille finale à {pct:g} % : {x:.1f} × {y:.1f} × {z:.1f} mm (le motif suit l'échelle)", "hint2": "Glisser : déplacer · molette : taille · Maj+molette : rotation · Ctrl+molette : zoom · clic droit : déplacer la vue · flèches : ajuster", "prot": "Marge auto autour des trous", "inl_off": "Dépassement de l'incrustation (mm)"},
  "en": {"part": "Or open another file (STL or 3MF)…", "pick_obj": "This 3MF file holds {n} objects: which one to customise?", "all_objs": "All (merged into one part)", "from_3mf": "3MF converted to STL ({n} object(s) in the file): {f}", "bad_3mf": "Cannot read the 3MF: {e}", "lib": "— Choose a part —", "none": "No part loaded. Decoration is applied at the STL's original size; the original is never modified.",
         "axis": "View (axis)", "mode": "Mode", "relief": "Relief", "engrave": "Engrave", "inlay": "Inlay (flush)", "kind": "Content", "camo": "Camouflage (whole part)", "camo_style": "Camouflage", "camo_seed": "Variant (no.)", "camo_scale": "Patch size", "camo_fr": "French (Central Europe style)", "camo_winter": "Winter (snow)", "camo_all": "Apply the camouflage to several parts…", "camo_base": "Suggested part colour: {c} (filament 1).", "text": "Text", "svg": "SVG", "image": "Image (PNG/JPEG)",
         "txt": "Text", "file": "File…", "size": "Size (mm)", "rot": "Rotation (°)", "u": "Position u (mm)", "v": "Position v (mm)", "depth": "Depth (mm)",
-        "zone": "Draw a forbidden zone", "zone_ok": "Draw an advised zone", "clear": "Clear zones", "zone_ref": "Save as reference zones (for everyone)", "zone_ref_done": "✓ Reference zones saved: {f}", "zone_ref_fail": "Could not save: {e}", "force": "Validate despite the forbidden zones", "zones_from_ref": "Reference zones of this part loaded.", "bold": "Bold", "inv": "Invert (image)", "white": "White = empty", "thr": "Image threshold (0-255)", "ncol": "Colours (1 = one piece)", "qual": "Quality (resolution)",
+        "face": "Face to decorate", "f+z": "▲ Top", "f-z": "▼ Bottom", "f-y": "Front", "f+y": "Back", "f-x": "◀ Left", "f+x": "Right ▶", "flip": "⟲ Turn over", "flip_tip": "Go to the opposite face (top ↔ bottom, front ↔ back, left ↔ right)", "face_tip": "Faces of the part as it is in the file (print orientation, as on the Bambu plate)", "zone": "Draw a forbidden zone", "zone_ok": "Draw an advised zone", "clear": "Clear zones", "zone_ref": "Save as reference zones (for everyone)", "zone_ref_done": "✓ Reference zones saved: {f}", "zone_ref_fail": "Could not save: {e}", "force": "Validate despite the forbidden zones", "zones_from_ref": "Reference zones of this part loaded.", "bold": "Bold", "inv": "Invert (image)", "white": "White = empty", "thr": "Image threshold (0-255)", "ncol": "Colours (1 = one piece)", "qual": "Quality (resolution)",
         "warn": "EXPERIMENTAL: functional zones (joints, pin holes, cable channels, skin contact) are NOT detected. Draw the zones to protect in red, where to place the motif in green, and check the result.",
         "lic": "Source licence", "unknown": "Provenance/licence UNKNOWN — do not redistribute.", "nc": "NON-commercial use",
         "busy": "⏳ Computing…", "analysing": "⏳ Analysing the part (choosing the face)…", "axis_auto": "View chosen automatically: {axis} (flattest face). You can change it in “View (axis)”.", "gen": "Generate the part from the official SCAD", "gen_ready": "Part “{part}” to generate for these measures", "gen_busy": "⏳ Generating “{part}” with OpenSCAD… (do not close the window)", "gen_done": "✓ Part “{part}” generated for these measures", "gen_need": "Enter valid measures first (step 2).", "gen_noscad": "Official SCAD file (UnLimbited_Arm_v2.1.scad) not found. It is in part 2 of 2 of the Thingiverse archive: add it with the menu Help > Source files.", "gen_fail": "Generation failed: {err}", "preparing": "⏳ Preparing the part…", "hint": "Click in the view to place the motif; in zone mode, drag a rectangle.", "spot_center": "Centre", "spot_top": "Top", "spot_bottom": "Bottom", "spot_left": "Left", "spot_right": "Right", "spots": "Place", "pad": "Move / turn the view", "thick": "Thicken thin strokes (< 0.8 mm)", "model_dims": "Standard size (100 %): {x:.1f} × {y:.1f} × {z:.1f} mm", "model_final": "final size at {pct:g} %: {x:.1f} × {y:.1f} × {z:.1f} mm (the motif follows the scale)", "hint2": "Drag: move · wheel: size · Shift+wheel: rotate · Ctrl+wheel: zoom · right-drag: pan · arrows: nudge", "prot": "Auto margin around holes", "inl_off": "Inlay protrusion (mm)"},
@@ -306,6 +306,11 @@ class CustomizePage(QWidget):
         self.b_part = QPushButton(); self.b_part.clicked.connect(self.choose_part)
         self.prov = QLabel(); self.prov.setWordWrap(True); self.prov.setStyleSheet("font-size:11px")
         self.axis = QComboBox(); [self.axis.addItem(a, a) for a in deco.AXES]
+        self.face_box = QWidget(); fg = QGridLayout(self.face_box); fg.setContentsMargins(0, 0, 0, 0); fg.setSpacing(3); self.face_btns = {}
+        for ax, (r_, c_) in {"+z": (0, 1), "-x": (1, 0), "+x": (1, 2), "-z": (2, 1), "-y": (0, 3), "+y": (2, 3)}.items():
+            b_ = QPushButton(); b_.setCheckable(True); b_.setObjectName("chip"); b_.clicked.connect(lambda _=False, a_=ax: self.set_face(a_)); fg.addWidget(b_, r_, c_); self.face_btns[ax] = b_
+        self.b_flip = QPushButton(); self.b_flip.setObjectName("chip"); self.b_flip.clicked.connect(self.flip_face); fg.addWidget(self.b_flip, 1, 1)
+        self.axis.currentIndexChanged.connect(self._sync_face_buttons)
         self.mode = QComboBox(); self.kind = QComboBox()
         self.text = QLineEdit(); self.text.setPlaceholderText("ex. Léo"); self.font = QFontComboBox(); self.font.setEditable(False); self.font.setMaxVisibleItems(10); self.font.setMinimumWidth(220); self.font.setView(QListView()); self.font.view().setItemDelegate(_FontPreviewDelegate(lambda: self.text.text().strip() or "Léo", self.font.view())); self.font.view().setMinimumWidth(420); self.bold = QCheckBox(); self.bold.setChecked(True)
         self.b_file = QPushButton(); self.b_file.clicked.connect(self.choose_file); self.b_rmfile = QPushButton("✕"); self.b_rmfile.setObjectName("chip"); self.b_rmfile.setMinimumWidth(36); self.b_rmfile.clicked.connect(self.remove_file)
@@ -328,7 +333,7 @@ class CustomizePage(QWidget):
         self.camo_style = QComboBox(); self.camo_seed = QSpinBox(); self.camo_seed.setRange(1, 9999); self.camo_seed.setValue(1); self.camo_scale = dspin(10, 120, 28, 0, " mm")
         self.form = QFormLayout()
         self.rows = {}
-        for k, w in (("axis", self.axis), ("mode", self.mode), ("motifs", self.motif_box), ("kind", self.kind), ("camo_style", self.camo_style), ("camo_seed", self.camo_seed), ("camo_scale", self.camo_scale), ("txt", self.text), ("fontrow", self.font), ("bold", self.bold),
+        for k, w in (("face", self.face_box), ("axis", self.axis), ("mode", self.mode), ("motifs", self.motif_box), ("kind", self.kind), ("camo_style", self.camo_style), ("camo_seed", self.camo_seed), ("camo_scale", self.camo_scale), ("txt", self.text), ("fontrow", self.font), ("bold", self.bold),
                      ("file", self.file_box), ("white", self.white), ("thick", self.thick), ("thr", self.thr), ("ncol", self.ncol), ("qual", self.qual), ("prot", self.prot), ("inv", self.inv), ("size", self.size_w), ("rot", self.rot_w), ("spots", self.spots), ("pad", self.pad), ("u", self.u), ("v", self.v), ("depth", self.depth), ("inl_off", self.inl_off)):
             lab = QLabel(); self.rows[k] = lab; self.form.addRow(lab, w)
         self.b_all = QPushButton(); self.b_all.clicked.connect(lambda: self.batch_requested.emit())
@@ -376,7 +381,7 @@ class CustomizePage(QWidget):
             combo.setCurrentIndex(max(0, combo.findData(cur))); combo.blockSignals(False)
         self._update_engrave()
         for k, b in self.spot_btns.items(): b.setText(self.t("spot_" + k))
-        self.b_addm.setText(self.t("motif_add")); self.b_delm.setText(self.t("motif_del")); self._motif_names(); self.b_all.setText(self.t("camo_all")); self.b_zone.setText(self.t("zone")); self.b_zone_ok.setText(self.t("zone_ok")); self.b_ref.setText(self.t("zone_ref")); self.force.setText(self.t("force")); self.b_clear.setText(self.t("clear")); self.warnbox.setText(self.t("warn"))
+        self.b_addm.setText(self.t("motif_add")); self.b_delm.setText(self.t("motif_del")); self._motif_names(); self.b_all.setText(self.t("camo_all")); [b_.setText(self.t("f" + a_)) for a_, b_ in self.face_btns.items()]; self.b_flip.setText(self.t("flip")); self.b_flip.setToolTip(self.t("flip_tip")); self.face_box.setToolTip(self.t("face_tip")); self.b_zone.setText(self.t("zone")); self.b_zone_ok.setText(self.t("zone_ok")); self.b_ref.setText(self.t("zone_ref")); self.force.setText(self.t("force")); self.b_clear.setText(self.t("clear")); self.warnbox.setText(self.t("warn"))
         self.view.msg = self.t("none"); self.show_prov(); self.view.update(); self.update_model()
 
     # --- state
@@ -611,7 +616,7 @@ class CustomizePage(QWidget):
             self.busy.setText(self.t("analysing")); QApplication.processEvents()
             ax = self._axis_for(self.part_path, self.mirror_x, self.tris); self.axis.blockSignals(True); self.axis.setCurrentIndex(max(0, self.axis.findData(ax))); self.axis.blockSignals(False)
             self.axis_note = self.t("axis_auto").format(axis=ax)
-        self.zones = []; self.hm = None
+        self.zones = []; self.hm = None; self.bed_z = float(np.asarray(self.tris, float).reshape(-1, 3)[:, 2].min()) if len(self.tris) else None
         self.source_watertight = self._is_watertight(); self._update_engrave()       # checked on loading (cached per mesh): original-file defects are shown at once
         self.show_prov(); self.update_model(); self.rebuild_heightmap(center=True); self.load_zones(); self.place_in_advised()
 
@@ -726,6 +731,23 @@ class CustomizePage(QWidget):
             try: self.set_part(path, auto_axis=False)
             finally: self._loading = False
             self.rebuild_heightmap(center=False)
+
+    OPPOSITE = {"+z": "-z", "-z": "+z", "+x": "-x", "-x": "+x", "+y": "-y", "-y": "+y"}
+
+    def set_face(self, axis):
+        """Decorate another face of the part: the placement view shows it flat, the motif is centred again (in a green zone if any)."""
+        self._sync_face_buttons()
+        if self.axis.currentData() == axis: return
+        self.axis.blockSignals(True); self.axis.setCurrentIndex(max(0, self.axis.findData(axis))); self.axis.blockSignals(False)
+        self._sync_face_buttons()
+        if self.tris is None: return
+        self.axis_note = ""; self.rebuild_heightmap(center=True); self.load_zones(); self.place_in_advised(); self.update_model()
+
+    def flip_face(self): self.set_face(self.OPPOSITE.get(self.axis.currentData() or "+z", "-z"))
+
+    def _sync_face_buttons(self, *_):
+        cur = self.axis.currentData() or "+z"
+        for a_, b_ in getattr(self, "face_btns", {}).items(): b_.setChecked(a_ == cur)
 
     def set_zone_mode(self, on, kind="forbidden"):
         """Drawing mode: "forbidden" (red) or "advised" (green); the two buttons are exclusive."""
@@ -845,7 +867,7 @@ class CustomizePage(QWidget):
         if self._no_artwork(s): r["warns"] = ["(aucune décoration)"]; return r
         try:
             r["mask"], r["layers"] = deco.render_spec_masks(s, hm, prot, zones)
-            r["errors"], w, info = deco.check_placement(hm, r["mask"], zones, s.depth_mm, s.mode, prot, s.allow_forbidden_zones)
+            r["errors"], w, info = deco.check_placement(hm, r["mask"], zones, s.depth_mm, s.mode, prot, s.allow_forbidden_zones, getattr(self, "bed_z", None))
             r["warns"] = [x for x in w if not x.startswith("Zones fonctionnelles")]
             if s.mode == "engrave" and not watertight:
                 r["errors"].append("Gravure impossible : pièce non étanche (soustraction non fiable). Utiliser le relief.")

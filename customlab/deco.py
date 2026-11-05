@@ -608,7 +608,20 @@ def thin_feature_report(mask, res, min_mm=MIN_FEATURE_MM):
     closed = _erode(_dilate(pad, k), k)[k:-k, k:-k] if k else mask
     gaps = float((closed & ~mask).sum()) / max(1, int(mask.sum()))
     return {"thin_fraction": thin, "narrow_gap_fraction": gaps, "min_mm": min_mm}
-def check_placement(hm: HeightMap, mask, zones=(), depth_mm=0.6, mode="relief", protected=None, allow_forbidden=False):
+BED_CONTACT_MM = 0.3          # a motif cell this close to the lowest point of the part lies on the face that touches the print bed
+
+
+def bed_contact_fraction(hm: HeightMap, mask, bed_z):
+    """Share of the motif cells whose surface lies on the part's lowest plane (the face on the print bed, in the file's orientation)."""
+    ii, jj = np.nonzero(mask)
+    if bed_z is None or not len(ii): return 0.0
+    H = hm.H; h = np.fmax.reduce([H[ii, jj], H[ii + 1, jj], H[ii, jj + 1], H[ii + 1, jj + 1]])      # any surface corner of the cell (NaN only if none)
+    pts = np.stack([hm.u0 + (ii + 0.5) * hm.res, hm.v0 + (jj + 0.5) * hm.res, h], axis=1)
+    z = from_uvw(pts, hm.axis)[:, 2]; ok = ~np.isnan(z)
+    return float(((z[ok] - bed_z) < BED_CONTACT_MM).mean()) if ok.any() else 0.0
+
+
+def check_placement(hm: HeightMap, mask, zones=(), depth_mm=0.6, mode="relief", protected=None, allow_forbidden=False, bed_z=None):
     """Returns (errors, warnings, info). Errors forbid generation; nothing is ever clamped silently. Drawn forbidden zones refuse the motif
     unless allow_forbidden (the user confirmed): then each one hit is a warning. Advised zones: a warning when part of the motif lies outside them."""
     errors, warns = [], []
@@ -648,6 +661,8 @@ def check_placement(hm: HeightMap, mask, zones=(), depth_mm=0.6, mode="relief", 
         warns.append(f"{tf['thin_fraction']*100:.0f} % du motif est plus fin que {MIN_FEATURE_MM:g} mm (buse 0,4) : traits fins possiblement non imprimés ; agrandir le motif ou le simplifier.")
     if tf["narrow_gap_fraction"] > 0.02:
         warns.append(f"Des fentes/espaces plus étroits que {MIN_FEATURE_MM:g} mm (≈ {tf['narrow_gap_fraction']*100:.0f} % de la surface du motif) risquent de se refermer à l'impression.")
+    if mode in ("relief", "inlay") and bed_contact_fraction(hm, mask, bed_z) > 0.2:
+        warns.append("Motif sur la face posée sur le plateau d'impression (dessous de la pièce telle qu'elle est dans le fichier) : un relief y est impossible à imprimer sans supports. Choisissez une autre face, ou retournez la pièce dans Bambu Studio.")
     warns.append("Zones fonctionnelles non détectées automatiquement : vérifier à la main qu'aucune articulation, trou de broche, passage de câble ou surface de contact n'est touché.")
     return errors, warns, {"cells": int(mask.sum()), "max_slope_deg": smax, "forbidden_zones_overridden": forced}
 
@@ -700,7 +715,8 @@ def apply_decoration(part_path, spec: DecoSpec, zones=(), hm: HeightMap = None, 
         raise DecoError(f"Dépassement de l'incrustation hors plage ({INLAY_OFFSET_RANGE[0]} à {INLAY_OFFSET_RANGE[1]} mm) : {spec.inlay_offset_mm} mm refusé.")
     protected = auto_protected_mask(hm, spec.protect_margin_mm) if spec.protect_margin_mm > 0 else None
     mask, color_layers = render_spec_masks(spec, hm, protected, zones)
-    errors, warns, info = check_placement(hm, mask, zones, spec.depth_mm, spec.mode, protected, spec.allow_forbidden_zones)
+    bed_z = float(np.asarray(tris, float).reshape(-1, 3)[:, 2].min()) if len(tris) else None
+    errors, warns, info = check_placement(hm, mask, zones, spec.depth_mm, spec.mode, protected, spec.allow_forbidden_zones, bed_z)
     if spec.mode == "engrave" and not is_watertight(tris):
         errors.append("Gravure impossible : cette pièce n'est pas étanche/manifold (soustraction non fiable). Utiliser le relief.")
     if errors: return DecoResult(tris, [], errors, warns, info)
