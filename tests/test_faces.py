@@ -43,3 +43,23 @@ class Buttons(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Layout(unittest.TestCase):
+    def test_face_buttons_never_overlap_even_with_a_large_font(self):
+        from PySide6.QtGui import QFont
+        from PySide6.QtWidgets import QApplication
+        from customlab import theme
+        from customlab.gui import MainWindow
+        app = QApplication.instance() or QApplication([]); old = app.font()
+        try:
+            f = QFont(old); f.setPointSize(18); app.setFont(f)                       # bigger than any default (macOS Retina screenshots)
+            if hasattr(theme, "apply"): theme.apply(app)
+            w = MainWindow(); w.select("phoenix_hand"); w.go(2); w.resize(1400, 1000); w.show(); app.processEvents()
+            bs = list(w.custom.face_btns.values()) + [w.custom.b_flip]
+            self.assertTrue(all(b.parentWidget() is w.custom.face_box for b in bs)); rects = [b.geometry() for b in bs]        # same parent: comparable geometries
+            for i, a in enumerate(rects):
+                self.assertGreaterEqual(bs[i].height(), bs[i].fontMetrics().height() + 16)                         # explicit floor: macOS style under-sizes styled buttons
+                for b in rects[i + 1:]: self.assertFalse(a.intersects(b), (a, b))
+            w.close()
+        finally: app.setFont(old)

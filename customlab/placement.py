@@ -352,10 +352,15 @@ class CustomizePage(QWidget):
         self.b_part = QPushButton(); self.b_part.clicked.connect(self.choose_part)
         self.prov = QLabel(); self.prov.setWordWrap(True); self.prov.setStyleSheet("font-size:11px")
         self.axis = QComboBox(); [self.axis.addItem(a, a) for a in deco.AXES]
-        self.face_box = QWidget(); fg = QGridLayout(self.face_box); fg.setContentsMargins(0, 0, 0, 0); fg.setSpacing(3); self.face_btns = {}
-        for ax, (r_, c_) in {"+z": (0, 1), "-x": (1, 0), "+x": (1, 2), "-z": (2, 1), "-y": (0, 3), "+y": (2, 3)}.items():
-            b_ = QPushButton(); b_.setCheckable(True); b_.setObjectName("chip"); b_.clicked.connect(lambda _=False, a_=ax: self.set_face(a_)); fg.addWidget(b_, r_, c_); self.face_btns[ax] = b_
-        self.b_flip = QPushButton(); self.b_flip.setObjectName("chip"); self.b_flip.clicked.connect(self.flip_face); fg.addWidget(self.b_flip, 1, 1)
+        self.face_box = QWidget(); fv = QVBoxLayout(self.face_box); fv.setContentsMargins(0, 0, 0, 0); fv.setSpacing(6); self.face_btns = {}
+        self.b_flip = QPushButton(); self.b_flip.setObjectName("chip"); self.b_flip.clicked.connect(self.flip_face)
+        for row in (("+z", "-z", "flip"), ("-x", "+x", "-y", "+y")):           # two plain rows: no button can sit on another, whatever the font
+            hl = QHBoxLayout(); hl.setSpacing(6); fv.addLayout(hl)
+            for ax in row:
+                if ax == "flip": b_ = self.b_flip
+                else:
+                    b_ = QPushButton(); b_.setCheckable(True); b_.setObjectName("chip"); b_.clicked.connect(lambda _=False, a_=ax: self.set_face(a_)); self.face_btns[ax] = b_
+                b_.setMinimumHeight(b_.fontMetrics().height() + 16); hl.addWidget(b_, 1)
         self.axis.currentIndexChanged.connect(self._sync_face_buttons)
         self.mode = QComboBox(); self.kind = QComboBox()
         self.text = QLineEdit(); self.text.setPlaceholderText("ex. Léo"); self.font = QFontComboBox(); self.font.setEditable(False); self.font.setMaxVisibleItems(10); self.font.setMinimumWidth(220); self.font.setView(QListView()); self.font.view().setItemDelegate(_FontPreviewDelegate(lambda: self.text.text().strip() or "Léo", self.font.view())); self.font.view().setMinimumWidth(420); self.bold = QCheckBox(); self.bold.setChecked(True)
