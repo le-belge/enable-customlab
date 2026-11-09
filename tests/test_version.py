@@ -16,6 +16,13 @@ class VersionTest(unittest.TestCase):
         self.assertEqual(customlab.__version__, iss)
 
 
+class InstallerIdTest(unittest.TestCase):
+    def test_appid_is_the_old_implicit_one_so_updates_replace_the_installed_copy(self):
+        iss = (ROOT / "packaging" / "installer.iss").read_text(encoding="utf-8")
+        self.assertRegex(iss, r"(?m)^AppId=e-NABLE CustomLab$")                         # never change it (Windows would install a second copy)
+        self.assertIn('Name: "{app}\\CustomLab.exe"', iss)                             # old program removed on update
+
+
 class ProfileNoticeTest(unittest.TestCase):
     def test_every_profile_has_an_english_notice(self):
         import json
