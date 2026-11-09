@@ -16,7 +16,7 @@ Paume et mécanisme de verrouillage : fichiers pré-échelonnés à l'échelle i
 - Valeurs hors tableaux : refusées, jamais corrigées. 164 tests passent (`tests/test_kinetic_arm.py`).
 
 ## Limites / points ouverts
-- Écart du manuel : son exemple « 81,4 % → Tensioners 80 » ne correspond pas au fichier le plus proche (82,5 %) ; CustomLab propose le fichier le plus proche et signale l'écart.
+- Écart du manuel : son exemple « 81,4 % → Tensioners 80 » ne correspond pas au fichier le plus proche (82,5 %) ; e-NableLab propose le fichier le plus proche et signale l'écart.
 - Les 111 STL (1,7 Go, 35 M de triangles, tailles binaires cohérentes) sont téléchargés dans `sources/kinetic_arm/stl/` (non embarqués ; README/LICENSE CC BY-NC-SA 4.0 ajoutés pour la provenance).
 - Décoration et export branchés pour le bras : chaque fichier a ses règles (`kinetic_arm.part_info`) — composants inférieurs/supérieurs → échelle correspondante appliquée à l'export (case cochée) ; Palm / LockMech / Tensioners = fichiers pré-échelonnés, jamais remis à l'échelle, avec avertissement si le fichier ne correspond pas à l'échelle calculée ; bras gauche : seuls les fichiers « RH » sont symétrisés en X avant décoration (déduit de la liste du manuel p. 22 et des noms de fichiers : à confirmer par un bénévole).
 - Essai réel : étoile SVG en incrustation sur `UpArmCov100` (axe +y), échelle haute 70 % appliquée, STL + JSON + 3MF Bambu exportés. Les autres pièces (paume, avant-bras de 32 Mo…) n'ont pas toutes été testées : les zones fonctionnelles (charnières, passages de tendons) ne sont pas détectées, à marquer à la main.

@@ -145,5 +145,6 @@
     }
   ],
   "official_scad": "sources/phoenix_scad/thing_1674320/files/UnLimbitedPhoenix.scad",
-  "notice": "Règle d'échelle ((poignet + marge) / 43 × 100) : variante confirmée par lecture du SCAD officiel (paramètre HandPerc 100–160, échelle uniforme, plage identique à la page e-NABLE France). La valeur de 43 mm elle-même vient de la page e-NABLE France et n'a pas été mesurée sur la géométrie ; essayer le gabarit Phoenix avant d'imprimer."
+  "notice": "Règle d'échelle ((poignet + marge) / 43 × 100) : variante confirmée par lecture du SCAD officiel (paramètre HandPerc 100–160, échelle uniforme, plage identique à la page e-NABLE France). La valeur de 43 mm elle-même vient de la page e-NABLE France et n'a pas été mesurée sur la géométrie ; essayer le gabarit Phoenix avant d'imprimer.",
+  "notice_en": "Scale rule ((wrist + margin) / 43 × 100): variant confirmed by reading the official SCAD (HandPerc parameter 100–160, uniform scale, same range as the e-NABLE France page). The 43 mm value itself comes from the e-NABLE France page and was not measured on the geometry; try the Phoenix jig before printing."
 }

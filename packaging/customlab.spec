@@ -13,9 +13,9 @@ excludes = ["tkinter", "unittest", "PySide6.QtWebEngineCore", "PySide6.QtWebEngi
 
 a = Analysis([str(ROOT / "packaging" / "entry.py")], pathex=[str(ROOT)], datas=datas, hiddenimports=["PySide6.QtSvg", "PySide6.QtSvgWidgets", "PySide6.QtOpenGLWidgets"], excludes=excludes)
 pyz = PYZ(a.pure)
-icon = str(ROOT / "packaging" / ("CustomLab.icns" if sys.platform == "darwin" else "CustomLab.ico"))
-exe = EXE(pyz, a.scripts, [], exclude_binaries=True, name="CustomLab", console=False, icon=icon)
-coll = COLLECT(exe, a.binaries, a.datas, name="CustomLab")
+icon = str(ROOT / "packaging" / ("e-NableLab.icns" if sys.platform == "darwin" else "e-NableLab.ico"))
+exe = EXE(pyz, a.scripts, [], exclude_binaries=True, name="e-NableLab", console=False, icon=icon)
+coll = COLLECT(exe, a.binaries, a.datas, name="e-NableLab")
 if sys.platform == "darwin":
-    app = BUNDLE(coll, name="e-NABLE CustomLab.app", icon=icon, bundle_identifier="fr.enable.customlab.test", version=VERSION,
-                 info_plist={"CFBundleDisplayName": "e-NABLE CustomLab", "NSHighResolutionCapable": True, "LSMinimumSystemVersion": "11.0"})
+    app = BUNDLE(coll, name="e-NableLab.app", icon=icon, bundle_identifier="fr.enable.customlab.test", version=VERSION,
+                 info_plist={"CFBundleDisplayName": "e-NableLab", "NSHighResolutionCapable": True, "LSMinimumSystemVersion": "11.0"})

@@ -30,8 +30,8 @@
   },
   "method": "kinetic_chart",
   "method_source": "Assembly Manual - Kinetic Hand, Appendix 1 « Measurement and Scaling Guide » (M1–M25) et Appendix 2 « 3D Printing Guide » (P1–P20)",
-  "method_doc": "Échelle de base (recommandée) : largeur du poignet de la main atteinte + 3 mm de rembourrage → valeur la plus proche du tableau « Hand Scaling Chart » → échelle uniforme 50–100 % par pas de 2,5 %. Puis espace libre dans la paume = longueur de paume du modèle à cette échelle − longueur de paume mesurée → insert souple A–E le plus proche. Échelle avancée (par axe : XY depuis le poignet, Z depuis la longueur de la main saine) : calculée à titre d'information seulement (« peut affecter le fonctionnement », nécessite les pièces en orientation CAO), jamais appliquée par CustomLab.",
-  "mirror_note": "Tous les fichiers fournis sont des mains droites (RH100 %) ; la main gauche s'obtient par symétrie en X (manuel P5). CustomLab symétrise AVANT de décorer.",
+  "method_doc": "Échelle de base (recommandée) : largeur du poignet de la main atteinte + 3 mm de rembourrage → valeur la plus proche du tableau « Hand Scaling Chart » → échelle uniforme 50–100 % par pas de 2,5 %. Puis espace libre dans la paume = longueur de paume du modèle à cette échelle − longueur de paume mesurée → insert souple A–E le plus proche. Échelle avancée (par axe : XY depuis le poignet, Z depuis la longueur de la main saine) : calculée à titre d'information seulement (« peut affecter le fonctionnement », nécessite les pièces en orientation CAO), jamais appliquée par e-NableLab.",
+  "mirror_note": "Tous les fichiers fournis sont des mains droites (RH100 %) ; la main gauche s'obtient par symétrie en X (manuel P5). e-NableLab symétrise AVANT de décorer.",
   "wizard_inputs": [
     {
       "id": "wrist_mm",
@@ -76,5 +76,6 @@
   ],
   "part_param": null,
   "notice": "Méthode de dimensionnement identifiée et testée sur les exemples chiffrés du manuel (72,5 % + insert D ; avancé : Z 82,5 % + insert E). Échelle uniforme appliquée à l'export (de 55 % à 100 % d'après le guide d'impression ; le tableau descend à 50 %). Imprimer une paume d'essai avant tout assemblage. Aucun essayage ni impression : à faire valider par un bénévole compétent.",
+  "notice_en": "Sizing method identified and tested on the manual's worked examples (72.5 % + insert D; advanced: Z 82.5 % + insert E). Uniform scale applied at export (55 % to 100 % per the printing guide; the chart goes down to 50 %). Print a test palm before any assembly. No fitting or print done: to be validated by a qualified volunteer.",
   "official_manual": "sources/kinetic_hand/manual/Kinetic Hand/Assembly Manual - Kinetic Hand.pdf"
 }

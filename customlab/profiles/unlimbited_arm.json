@@ -115,5 +115,6 @@
       "version, mesures A B C et échelle de la main % estampillés sous le cuff"
     ]
   },
-  "notice": "Dimensionnement et rendu OpenSCAD vérifiés sur le SCAD officiel v2.1 (7 pièces rendues). Cuff et Forearm demandent ~4-5 minutes (OpenSCAD 2021). Aucune impression ni essayage : à valider par un bénévole e-NABLE compétent."
+  "notice": "Dimensionnement et rendu OpenSCAD vérifiés sur le SCAD officiel v2.1 (7 pièces rendues). Cuff et Forearm demandent ~4-5 minutes (OpenSCAD 2021). Aucune impression ni essayage : à valider par un bénévole e-NABLE compétent.",
+  "notice_en": "Sizing and OpenSCAD rendering verified on the official SCAD v2.1 (7 parts rendered). Cuff and Forearm take about 4-5 minutes (OpenSCAD 2021). No print or fitting done: to be validated by a qualified e-NABLE volunteer."
 }

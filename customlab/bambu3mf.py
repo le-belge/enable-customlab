@@ -2,7 +2,8 @@
 
 Layout mirrors what Bambu Studio 02.08 writes itself (checked on a 3MF it produced): a parent <object> whose
 <component>s point to one mesh file per part (3D/Objects/object_K.model); Metadata/model_settings.config lists the
-parts and their `extruder`. Verified only by opening files in Bambu Studio 02.08.03.66 (see docs); other versions untested.
+parts and their `extruder`. Only the declared filament colours were checked by opening a file in Bambu Studio (2026-10-29, version not noted);
+materials, multi-part plates and other versions are NOT verified (see docs/BAMBU_FILAMENTS.md).
 """
 import uuid
 import zipfile
@@ -37,7 +38,7 @@ def project_settings_json(colours):
     return json.dumps({"filament_colour": list(colours), "filament_diameter": ["1.75"] * len(colours), "from": "project"}, indent=2)
 
 
-def write_bambu_3mf(path, parts, object_name="CustomLab", bed=(256.0, 256.0), filament_colours=None):
+def write_bambu_3mf(path, parts, object_name="e-NableLab", bed=(256.0, 256.0), filament_colours=None):
     """parts: list of {"name": str, "triangles": [...], "extruder": int>=1}. World coordinates are kept; the object is
     centred on the plate and dropped to z=0 through the build transform only."""
     if not parts: raise ValueError("no parts")
@@ -57,7 +58,7 @@ def write_bambu_3mf(path, parts, object_name="CustomLab", bed=(256.0, 256.0), fi
       <mesh_stat face_count="{faces}" edges_fixed="0" degenerate_facets="0" facets_removed="0" facets_reversed="0" backwards_edges="0"/>
     </part>''')
     model = (f'<?xml version="1.0" encoding="UTF-8"?>\n<model unit="millimeter" xml:lang="en-US" {NS}>\n'
-             ' <metadata name="Application">CustomLab</metadata>\n <metadata name="BambuStudio:3mfVersion">1</metadata>\n'
+             ' <metadata name="Application">e-NableLab</metadata>\n <metadata name="BambuStudio:3mfVersion">1</metadata>\n'
              f' <metadata name="Title">{escape(object_name)}</metadata>\n <resources>\n  <object id="{obj_id}" p:UUID="{uuid.uuid4()}" type="model">\n   <components>\n    '
              + "\n    ".join(comps) + f'\n   </components>\n  </object>\n </resources>\n <build p:UUID="{uuid.uuid4()}">\n'
              f'  <item objectid="{obj_id}" p:UUID="{uuid.uuid4()}" transform="1 0 0 0 1 0 0 0 1 {tx:.5f} {ty:.5f} {tz:.5f}" printable="1"/>\n </build>\n</model>\n')
@@ -132,7 +133,7 @@ def pack(objects, bed, gap=8.0):
     return plates, too_big
 
 
-def write_bambu_plate(path, placed, filaments, title="CustomLab"):
+def write_bambu_plate(path, placed, filaments, title="e-NableLab"):
     """One plate: several objects, each made of parts with their own filament. placed: [(object, tx, ty, tz)] from pack().
     filaments: [(bambu_type, '#RRGGBB')] (filament k+1). Same layout as write_bambu_3mf, with one parent object per device part."""
     if not placed: raise ValueError("no objects")
@@ -155,7 +156,7 @@ def write_bambu_plate(path, placed, filaments, title="CustomLab"):
         cfg.append(f'  <object id="{parent}">\n    <metadata key="name" value="{escape(o["name"], {chr(34): "&quot;"})}"/>\n'
                    f'    <metadata key="extruder" value="{int(o["parts"][0]["extruder"])}"/>\n' + "\n".join(pxml) + '\n  </object>')
     model = (f'<?xml version="1.0" encoding="UTF-8"?>\n<model unit="millimeter" xml:lang="en-US" {NS}>\n'
-             ' <metadata name="Application">CustomLab</metadata>\n <metadata name="BambuStudio:3mfVersion">1</metadata>\n'
+             ' <metadata name="Application">e-NableLab</metadata>\n <metadata name="BambuStudio:3mfVersion">1</metadata>\n'
              f' <metadata name="Title">{escape(title)}</metadata>\n <resources>\n' + "\n".join(objs_xml) + f'\n </resources>\n <build p:UUID="{uuid.uuid4()}">\n'
              + "\n".join(build) + '\n </build>\n</model>\n')
     inst = "".join(f'''    <model_instance>

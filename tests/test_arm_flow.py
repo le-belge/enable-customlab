@@ -51,7 +51,7 @@ class ArmFlow(unittest.TestCase):
         c.kind.setCurrentIndex(c.kind.findData("svg")); c.svg_path = str(STAR); c.size.setValue(24); c.depth.setValue(1.0)
         c.mode.setCurrentIndex(c.mode.findData("inlay")); c.qual.setCurrentIndex(c.qual.findData(0.25))
         ii = c.hm.shape; c.place(c.hm.u0 + ii[0] * c.hm.res / 2, c.hm.v0 + ii[1] * c.hm.res / 2); self.assertEqual(c.errors, [], c.errors)
-        w.go(3); self.assertIsNotNone(w.out_tris); self.assertFalse(w.scale_cb.isVisibleTo(w))            # the arm is scaled by the SCAD itself, never by CustomLab
+        w.go(3); self.assertIsNotNone(w.out_tris); self.assertFalse(w.scale_cb.isVisibleTo(w))            # the arm is scaled by the SCAD itself, never by e-NableLab
         out = w.export_to(Path(self.d.name) / "out"); meta = json.loads(out.with_suffix(".json").read_text(encoding="utf-8"))
         self.assertTrue(meta["source_license"]["share_alike"]); self.assertTrue(meta["source_license"]["non_commercial"]); self.assertIsNone(meta["scale_percent_applied"])
         self.assertEqual(meta["arm_generation"]["defines"]["HandLen"], 150); self.assertEqual(meta["device"], "unlimbited_arm")

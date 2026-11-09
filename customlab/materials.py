@@ -33,10 +33,6 @@ PRINTERS = {
                 "slots": 5, "flex_slots": 1, "bed": (256.0, 256.0),
                 "note_fr": "Le TPU ne passe pas par l'AMS : une seule bobine souple possible, sur le support externe.",
                 "note_en": "TPU does not go through the AMS: one flexible spool at most, on the external holder."},
-    "h3c":     {"fr": "Bambu H3C (9 outils)", "en": "Bambu H3C (9 tools)",
-                "slots": 9, "flex_slots": 9, "bed": (330.0, 320.0), "multi_nozzle": True,      # one nozzle diameter per tool (0.2 to 0.8 mm announced)
-                "note_fr": "Caractéristiques annoncées par Bambu Lab (sortie le 3/11/2026), NON testées avec CustomLab.",
-                "note_en": "Specifications announced by Bambu Lab (released 2026-11-03), NOT tested with CustomLab."},
     "other":   {"fr": "Autre imprimante (pas de vérification)", "en": "Other printer (no check)",
                 "slots": None, "flex_slots": None, "bed": (256.0, 256.0), "note_fr": "", "note_en": ""},
 }
@@ -102,5 +98,4 @@ def plan(items, printer=DEFAULT_PRINTER, lang="fr"):
     if flex:
         out.warnings.append("Pièces en TPU : choisissez un préréglage de filament TPU dans Bambu Studio (impression lente) ; souplesse et tenue NON vérifiées."
                             if fr else "TPU parts: pick a TPU filament preset in Bambu Studio (slow printing); flexibility and strength NOT verified.")
-    if p.get("note_fr") and printer == "h3c": out.warnings.append(p["note_fr"] if fr else p["note_en"])
     return out

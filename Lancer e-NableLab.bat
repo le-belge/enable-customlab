@@ -1,5 +1,5 @@
 @echo off
-rem Double-cliquez pour lancer e-NABLE CustomLab (Windows).
+rem Double-cliquez pour lancer e-NableLab (Windows).
 cd /d "%~dp0"
 if not exist ".venv\Scripts\python.exe" (
   echo Environnement .venv introuvable : voir README.md

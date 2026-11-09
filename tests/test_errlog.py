@@ -64,7 +64,7 @@ class ErrorLog(_Home):
 
     def test_install_sets_hooks(self):
         old = sys.excepthook, threading.excepthook
-        try: errlog.install(); self.assertIs(sys.excepthook, errlog.excepthook); self.assertIn("Démarrage de CustomLab", self.log_text())
+        try: errlog.install(); self.assertIs(sys.excepthook, errlog.excepthook); self.assertIn("Démarrage de e-NableLab", self.log_text())
         finally: sys.excepthook, threading.excepthook = old
 
     def test_dialog_copy_button_puts_report_in_clipboard(self):

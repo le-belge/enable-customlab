@@ -1,18 +1,18 @@
-# e-NABLE CustomLab — version de test 0.9.0
+# e-NableLab — version de test 0.9.0
 
 Application gratuite et hors ligne pour dimensionner, personnaliser et exporter des pièces de mains/bras e-NABLE. **Expérimentale** : aucune pièce n'a été validée à l'impression ni à l'essayage ; à faire relire par un bénévole e-NABLE compétent avant tout usage.
 
 ## Installer
-**Mac** (Apple Silicon : M1 et suivants) : décompressez `e-NABLE_CustomLab_mac.zip`, glissez l'appli dans Applications, puis double-cliquez dessus. macOS la bloque (« Apple n'a pas pu vérifier… ») parce qu'elle n'est pas notariée. Pour l'autoriser :
+**Mac** (Apple Silicon : M1 et suivants) : décompressez `e-NableLab_mac.zip`, glissez l'appli dans Applications, puis double-cliquez dessus. macOS la bloque (« Apple n'a pas pu vérifier… ») parce qu'elle n'est pas notariée. Pour l'autoriser :
 1. Cliquez sur « OK » (ou « Terminé »).
-2. Ouvrez **Réglages Système → Confidentialité et sécurité**, descendez jusqu'au message sur « e-NABLE CustomLab » et cliquez sur **Ouvrir quand même** (mot de passe ou Touch ID).
+2. Ouvrez **Réglages Système → Confidentialité et sécurité**, descendez jusqu'au message sur « e-NableLab » et cliquez sur **Ouvrir quand même** (mot de passe ou Touch ID).
 3. Rouvrez l'appli et confirmez « Ouvrir ». Cela n'est à faire qu'une fois.
-Sur un macOS plus ancien (avant 15), le clic droit sur l'appli → Ouvrir fonctionne aussi. Dernier recours, dans le Terminal : `xattr -dr com.apple.quarantine "/Applications/e-NABLE CustomLab.app"`.
-**Windows** : décompressez `e-NABLE_CustomLab_windows.zip`, lancez `CustomLab\CustomLab.exe`. Si SmartScreen s'affiche : « Informations complémentaires » → « Exécuter quand même ».
+Sur un macOS plus ancien (avant 15), le clic droit sur l'appli → Ouvrir fonctionne aussi. Dernier recours, dans le Terminal : `xattr -dr com.apple.quarantine "/Applications/e-NableLab.app"`.
+**Windows** : décompressez `e-NableLab_windows.zip`, lancez `e-NableLab\e-NableLab.exe`. Si SmartScreen s'affiche : « Informations complémentaires » → « Exécuter quand même ».
 
 ## Premier lancement
 - La **Phoenix** fonctionne tout de suite (pièces incluses).
-- Une fenêtre **Fichiers sources** s'ouvre au premier lancement (menu Aide → Fichiers sources pour la rouvrir). Pour la Kinetic Hand, le Kinetic Arm ou l'Unlimbited Arm : « Ouvrir la page officielle » → téléchargez les fichiers → « Ajouter le .zip téléchargé… » et choisissez le fichier. CustomLab le range tout seul ; quand la ligne passe au ✓ vert, c'est prêt.
+- Une fenêtre **Fichiers sources** s'ouvre au premier lancement (menu Aide → Fichiers sources pour la rouvrir). Pour la Kinetic Hand, le Kinetic Arm ou l'Unlimbited Arm : « Ouvrir la page officielle » → téléchargez les fichiers → « Ajouter le .zip téléchargé… » et choisissez le fichier. e-NableLab le range tout seul ; quand la ligne passe au ✓ vert, c'est prêt.
 - Pour la gravure et l'Unlimbited Arm, installez aussi **OpenSCAD** (gratuit, openscad.org) ; il est détecté automatiquement.
 - Le menu **Aide → Tuto** résume les méthodes de mise à l'échelle de chaque appareil.
 

@@ -1,8 +1,8 @@
-"""e-NABLE CustomLab — core library (no GUI yet)."""
+"""e-NableLab — core library (no GUI yet)."""
 import os as _os
 import sys as _sys
 
-__version__ = "0.1.0"
+__version__ = "1.0.0-beta.2"      # keep in step with packaging/customlab.spec and packaging/installer.iss (tests/test_version.py checks it)
 
 
 def windows_offscreen_fonts():

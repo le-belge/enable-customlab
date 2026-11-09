@@ -90,7 +90,8 @@
       "help_en": "Only for the documented check: the residual limb should be 15–70 % of the unaffected forearm; 0 = not measured."
     }
   ],
-  "notice": "Méthode de dimensionnement identifiée dans le manuel officiel et testée sur son exemple chiffré (Jake : 70 %, type B, composants supérieurs 70 %, insert D, languette 2, doublure 4). CustomLab calcule la sélection des pièces ; il n'embarque ni ne met à l'échelle les STL du bras (non fournis). Imprimer un bras d'essai avant le bras final. Aucun essayage ni impression : à faire valider par un bénévole compétent.",
+  "notice": "Méthode de dimensionnement identifiée dans le manuel officiel et testée sur son exemple chiffré (Jake : 70 %, type B, composants supérieurs 70 %, insert D, languette 2, doublure 4). e-NableLab calcule la sélection des pièces ; il n'embarque ni ne met à l'échelle les STL du bras (non fournis). Imprimer un bras d'essai avant le bras final. Aucun essayage ni impression : à faire valider par un bénévole compétent.",
+  "notice_en": "Sizing method identified in the official manual and tested on its worked example (Jake: 70 %, type B, upper components 70 %, insert D, tongue 2, liner 4). e-NableLab computes the part selection; it does not bundle or scale the arm STLs (not supplied). Print a test arm before the final arm. No fitting or print done: to be validated by a qualified volunteer.",
   "official_manual": "sources/kinetic_arm/manual/Kinetic_Arm_Assembly_Manual.pdf",
   "limits": "Fichiers STL de l'entrée non téléchargés (1,8 Go) ni décorables ici : seul le dimensionnement et la sélection des pièces sont implémentés. Paume : tissage/zones fonctionnelles non définis."
 }

@@ -1,4 +1,4 @@
-"""Look & feel of CustomLab: e-NABLE France colours (read from e-nable.fr's stylesheet, 2026-10-29) and gentle animations.
+"""Look & feel of e-NableLab: e-NABLE France colours (read from e-nable.fr's stylesheet, 2026-10-29) and gentle animations.
 
 The e-Nable France logo (assets/enable_france_logo.png, see LOGO_NOTICE.txt) is shown in the header. Animations are skipped when CUSTOMLAB_SYNC=1 (tests) or when
 the platform reports reduced motion is not available, so that nothing ever waits on a timer.
@@ -40,6 +40,8 @@ QSS = f"""
 * {{ font-family: {FONT_STACK}; color: {TEXT}; }}
 QMainWindow, QDialog {{ background: {TINT}; }}
 QWidget#page {{ background: transparent; }}
+QScrollArea {{ background: transparent; border: none; }}
+QScrollArea > QWidget > QWidget {{ background: transparent; }}
 QMenuBar {{ background: {NAVY}; color: white; padding: 2px 6px; }}
 QMenuBar::item {{ background: transparent; color: white; padding: 5px 10px; border-radius: 6px; }}
 QMenuBar::item:selected {{ background: rgba(141,201,229,0.28); }}
@@ -87,8 +89,24 @@ QGroupBox::title {{ subcontrol-origin: margin; left: 12px; padding: 0 6px; color
 """
 
 
+def force_light(app):
+    """The style sheet is designed on a light background: ignore the system's dark mode (Windows / macOS), otherwise the text is dark on black.
+    Qt >= 6.8 can be told to stay light; if the palette is still dark (older Qt, odd platform) a light Fusion palette is set."""
+    from PySide6.QtGui import QPalette
+    try: app.styleHints().setColorScheme(Qt.ColorScheme.Light)
+    except Exception: pass
+    if app.palette().color(QPalette.Window).lightness() >= 128: return
+    app.setStyle("Fusion"); pal = QPalette()
+    for role, col in ((QPalette.Window, TINT), (QPalette.WindowText, TEXT), (QPalette.Base, "#ffffff"), (QPalette.AlternateBase, "#f2f6f9"), (QPalette.Text, TEXT),
+                      (QPalette.Button, "#ffffff"), (QPalette.ButtonText, NAVY), (QPalette.ToolTipBase, "#ffffff"), (QPalette.ToolTipText, TEXT), (QPalette.PlaceholderText, "#8a99a4"),
+                      (QPalette.Highlight, SKY), (QPalette.HighlightedText, NAVY), (QPalette.Link, "#14486f")):
+        pal.setColor(role, QColor(col))
+    app.setPalette(pal)
+
+
 def apply(app):
     """Global style sheet + base font. Safe to call once per QApplication."""
+    force_light(app)
     f = QFont(); f.setFamilies(["Lato", "Helvetica Neue", "Segoe UI", "Roboto", "Arial"]); f.setPointSizeF(max(app.font().pointSizeF(), 10.5)); app.setFont(f)
     app.setStyleSheet(QSS)
 
@@ -164,7 +182,7 @@ class Header(QFrame):
         lay = QHBoxLayout(self); lay.setContentsMargins(18, 8, 14, 8); lay.setSpacing(14)
         logo = LogoLink(); logo.setStyleSheet("background:white;border-radius:34px;padding:4px"); pm = QPixmap(str(LOGO))
         if not pm.isNull(): logo.setPixmap(pm.scaledToHeight(64, Qt.SmoothTransformation)); lay.addWidget(logo)
-        brand = QLabel("e-NABLE <span style='color:%s'>CustomLab</span><br><span style='font-size:10px;font-weight:400;color:#cfe3f0'>par e-NABLE France</span>" % SKY); brand.setStyleSheet("color:white;font-size:17px;font-weight:700;background:transparent")
+        brand = QLabel("e-Nable<span style='color:%s'>Lab</span><br><span style='font-size:10px;font-weight:400;color:#cfe3f0'>By e-Nable France</span>" % SKY); brand.setStyleSheet("color:white;font-size:17px;font-weight:700;background:transparent")
         stripe = QWidget(); stripe.setFixedSize(3, 22); stripe.setStyleSheet(f"background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 {FRENCH_BLUE}, stop:0.34 {FRENCH_BLUE}, stop:0.34 white, stop:0.67 white, stop:0.67 {FRENCH_RED}, stop:1 {FRENCH_RED}); border-radius:1px")
         step_label.setStyleSheet("color:white;font-size:15px;font-weight:600;background:transparent")
         self.steps = StepBar(); lang_button.setObjectName("lang")

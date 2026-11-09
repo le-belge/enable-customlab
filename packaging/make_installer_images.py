@@ -12,8 +12,8 @@ NAVY = QColor("#0b314d")
 def big(path):
     im = QImage(164, 314, QImage.Format_RGB32); im.fill(Qt.white); p = QPainter(im); p.setRenderHint(QPainter.SmoothPixmapTransform)
     lg = logo.scaledToWidth(120, Qt.SmoothTransformation); p.drawImage((164 - lg.width()) // 2, 40, lg)
-    p.setPen(NAVY); f = QFont("Helvetica", 12); f.setBold(True); p.setFont(f); p.drawText(QRect(0, 190, 164, 24), Qt.AlignCenter, "e-NABLE CustomLab")
-    f = QFont("Helvetica", 9); p.setFont(f); p.drawText(QRect(0, 216, 164, 20), Qt.AlignCenter, "par e-NABLE France")
+    p.setPen(NAVY); f = QFont("Helvetica", 12); f.setBold(True); p.setFont(f); p.drawText(QRect(0, 190, 164, 24), Qt.AlignCenter, "e-NableLab")
+    f = QFont("Helvetica", 9); p.setFont(f); p.drawText(QRect(0, 216, 164, 20), Qt.AlignCenter, "By e-Nable France")
     p.fillRect(0, 306, 55, 8, QColor("#2d5aa0")); p.fillRect(55, 306, 54, 8, Qt.white); p.fillRect(109, 306, 55, 8, QColor("#d62d2d")); p.end(); im.save(str(path), "BMP")
 
 

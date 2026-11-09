@@ -10,7 +10,7 @@ Version de test **1.0.0-beta.2** : expérimentale, non signée, aucune pièce va
 ```
 packaging/build_mac.sh
 ```
-Résultat : `dist/e-NABLE_CustomLab_mac.zip` (signature ad hoc, sans compte développeur Apple, donc non notariée).
+Résultat : `dist/e-NableLab_mac.zip` (signature ad hoc, sans compte développeur Apple, donc non notariée).
 
 ## Windows (à faire sur un PC Windows : PyInstaller ne compile pas pour Windows depuis un Mac)
 1. Installer Python 3.9 ou plus récent (python.org).
@@ -21,8 +21,8 @@ py -3 -m venv .venv
 packaging\build_windows.bat
 ```
 PySide6 6.12.0 est exclu : avec Python 3.9 à 3.11, il fait planter l'appli (« Fatal Python error: none_dealloc »). La CI utilise 6.11.3.
-Résultat : `dist\e-NABLE_CustomLab_windows.zip` (dossier `CustomLab\` avec `CustomLab.exe`). Non signé : Windows SmartScreen affichera « Windows a protégé votre ordinateur » → « Informations complémentaires » → « Exécuter quand même ».
+Résultat : `dist\e-NableLab_windows.zip` (dossier `e-NableLab\` avec `e-NableLab.exe`). Non signé : Windows SmartScreen affichera « Windows a protégé votre ordinateur » → « Informations complémentaires » → « Exécuter quand même ».
 **La version Windows n'a jamais été lancée** : elle est à tester par un testeur sur PC.
 
 Auto-test sans fenêtre (imports, profils, mise à l'échelle et export d'une pièce Phoenix incluse dans un dossier temporaire), code de sortie 0 = OK, 1 = échec :
-`CustomLab.exe --selftest --report selftest.txt` (Windows, le rapport est dans le fichier) ou `"e-NABLE CustomLab.app/Contents/MacOS/CustomLab" --selftest` (macOS). La CI (`.github/workflows/build.yml`) le lance sur chaque application construite.
+`e-NableLab.exe --selftest --report selftest.txt` (Windows, le rapport est dans le fichier) ou `"e-NableLab.app/Contents/MacOS/e-NableLab" --selftest` (macOS). La CI (`.github/workflows/build.yml`) le lance sur chaque application construite.

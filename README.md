@@ -1,5 +1,5 @@
-# e-NABLE CustomLab — voir docs/PARCOURS_PHOENIX.md pour le parcours complet (interface incluse)
-**Lancer sans terminal** : double-cliquez sur `Lancer CustomLab.command` (macOS) ou `Lancer CustomLab.bat` (Windows).
+# e-NableLab — voir docs/PARCOURS_PHOENIX.md pour le parcours complet (interface incluse)
+**Lancer sans terminal** : double-cliquez sur `Lancer e-NableLab.command` (macOS) ou `Lancer e-NableLab.bat` (Windows).
 
 ```
 # env: .venv (PySide6) + tools/OpenSCAD.app (local)
@@ -17,16 +17,16 @@ Lire `docs/AUDIT.md` d'abord : les limites et blocages réels y sont listés.
 
 Les versions de test se téléchargent depuis l'onglet **Actions** du dépôt (workflow « Build test apps », section *Artifacts* du dernier run réussi).
 
-**Windows** : télécharger `e-NABLE_CustomLab_windows`, décompresser, lancer `e-NABLE_CustomLab_Setup.exe` (sans droits administrateur). L'application n'est pas signée : Windows affiche « Windows a protégé votre ordinateur » → *Informations complémentaires* → *Exécuter quand même*.
+**Windows** : télécharger `e-NableLab_windows`, décompresser, lancer `e-NableLab_Setup.exe` (sans droits administrateur). L'application n'est pas signée : Windows affiche « Windows a protégé votre ordinateur » → *Informations complémentaires* → *Exécuter quand même*.
 Installer aussi [OpenSCAD](https://openscad.org) (gravure et bras Unlimbited), puis ajouter vos sources via *Fichier → Fichiers sources*.
 
-**macOS** : télécharger `e-NABLE_CustomLab_mac`, décompresser, ouvrir `e-NABLE CustomLab.app` (clic droit → *Ouvrir* la première fois).
+**macOS** : télécharger `e-NableLab_mac`, décompresser, ouvrir `e-NableLab.app` (clic droit → *Ouvrir* la première fois).
 
 Ces versions n'ont pas été testées sur un poste vierge. Les fichiers sources (SCAD / STL officiels) ne sont pas fournis.
 
 ## Licence
 
-Le **code de CustomLab** est publié sous **GNU GPL v3** (fichier `LICENSE`).
+Le **code de e-NableLab** est publié sous **GNU GPL v3** (fichier `LICENSE`).
 
 La licence ne couvre **que le code**. Ces éléments gardent leur propre licence :
 - `customlab/bundled_parts/` : pièces Phoenix de jesimon, **CC BY-NC 3.0** (usage non commercial, attribution ; voir `customlab/bundled_parts/NOTICE.txt`).

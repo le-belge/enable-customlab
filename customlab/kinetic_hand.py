@@ -6,7 +6,7 @@ Method (basic scaling, "recommended" by the manual):
   2. at that scale: free space in the palm = design palm length - measured palm length of the affected hand
      -> pick the closest soft Insert (A-E) for that scale.
 Advanced scaling (per-axis, XY from the wrist, Z from the sound hand length) is only COMPUTED for information: it needs the parts in CAD
-orientation (workshop .fpp file), warns that it "may affect Kinetic Hand function", and is never applied by CustomLab.
+orientation (workshop .fpp file), warns that it "may affect Kinetic Hand function", and is never applied by e-NableLab.
 Documented limits: parts are supplied at 100 %; chart 50-100 % in steps of 2.5 %; printing guide: "can be scaled down to 55 %".
 A test palm must be printed before giving a hand to a recipient (manual P20).
 """

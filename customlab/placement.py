@@ -10,7 +10,7 @@ from PySide6.QtWidgets import (QStyledItemDelegate, QListView, QProgressBar, QSc
                                QLabel, QLineEdit, QMessageBox, QPushButton, QTextEdit, QVBoxLayout, QWidget)
 
 from . import deco
-from . import cache, library, thumbs
+from . import cache, errlog, library, thumbs
 from .licenseinfo import read_license_info
 from .meshio import read_stl
 from .glview import make_view
@@ -25,6 +25,7 @@ TX = {
         "face": "Face à décorer", "f+z": "▲ Dessus", "f-z": "▼ Dessous", "f-y": "Devant", "f+y": "Derrière", "f-x": "◀ Gauche", "f+x": "Droite ▶", "flip": "⟲ Retourner", "flip_tip": "Passer à la face opposée (dessus ↔ dessous, devant ↔ derrière, gauche ↔ droite)", "face_tip": "Faces de la pièce telle qu'elle est dans le fichier (orientation d'impression, comme sur le plateau Bambu)", "zone": "Tracer une zone interdite", "zone_ok": "Tracer une zone conseillée", "undo_zone": "↶ Annuler la dernière zone", "zone_hint": "Zone : glissez pour tracer ; attrapez un coin ou un bord d'une zone pour la redimensionner.", "clear": "Effacer les zones", "zone_ref": "Enregistrer comme zones de référence (pour tous)", "zone_ref_done": "✓ Zones de référence enregistrées : {f}", "zone_ref_fail": "Enregistrement impossible : {e}", "force": "Valider malgré les zones interdites", "zones_from_ref": "Zones de référence de cette pièce chargées.", "bold": "Gras", "inv": "Inverser (image)", "white": "Blanc = vide", "thr": "Seuil image (0-255)", "ncol": "Couleurs (1 = une pièce)", "qual": "Qualité (finesse)",
         "warn": "EXPÉRIMENTAL : les zones fonctionnelles (articulations, trous de broches, passages de câbles, contact avec la peau) ne sont PAS détectées. Tracez en rouge les zones à protéger, en vert celles où placer le motif, et vérifiez le résultat.",
         "lic": "Licence de la source", "unknown": "Provenance/licence INCONNUES — ne pas redistribuer.", "nc": "usage NON commercial",
+        "zones_save_title": "Zones", "zones_save_fail": "Les zones tracées n'ont pas pu être enregistrées ({e}). Elles restent à l'écran mais seront perdues à la fermeture : vérifiez l'espace disque et les droits d'écriture du dossier de l'utilisateur.",
         "busy": "⏳ Calcul en cours…", "analysing": "⏳ Analyse de la pièce (choix de la face)…", "axis_auto": "Vue choisie automatiquement : {axis} (face la plus plane). Vous pouvez la changer dans « Vue (axe) ».", "gen": "Générer la pièce depuis le SCAD officiel", "gen_ready": "Pièce « {part} » à générer pour ces mesures", "gen_busy": "⏳ Génération de « {part} » par OpenSCAD en cours… (ne fermez pas la fenêtre)", "gen_done": "✓ Pièce « {part} » générée pour ces mesures", "gen_need": "Saisissez d'abord des mesures valides (étape 2).", "gen_noscad": "Fichier SCAD officiel (UnLimbited_Arm_v2.1.scad) introuvable. Il est dans la partie 2 sur 2 de l'archive Thingiverse : ajoutez-la avec le menu Aide > Fichiers sources.", "gen_fail": "Échec de la génération : {err}", "preparing": "⏳ Préparation de la pièce…", "hint": "Cliquez dans la vue pour placer le motif ; en mode zone, glissez un rectangle.", "spot_center": "Centre", "spot_top": "Haut", "spot_bottom": "Bas", "spot_left": "Gauche", "spot_right": "Droite", "spots": "Placer", "pad": "Déplacer / pivoter la vue", "thick": "Épaissir les traits fins (< 0,8 mm)", "model_dims": "Taille standard (100 %) : {x:.1f} × {y:.1f} × {z:.1f} mm", "model_final": "taille finale à {pct:g} % : {x:.1f} × {y:.1f} × {z:.1f} mm (le motif suit l'échelle)", "hint2": "Glisser : déplacer · molette : taille · Maj+molette : rotation · Ctrl+molette : zoom · clic droit : déplacer la vue · flèches : ajuster", "prot": "Marge auto autour des trous", "inl_off": "Dépassement de l'incrustation (mm)"},
  "en": {"part": "Or open another file (STL or 3MF)…", "pick_obj": "This 3MF file holds {n} objects: which one to customise?", "all_objs": "All (merged into one part)", "from_3mf": "3MF converted to STL ({n} object(s) in the file): {f}", "bad_3mf": "Cannot read the 3MF: {e}", "lib": "— Choose a part —", "none": "No part loaded. Decoration is applied at the STL's original size; the original is never modified.",
         "axis": "View (axis)", "mode": "Mode", "relief": "Relief", "engrave": "Engrave", "inlay": "Inlay (flush)", "kind": "Content", "camo": "Camouflage (whole part)", "camo_style": "Camouflage", "camo_seed": "Variant (no.)", "camo_scale": "Patch size", "camo_fr": "French (Central Europe style)", "camo_winter": "Winter (snow)", "camo_all": "Apply the camouflage to several parts…", "camo_base": "Suggested part colour: {c} (filament 1).", "text": "Text", "svg": "SVG", "image": "Image (PNG/JPEG)",
@@ -32,6 +33,7 @@ TX = {
         "face": "Face to decorate", "f+z": "▲ Top", "f-z": "▼ Bottom", "f-y": "Front", "f+y": "Back", "f-x": "◀ Left", "f+x": "Right ▶", "flip": "⟲ Turn over", "flip_tip": "Go to the opposite face (top ↔ bottom, front ↔ back, left ↔ right)", "face_tip": "Faces of the part as it is in the file (print orientation, as on the Bambu plate)", "zone": "Draw a forbidden zone", "zone_ok": "Draw an advised zone", "undo_zone": "↶ Undo the last zone", "zone_hint": "Zone: drag to draw; grab a corner or an edge of a zone to resize it.", "clear": "Clear zones", "zone_ref": "Save as reference zones (for everyone)", "zone_ref_done": "✓ Reference zones saved: {f}", "zone_ref_fail": "Could not save: {e}", "force": "Validate despite the forbidden zones", "zones_from_ref": "Reference zones of this part loaded.", "bold": "Bold", "inv": "Invert (image)", "white": "White = empty", "thr": "Image threshold (0-255)", "ncol": "Colours (1 = one piece)", "qual": "Quality (resolution)",
         "warn": "EXPERIMENTAL: functional zones (joints, pin holes, cable channels, skin contact) are NOT detected. Draw the zones to protect in red, where to place the motif in green, and check the result.",
         "lic": "Source licence", "unknown": "Provenance/licence UNKNOWN — do not redistribute.", "nc": "NON-commercial use",
+        "zones_save_title": "Zones", "zones_save_fail": "The drawn zones could not be saved ({e}). They stay on screen but will be lost when you close: check the disk space and write permission of the user folder.",
         "busy": "⏳ Computing…", "analysing": "⏳ Analysing the part (choosing the face)…", "axis_auto": "View chosen automatically: {axis} (flattest face). You can change it in “View (axis)”.", "gen": "Generate the part from the official SCAD", "gen_ready": "Part “{part}” to generate for these measures", "gen_busy": "⏳ Generating “{part}” with OpenSCAD… (do not close the window)", "gen_done": "✓ Part “{part}” generated for these measures", "gen_need": "Enter valid measures first (step 2).", "gen_noscad": "Official SCAD file (UnLimbited_Arm_v2.1.scad) not found. It is in part 2 of 2 of the Thingiverse archive: add it with the menu Help > Source files.", "gen_fail": "Generation failed: {err}", "preparing": "⏳ Preparing the part…", "hint": "Click in the view to place the motif; in zone mode, drag a rectangle.", "spot_center": "Centre", "spot_top": "Top", "spot_bottom": "Bottom", "spot_left": "Left", "spot_right": "Right", "spots": "Place", "pad": "Move / turn the view", "thick": "Thicken thin strokes (< 0.8 mm)", "model_dims": "Standard size (100 %): {x:.1f} × {y:.1f} × {z:.1f} mm", "model_final": "final size at {pct:g} %: {x:.1f} × {y:.1f} × {z:.1f} mm (the motif follows the scale)", "hint2": "Drag: move · wheel: size · Shift+wheel: rotate · Ctrl+wheel: zoom · right-drag: pan · arrows: nudge", "prot": "Auto margin around holes", "inl_off": "Inlay protrusion (mm)"},
 }
 TX["fr"].update({"motifs": "Motifs", "motif_add": "＋ Ajouter un motif", "motif_del": "✕ Retirer", "motif_n": "Motif {n}", "motif_empty": "(vide)"})
@@ -204,7 +206,7 @@ class PlacementView(QWidget):
     def paintEvent(self, _):
         p = QPainter(self); p.fillRect(self.rect(), QColor("#eaf4f9")); p.setClipRect(self.rect())
         if self.base is None:
-            p.setPen(QColor("#667")); p.drawText(self.rect(), Qt.AlignCenter, self.msg or "—"); return
+            p.setPen(QColor("#667")); p.drawText(self.rect().adjusted(12, 0, -12, 0), Qt.AlignCenter | Qt.TextWordWrap, self.msg or "—"); return
         p.save()
         W, H = self.width(), self.height()                                           # draw in the turned frame
         if self.rot % 4: p.translate(*((0, H), (W, H), (W, 0))[self.rot % 4 - 1]); p.rotate((-90, 180, 90)[self.rot % 4 - 1])
@@ -318,7 +320,8 @@ class _Job(QRunnable):
     def run(self):
         try: res = ("ok", self.fn())
         except Exception as e: res = ("err", e)
-        self.sig.done.emit(self.gen, res)
+        try: self.sig.done.emit(self.gen, res)
+        except RuntimeError: pass                                  # the window (and its signal object) was closed while the job ran
 
 
 class CustomizePage(QWidget):
@@ -821,7 +824,11 @@ class CustomizePage(QWidget):
         try:
             f = self._zone_file()
             if f: f.parent.mkdir(parents=True, exist_ok=True); f.write_text(json.dumps(self.zones), encoding="utf-8"); self.zone_source = "user"
-        except Exception: pass
+        except Exception as e:
+            try: errlog.get_logger().exception("Zones non enregistrées (%s)", e)
+            except Exception: pass
+            if not getattr(self, "_zones_warned", False):                       # say it once: the zones stay on screen but will be lost on closing
+                self._zones_warned = True; QMessageBox.warning(self, self.t("zones_save_title"), self.t("zones_save_fail").format(e=e))
 
     def add_zone(self, a, b, c, d, kind=None):
         kind = kind or (self.view.zone_mode if self.view.zone_mode in ("forbidden", "advised") else "forbidden")

@@ -14,7 +14,7 @@
 <text x="205" y="70" font-size="12" font-family="sans-serif" fill="#1b2a38">1  Main atteinte posée à plat, paume vers le bas.</text><text x="205" y="89" font-size="12" font-family="sans-serif" fill="#1b2a38">2  Repérez la ligne d'articulation du poignet</text><text x="205" y="108" font-size="12" font-family="sans-serif" fill="#1b2a38">    (le pli, là où la main rejoint l'avant-bras).</text><text x="205" y="127" font-size="12" font-family="sans-serif" fill="#1b2a38">3  Mesurez la largeur à cet endroit, en mm.</text><text x="205" y="146" font-size="12" font-family="sans-serif" fill="#1b2a38">    Ex. : 40 mm → saisissez 40.</text>
 <rect x="205" y="178" width="305" height="76" rx="6" fill="#fff4dc" stroke="#e0b050"/>
 <text x="214" y="199" font-size="12" font-weight="700" font-family="sans-serif" fill="#8a4b00">Ne rajoutez pas de marge :</text>
-<text x="214" y="216" font-size="12" font-weight="700" font-family="sans-serif" fill="#8a4b00">CustomLab ajoute 5 mm tout seul.</text>
+<text x="214" y="216" font-size="12" font-weight="700" font-family="sans-serif" fill="#8a4b00">e-NableLab ajoute 5 mm tout seul.</text>
 <text x="214" y="236" font-size="11" font-family="sans-serif" fill="#5b6b78">Échelle = (mesure + 5) ÷ 43 × 100</text>
 <text x="214" y="250" font-size="11" font-family="sans-serif" fill="#5b6b78">Plage documentée : 100–160 %</text>
 </svg>

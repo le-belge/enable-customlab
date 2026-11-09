@@ -1,4 +1,4 @@
-"""Self-test of an installed or frozen CustomLab, without any visible window: `CustomLab --selftest [--report FILE]`.
+"""Self-test of an installed or frozen e-NableLab, without any visible window: `e-NableLab --selftest [--report FILE]`.
 
 Checks, in order: imports (GUI included, Qt offscreen), device profiles, bundled resources, Phoenix scale formula, then the export of
 one bundled Phoenix part at a non-100 % scale into a temporary folder (STL + JSON sheet + attribution), compared with the source.
@@ -77,7 +77,7 @@ STEPS = [("imports", _imports), ("profils / profiles", _profiles), ("ressources 
 def run(report=print):
     """Runs every step, reports each one; -> 0 if all pass, 1 otherwise."""
     from . import __version__
-    report(f"CustomLab {__version__} selftest - Python {sys.version.split()[0]} - {sys.platform} - frozen={bool(getattr(sys, 'frozen', False))}")
+    report(f"e-NableLab {__version__} selftest - Python {sys.version.split()[0]} - {sys.platform} - frozen={bool(getattr(sys, 'frozen', False))}")
     ok, pct = True, None
     steps = STEPS + [("échelle Phoenix / Phoenix scale", _scale), ("export Phoenix", lambda: _export(pct))]
     for name, fn in steps:
@@ -94,7 +94,7 @@ def run(report=print):
 
 def main(argv=None):
     import argparse
-    ap = argparse.ArgumentParser(prog="CustomLab --selftest")
+    ap = argparse.ArgumentParser(prog="e-NableLab --selftest")
     ap.add_argument("--selftest", action="store_true"); ap.add_argument("--report", help="also write the report to this file (UTF-8)")
     a, _ = ap.parse_known_args(sys.argv[1:] if argv is None else argv)
     lines = []

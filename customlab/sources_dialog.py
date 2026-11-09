@@ -1,6 +1,6 @@
 """Window "Fichiers sources": where the user's own SCAD/STL downloads go, what is found, OpenSCAD status.
 
-CustomLab bundles none of these files (only the Phoenix parts under customlab/bundled_parts). The user downloads them from the official
+e-NableLab bundles none of these files (only the Phoenix parts under customlab/bundled_parts). The user downloads them from the official
 pages, drops them in the sources folder and presses "Vérifier". Nothing is downloaded by the app.
 """
 import re
@@ -21,17 +21,17 @@ DEVICES = {
     "kinetic_arm": ("kinetic_arm", "https://www.thingiverse.com/thing:6736769", "stl"),
     "unlimbited_arm": ("unlimbited_arm", "https://www.thingiverse.com/thing:1672381", "scad"),
 }
-TX = {"fr": {"title": "Fichiers sources", "intro": "<b>Pour utiliser un autre appareil que la Phoenix :</b><br>1. Cliquez sur « Ouvrir la page officielle » et téléchargez les fichiers (bouton de téléchargement du site).<br>2. Cliquez sur « Ajouter le .zip téléchargé… » et choisissez le fichier : CustomLab le range au bon endroit tout seul.<br>3. C'est prêt (✓ vert). Rien d'autre à faire.",
+TX = {"fr": {"title": "Fichiers sources", "intro": "<b>Pour utiliser un autre appareil que la Phoenix :</b><br>1. Cliquez sur « Ouvrir la page officielle » et téléchargez les fichiers (bouton de téléchargement du site).<br>2. Cliquez sur « Ajouter le .zip téléchargé… » et choisissez le fichier : e-NableLab le range au bon endroit tout seul.<br>3. C'est prêt (✓ vert). Rien d'autre à faire.",
              "folder": "Dossier de rangement :", "choose": "Changer de dossier…", "reveal": "Ouvrir le dossier", "check": "Vérifier", "close": "Fermer", "page": "Ouvrir la page officielle",
              "add_zip": "Ajouter le .zip téléchargé…", "add_dir": "Ajouter un dossier…", "pick_zip": "Choisir le .zip téléchargé", "pick_dir": "Choisir le dossier téléchargé", "busy": "⏳ Copie en cours… ({i}/{n})", "added": "✓ {n} fichier(s) ajouté(s).", "err": "✗ Impossible d'ajouter : {e}",
              "ok_stl": "✓ prêt ({n} fichiers STL)", "ko_stl": "✗ pas encore de fichiers", "ok_scad": "✓ prêt (SCAD officiel trouvé)", "ko_scad": "✗ pas encore de fichiers", "ko_part2": "✗ il manque la partie 2 sur 2 de l'archive : c'est elle qui contient le fichier {f}. Téléchargez « part 2 of 2 » sur la page officielle et ajoutez-la.", "ko_version": "✗ fichier trouvé ({g}), mais ce n'est pas la version attendue ({f}). Ajoutez la partie 2 sur 2 de l'archive officielle, qui contient {f}.", "opt": "Facultatif : les pièces Phoenix incluses suffisent",
-             "sub": "", "scad_ok": "✓ OpenSCAD trouvé", "scad_ko": "✗ OpenSCAD (gratuit, openscad.org) n'est pas installé : il n'est nécessaire que pour la gravure et l'Unlimbited Arm. Installez-le puis relancez CustomLab.",
+             "sub": "", "scad_ok": "✓ OpenSCAD trouvé", "scad_ko": "✗ OpenSCAD (gratuit, openscad.org) n'est pas installé : il n'est nécessaire que pour la gravure et l'Unlimbited Arm. Installez-le puis relancez e-NableLab.",
              "names": {"kinetic_hand": "Kinetic Hand", "kinetic_arm": "Kinetic Arm", "unlimbited_arm": "Unlimbited Arm", "phoenix_hand": "Phoenix (SCAD, facultatif)"}},
-      "en": {"title": "Source files", "intro": "<b>To use a device other than the Phoenix:</b><br>1. Click \"Open the official page\" and download the files (the site's download button).<br>2. Click \"Add the downloaded .zip…\" and choose the file: CustomLab puts it in the right place by itself.<br>3. It is ready (green ✓). Nothing else to do.",
+      "en": {"title": "Source files", "intro": "<b>To use a device other than the Phoenix:</b><br>1. Click \"Open the official page\" and download the files (the site's download button).<br>2. Click \"Add the downloaded .zip…\" and choose the file: e-NableLab puts it in the right place by itself.<br>3. It is ready (green ✓). Nothing else to do.",
              "folder": "Storage folder:", "choose": "Change folder…", "reveal": "Open the folder", "check": "Check", "close": "Close", "page": "Open the official page",
              "add_zip": "Add the downloaded .zip…", "add_dir": "Add a folder…", "pick_zip": "Choose the downloaded .zip", "pick_dir": "Choose the downloaded folder", "busy": "⏳ Copying… ({i}/{n})", "added": "✓ {n} file(s) added.", "err": "✗ Could not add: {e}",
              "ok_stl": "✓ ready ({n} STL files)", "ko_stl": "✗ no files yet", "ok_scad": "✓ ready (official SCAD found)", "ko_scad": "✗ no files yet", "ko_part2": "✗ part 2 of 2 of the archive is missing: it is the part that contains the file {f}. Download \"part 2 of 2\" from the official page and add it.", "ko_version": "✗ file found ({g}), but it is not the expected version ({f}). Add part 2 of 2 of the official archive, which contains {f}.", "opt": "Optional: the bundled Phoenix parts are enough",
-             "sub": "", "scad_ok": "✓ OpenSCAD found", "scad_ko": "✗ OpenSCAD (free, openscad.org) is not installed: only needed for engraving and the Unlimbited Arm. Install it, then restart CustomLab.",
+             "sub": "", "scad_ok": "✓ OpenSCAD found", "scad_ko": "✗ OpenSCAD (free, openscad.org) is not installed: only needed for engraving and the Unlimbited Arm. Install it, then restart e-NableLab.",
              "names": {"kinetic_hand": "Kinetic Hand", "kinetic_arm": "Kinetic Arm", "unlimbited_arm": "Unlimbited Arm", "phoenix_hand": "Phoenix (SCAD, optional)"}}}
 
 

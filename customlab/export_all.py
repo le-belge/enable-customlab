@@ -65,7 +65,7 @@ def run(parts, decorated, out_root, ctx, progress=lambda i, n, msg: None, cancel
         except Exception as e: results.append({"part": "3MF de l'appareil complet", "kind": "device", "file": "", "status": "failed", "message": str(e)[:300], "folder": None})
     progress(len(parts), len(parts), "")
     (out_root / "RECAP_export.json").write_text(json.dumps({"generated": datetime.now().isoformat(timespec="seconds"), "parts": results}, indent=2, ensure_ascii=False), encoding="utf-8")
-    lines = ["CustomLab — export de toutes les pièces", ""] + [f"[{r['status']}] {r['part']} — {r['message']}" for r in results]
+    lines = ["e-NableLab — export de toutes les pièces", ""] + [f"[{r['status']}] {r['part']} — {r['message']}" for r in results]
     lines += ["", "Aucune impression ni validation physique n'a été faite."]
     (out_root / "RECAP_export.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
     return results
@@ -96,24 +96,16 @@ def device_3mf(pieces, out_root, ctx):
             else: ext = pl.index(mat, col)
             parts.append({"name": prt["name"], "triangles": prt["triangles"], "extruder": ext})
         objects.append({"name": pc["label"].split(" — ")[0][:60], "parts": parts})
-    bed = materials.PRINTERS[printer]["bed"]; plates, too_big = bambu3mf.pack(objects, bed)
+    bed = materials.PRINTERS.get(printer, materials.PRINTERS["other"])["bed"]; plates, too_big = bambu3mf.pack(objects, bed)
     files = []; types = [(materials.MATERIALS[m]["type"], c) for m, c in pl.filaments]
     for i, placed in enumerate(plates, start=1):
         fn = out_root / ("APPAREIL_Bambu_pret.3mf" if len(plates) == 1 else f"APPAREIL_Bambu_pret_plateau{i}.3mf")
-        bambu3mf.write_bambu_plate(fn, placed, types, title="CustomLab"); files.append(fn)
-    multi_nozzle = materials.PRINTERS[printer].get("multi_nozzle", False)
-    body = {pl.index(m, c) for m, c, mo in chosen}; detail = [n for n in range(1, len(pl.filaments) + 1) if n not in body]   # used only by motif pieces
-    lines = ["CustomLab — appareil complet, prêt pour Bambu Studio (EXPÉRIMENTAL)", "",
-             f"Imprimante choisie : {materials.PRINTERS[printer]['fr']}", "", "Filaments du projet (à charger dans cet ordre) :"]
+        bambu3mf.write_bambu_plate(fn, placed, types, title="e-NableLab"); files.append(fn)
+    lines = ["e-NableLab — appareil complet, prêt pour Bambu Studio (EXPÉRIMENTAL)", "",
+             f"Imprimante choisie : {materials.PRINTERS.get(printer, materials.PRINTERS['other'])['fr']}", "", "Filaments du projet (à charger dans cet ordre) :"]
     for n, (m, c) in enumerate(pl.filaments, start=1):
         who = [it["label"].split(" — ")[0] for it, (mm, cc, mo) in zip(items, chosen) if (mm, materials.colour_hex(cc)) == (m, c) or (mm == m and c in [materials.colour_hex(x) for x in mo])]
-        tip = " — buse 0,2 mm conseillée (détails du motif)" if (multi_nozzle and n in detail) else ""
-        lines.append(f"  Filament {n} : {m} {materials.colour_name(c)} ({c}) — {', '.join(who)}{tip}")
-    if detail and multi_nozzle:
-        lines += ["", "Buses : 0,4 mm pour les pièces, 0,2 mm pour les filaments du motif (texte, logo) si vous voulez des détails plus fins.",
-                  "Ce choix se fait dans Bambu Studio (outil par filament) : CustomLab ne l'écrit pas dans le fichier (format non vérifié)."]
-    elif detail:
-        lines += ["", "Cette imprimante n'a qu'une buse : la même (0,4 mm en général) sert aux pièces et aux détails du motif."]
+        lines.append(f"  Filament {n} : {m} {materials.colour_name(c)} ({c}) — {', '.join(who)}")
     lines += ["", "Fichiers : " + ", ".join(f.name for f in files)]
     if too_big: lines.append("Pièces trop grandes pour le plateau (non incluses, imprimez-les à part) : " + ", ".join(too_big))
     lines += ["", "Dans Bambu Studio : vérifiez que chaque filament du projet a la bonne matière (préréglage) et la bonne couleur,",
@@ -123,6 +115,5 @@ def device_3mf(pieces, out_root, ctx):
               "Aucune impression ni validation physique n'a été faite."]
     (out_root / "APPAREIL_LISEZ-MOI_Bambu.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
     msg = f"{len(files)} plateau(x), {len(pl.filaments)} filament(s)" + (f" ; trop grandes : {', '.join(too_big)}" if too_big else "") + ("".join(" ; " + w for w in pl.warnings) if pl.warnings else "")
-    r.update(status="ok", message=msg, file=str(files[0]), filaments=[{"filament": n, "material": m, "colour": c, "detail_nozzle_mm": 0.2 if (multi_nozzle and n in detail) else None}
-                                                              for n, (m, c) in enumerate(pl.filaments, start=1)])
+    r.update(status="ok", message=msg, file=str(files[0]), filaments=[{"filament": n, "material": m, "colour": c} for n, (m, c) in enumerate(pl.filaments, start=1)])
     return r

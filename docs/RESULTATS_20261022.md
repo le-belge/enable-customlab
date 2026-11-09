@@ -7,12 +7,12 @@ Aucun code modifié. Contrôles réalisés avec Bambu Studio 02.08.03.66 **en li
 - Écart de version : la page e-NABLE France documente un paramètre `scale` (100–160) ; ces archives utilisent `HandPerc`. **Rien ne démontre** que la référence « 43 mm » de la formule e-NABLE France correspond à cette version. → **Blocage explicite** : la mise à l'échelle documentée n'est pas validée pour ces fichiers. Usage local uniquement ; ne pas redistribuer. Le profil `phoenix_hand` (licence « CC-BY ») est à corriger en conséquence (non fait : code/profils non touchés).
 
 ## 2. Pack synthétique dans Bambu Studio (CLI)
-- Import réussi : 2 objets (« panel », « decoration »), géométrie intacte (volume panneau 10203,1 mm³ = valeur calculée par CustomLab), 0 arête ouverte, 0 arête non-manifold, tranchage OK.
+- Import réussi : 2 objets (« panel », « decoration »), géométrie intacte (volume panneau 10203,1 mm³ = valeur calculée par e-NableLab), 0 arête ouverte, 0 arête non-manifold, tranchage OK.
 - Avertissement : « no filament colors found in projects » → **les couleurs du 3MF (basematerials) ne sont pas reprises** ; tranchage mono-filament (#00AE42). Avertissement non critique « decoration has floating regions » (relief tranché isolément).
 - Bambu stocke l'affectation filament par objet dans `Metadata/model_settings.config` (`extruder`) et les couleurs dans `project_settings.config`. Deux essais d'ajout minimal de ces métadonnées n'ont **rien changé** ; même un 3MF produit par Bambu avec deux filaments reste mono-filament en CLI (profil par défaut sans AMS). **Le 3MF multicolore n'est donc ni validé ni réfuté** : il faut une session graphique avec le profil X1C + AMS. Tant que ce n'est pas fait, exporter les STL séparés et affecter les filaments à la main.
 
 ## 3. Originaux Palm et Fingers (gauche et droite)
-| Fichier | Contrôle strict CustomLab | Bambu (CLI) |
+| Fichier | Contrôle strict e-NableLab | Bambu (CLI) |
 |---|---|---|
 | Palm G/D | non étanche | 3 composants, 9 arêtes non-manifold, faces inversées signalées, 0 arête ouverte |
 | Fingers G/D | non étanche | 5 composants, 2 arêtes non-manifold, faces inversées signalées, 0 arête ouverte |

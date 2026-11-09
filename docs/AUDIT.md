@@ -1,4 +1,4 @@
-# Audit technique et documentaire — e-NABLE CustomLab (Phase 0)
+# Audit technique et documentaire — e-NableLab (Phase 0)
 
 Date : 2026-10-22. Méthode : lecture des pages officielles via un outil de lecture web (résumés automatiques de pages).
 **Aucun fichier STL/SCAD n'a été téléchargé** (téléchargement non autorisé explicitement, et Thingiverse renvoie HTTP 403 aux accès automatisés).
@@ -26,7 +26,7 @@ Toute information ci-dessous marquée « NON VÉRIFIÉ » doit être contrôlée
 | Unlimbited Arm | CC-BY d'après un miroir (NIH 3D, v2.1) | Attribution Team UnLimbited | NON VÉRIFIÉ |
 
 Conséquence : **ne redistribuer aucun fichier source** dans le logiciel. L'application doit demander à l'utilisateur de fournir lui-même les SCAD/STL (import local), et afficher crédits et licence de chaque profil.
-Le CC BY-NC-SA des Kinetic impose que tout dérivé distribué soit non commercial et sous la même licence : à traiter dans la licence du logiciel (le code de CustomLab peut rester séparé tant qu'il ne contient pas les modèles).
+Le CC BY-NC-SA des Kinetic impose que tout dérivé distribué soit non commercial et sous la même licence : à traiter dans la licence du logiciel (le code de e-NableLab peut rester séparé tant qu'il ne contient pas les modèles).
 
 ## 3. Méthodes de dimensionnement documentées
 

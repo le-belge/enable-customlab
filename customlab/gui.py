@@ -1,4 +1,4 @@
-"""e-NABLE CustomLab — first PySide6 GUI: catalogue -> measures -> result/3D -> export."""
+"""e-NableLab — first PySide6 GUI: catalogue -> measures -> result/3D -> export."""
 import json
 import os
 import sys
@@ -8,7 +8,7 @@ from pathlib import Path
 from PySide6.QtCore import QObject, QRunnable, Qt, QThreadPool, Signal
 from PySide6.QtGui import QAction, QIcon, QPixmap
 from PySide6.QtSvgWidgets import QSvgWidget
-from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QDoubleSpinBox, QFileDialog, QFormLayout, QFrame,
+from PySide6.QtWidgets import (QScrollArea, QApplication, QCheckBox, QComboBox, QDoubleSpinBox, QFileDialog, QFormLayout, QFrame,
                                QHBoxLayout, QLabel, QMainWindow, QMessageBox, QPushButton, QStackedWidget,
                                QTextEdit, QVBoxLayout, QWidget)
 
@@ -28,11 +28,11 @@ from .placement import _Job, _Signals
 ASSETS = Path(__file__).resolve().parent / "assets" / "schemas"
 SCHEMA = {"phoenix_hand": "poignet", "unlimbited_arm": "bras"}
 SCALE_RANGE = {"phoenix_hand": (100.0, 160.0), "kinetic_hand": (50.0, 100.0), "kinetic_arm": (50.0, 100.0)}      # documented ranges: a value outside is refused, never corrected (Kinetic Arm: per group of parts, see kinetic_arm.GROUP_RANGE)
-SCALABLE = ("phoenix_hand", "kinetic_hand", "kinetic_arm")            # uniform scale applied by CustomLab at export (the arm is scaled by its own SCAD)
+SCALABLE = ("phoenix_hand", "kinetic_hand", "kinetic_arm")            # uniform scale applied by e-NableLab at export (the arm is scaled by its own SCAD)
 DECO_DEVICES = ("phoenix_hand", "unlimbited_arm", "kinetic_hand", "kinetic_arm")      # devices for which the customisation page works (arm parts are generated from the official SCAD)
 
 T = {
- "fr": {"title": "e-NABLE CustomLab", "catalog": "1 · Appareil", "measures": "2 · Mesures & dimensionnement", "custom": "3 · Personnalisation", "result": "4 · Aperçu 3D & export",
+ "fr": {"title": "e-NableLab", "catalog": "1 · Appareil", "measures": "2 · Mesures & dimensionnement", "custom": "3 · Personnalisation", "result": "4 · Aperçu 3D & export",
         "next": "Suivant →", "back": "← Retour", "side": "Côté", "part": "Pièce", "left": "Gauche", "right": "Droite",
         "status_experimental": "EXPÉRIMENTAL", "status_unavailable": "INDISPONIBLE", "status_verified": "VÉRIFIÉ",
         "license": "Licence", "blocked": "Blocage", "info": "Information", "import_stl": "Importer un STL officiel (100 %)…",
@@ -42,8 +42,8 @@ T = {
         "disclaimer": "Aucune validation médicale ni d'impression : à faire contrôler par un bénévole e-NABLE compétent.",
         "scale": "Échelle", "usable": "Largeurs de poignet utilisables", "err": "Erreur",
         "kcheck": "Contrôle de cohérence Kinetic Arm (documenté NIH 3D) — ce n'est pas un dimensionnement",
-        "resid": "Longueur du moignon", "forearm": "Avant-bras valide", "pick": "Choisissez un appareil.", "hello": "Quel appareil voulez-vous adapter ?", "hello2": "Dimensionnez-le à partir des mesures du bénéficiaire, personnalisez-le, puis exportez les pièces pour l'impression.", "select": "Sélectionner", "scale_cb": "Appliquer l'échelle calculée à l'export (uniforme, vérifiée sur le SCAD officiel)", "scale_cb_kinetic": "Appliquer l'échelle du tableau du manuel à l'export (uniforme, toutes les pièces)", "nocustom": "Personnalisation disponible pour la Phoenix uniquement.", "nopart": "Choisissez d'abord la pièce à l'étape 3.", "export_dir": "Exporter la pièce (STL + fiche)…", "export_all": "Exporter toutes les pièces à cette échelle…", "m_help": "Aide", "m_scale": "Mettre à l'échelle : pas à pas (appareil choisi)…", "scale_btn": "ℹ️ Comment calculer l'échelle ? (pas à pas)", "photo_btn": "📷 Mesurer sur une photo (avec un mètre ou une carte bancaire à côté)…", "export_one": "Exporter tout, prêt pour Bambu…", "export_only": "Exporter seulement la pièce en cours…", "m_view": "Affichage", "m_adv": "Mode avancé (tous les réglages)", "m_sources": "Fichiers sources (SCAD / STL)…", "m_tuto": "Tuto : mesures, échelles et personnalisation…", "tuto_btn": "📖 Lire le tuto avant de commencer", "exported": "Exporté", "open_slicer": "Ouvrir dans le trancheur (Bambu Studio)", "m_file": "Fichier", "m_new": "Nouveau projet", "m_open": "Ouvrir un projet…", "m_save": "Enregistrer le projet…", "m_recent": "Projets récents", "m_prof": "Profils bénéficiaires…", "m_people": "Bénéficiaires", "proj_filter": "Projet CustomLab (*.customlab.json)", "saved": "Projet enregistré", "none_recent": "(aucun)", "load_problems": "Projet ouvert avec des éléments introuvables", "open_failed": "Impossible d'ouvrir ce projet (fichier illisible ou abîmé)", "m_logs": "Ouvrir le dossier des journaux d'erreurs"},
- "en": {"title": "e-NABLE CustomLab", "catalog": "1 · Device", "measures": "2 · Measures & sizing", "custom": "3 · Customisation", "result": "4 · 3D preview & export",
+        "resid": "Longueur du moignon", "forearm": "Avant-bras valide", "pick": "Choisissez un appareil.", "hello": "Quel appareil voulez-vous adapter ?", "hello2": "Dimensionnez-le à partir des mesures du bénéficiaire, personnalisez-le, puis exportez les pièces pour l'impression.", "select": "Sélectionner", "scale_cb": "Appliquer l'échelle calculée à l'export (uniforme, vérifiée sur le SCAD officiel)", "scale_cb_kinetic": "Appliquer l'échelle du tableau du manuel à l'export (uniforme, toutes les pièces)", "nocustom": "Personnalisation disponible pour la Phoenix uniquement.", "nopart": "Choisissez d'abord la pièce à l'étape 3.", "export_dir": "Exporter la pièce (STL + fiche)…", "export_all": "Exporter toutes les pièces à cette échelle…", "m_help": "Aide", "m_scale": "Mettre à l'échelle : pas à pas (appareil choisi)…", "scale_btn": "ℹ️ Comment calculer l'échelle ? (pas à pas)", "photo_btn": "📷 Mesurer sur une photo (avec un mètre ou une carte bancaire à côté)…", "export_one": "Exporter tout, prêt pour Bambu…", "export_only": "Exporter seulement la pièce en cours…", "m_view": "Affichage", "m_adv": "Mode avancé (tous les réglages)", "m_sources": "Fichiers sources (SCAD / STL)…", "m_tuto": "Tuto : mesures, échelles et personnalisation…", "tuto_btn": "📖 Lire le tuto avant de commencer", "exported": "Exporté", "open_slicer": "Ouvrir dans le trancheur (Bambu Studio)", "m_file": "Fichier", "m_new": "Nouveau projet", "m_open": "Ouvrir un projet…", "m_save": "Enregistrer le projet…", "m_recent": "Projets récents", "m_prof": "Profils bénéficiaires…", "m_people": "Bénéficiaires", "proj_filter": "Projet e-NableLab (*.customlab.json)", "saved": "Projet enregistré", "none_recent": "(aucun)", "load_problems": "Projet ouvert avec des éléments introuvables", "open_failed": "Impossible d'ouvrir ce projet (fichier illisible ou abîmé)", "m_logs": "Ouvrir le dossier des journaux d'erreurs"},
+ "en": {"title": "e-NableLab", "catalog": "1 · Device", "measures": "2 · Measures & sizing", "custom": "3 · Customisation", "result": "4 · 3D preview & export",
         "next": "Next →", "back": "← Back", "side": "Side", "part": "Part", "left": "Left", "right": "Right",
         "status_experimental": "EXPERIMENTAL", "status_unavailable": "UNAVAILABLE", "status_verified": "VERIFIED",
         "license": "Licence", "blocked": "Blocker", "info": "Information", "import_stl": "Import official STL (100 %)…",
@@ -53,7 +53,7 @@ T = {
         "disclaimer": "No medical or print validation: have a qualified e-NABLE volunteer check it.",
         "scale": "Scale", "usable": "Usable wrist widths", "err": "Error",
         "kcheck": "Kinetic Arm consistency check (NIH 3D documented) — not a sizing method",
-        "resid": "Residual limb length", "forearm": "Sound forearm length", "pick": "Choose a device.", "hello": "Which device would you like to adapt?", "hello2": "Size it from the beneficiary's measurements, personalise it, then export the parts for printing.", "select": "Select", "scale_cb": "Apply the computed scale on export (uniform, checked against the official SCAD)", "scale_cb_kinetic": "Apply the manual's chart scale on export (uniform, all parts)", "nocustom": "Customisation is available for the Phoenix only.", "nopart": "Choose the part in step 3 first.", "export_dir": "Export the part (STL + sheet)…", "export_all": "Export all parts at this scale…", "m_help": "Help", "m_scale": "Scaling: step by step (chosen device)…", "scale_btn": "ℹ️ How is the scale computed? (step by step)", "photo_btn": "📷 Measure on a photo (with a ruler or bank card beside it)…", "export_one": "Export everything, ready for Bambu…", "export_only": "Export only the current part…", "m_view": "View", "m_adv": "Advanced mode (all settings)", "m_sources": "Source files (SCAD / STL)…", "m_tuto": "Tutorial: measuring, scaling and customising (in French)…", "tuto_btn": "📖 Read the tutorial before starting (in French)", "exported": "Exported", "open_slicer": "Open in the slicer (Bambu Studio)", "m_file": "File", "m_new": "New project", "m_open": "Open a project…", "m_save": "Save the project…", "m_recent": "Recent projects", "m_prof": "Beneficiary profiles…", "m_people": "Beneficiaries", "proj_filter": "CustomLab project (*.customlab.json)", "saved": "Project saved", "none_recent": "(none)", "load_problems": "Project opened with items not found", "open_failed": "This project cannot be opened (unreadable or damaged file)", "m_logs": "Open the error logs folder"},
+        "resid": "Residual limb length", "forearm": "Sound forearm length", "pick": "Choose a device.", "hello": "Which device would you like to adapt?", "hello2": "Size it from the beneficiary's measurements, personalise it, then export the parts for printing.", "select": "Select", "scale_cb": "Apply the computed scale on export (uniform, checked against the official SCAD)", "scale_cb_kinetic": "Apply the manual's chart scale on export (uniform, all parts)", "nocustom": "Customisation is available for the Phoenix only.", "nopart": "Choose the part in step 3 first.", "export_dir": "Export the part (STL + sheet)…", "export_all": "Export all parts at this scale…", "m_help": "Help", "m_scale": "Scaling: step by step (chosen device)…", "scale_btn": "ℹ️ How is the scale computed? (step by step)", "photo_btn": "📷 Measure on a photo (with a ruler or bank card beside it)…", "export_one": "Export everything, ready for Bambu…", "export_only": "Export only the current part…", "m_view": "View", "m_adv": "Advanced mode (all settings)", "m_sources": "Source files (SCAD / STL)…", "m_tuto": "Tutorial: measuring, scaling and customising (in French)…", "tuto_btn": "📖 Read the tutorial before starting (in French)", "exported": "Exported", "open_slicer": "Open in the slicer (Bambu Studio)", "m_file": "File", "m_new": "New project", "m_open": "Open a project…", "m_save": "Save the project…", "m_recent": "Recent projects", "m_prof": "Beneficiary profiles…", "m_people": "Beneficiaries", "proj_filter": "e-NableLab project (*.customlab.json)", "saved": "Project saved", "none_recent": "(none)", "load_problems": "Project opened with items not found", "open_failed": "This project cannot be opened (unreadable or damaged file)", "m_logs": "Open the error logs folder"},
 }
 BADGE = theme.STATUS
 
@@ -104,6 +104,7 @@ class MainWindow(QMainWindow):
         self.retranslate(); self.go(0)
 
     def t(self, k): return T[self.lang][k]
+    def notice(self, p): return (p.get("notice_en") if self.lang == "en" else None) or p.get("notice")      # profile info text in the interface language
 
     def set_advanced(self, flag):
         """Simple mode (default): only what a volunteer needs; advanced mode: every setting. The choice is remembered."""
@@ -180,7 +181,7 @@ class MainWindow(QMainWindow):
     def open_project(self, path):
         try:
             d = json.loads(Path(path).read_text(encoding="utf-8"))
-            if not isinstance(d, dict): raise ValueError("pas un projet CustomLab / not a CustomLab project")
+            if not isinstance(d, dict): raise ValueError("pas un projet e-NableLab / not a e-NableLab project")
         except (OSError, ValueError) as e:                          # unreadable / damaged / not a project: tell the user, keep the window as it is
             errlog.warning(f"Projet illisible {path} : {e!r}"); msg = f"{self.t('open_failed')} :\n{path}\n\n{e}"
             QMessageBox.warning(self, self.t("m_open"), msg); return [msg]
@@ -292,7 +293,7 @@ class MainWindow(QMainWindow):
         top = QHBoxLayout(); top.addLayout(self.form, 1)
         self.schema = QSvgWidget(); self.schema.setFixedSize(460, 205); top.addWidget(self.schema, 0, Qt.AlignTop)
         self.direct_row = QWidget(); dr = QHBoxLayout(self.direct_row); dr.setContentsMargins(0, 0, 0, 0)
-        self.direct_lab = QLabel(); self.direct_spin = QDoubleSpinBox(); self.direct_spin.setRange(0, 300); self.direct_spin.setDecimals(1); self.direct_spin.setSingleStep(2.5); self.direct_spin.setSuffix(" %"); self.direct_spin.setMinimumWidth(240)
+        self.direct_lab = QLabel(); self.direct_spin = QDoubleSpinBox(); self.direct_spin.setRange(0, 300); self.direct_spin.setDecimals(1); self.direct_spin.setSingleStep(2.5); self.direct_spin.setSuffix(" %"); self.direct_spin.setMinimumWidth(330)
         self.direct_info = QLabel(); self.direct_info.setStyleSheet(f"color:{theme.MUTED};font-size:11px")
         for x in (self.direct_lab, self.direct_spin, self.direct_info): dr.addWidget(x)
         dr.addStretch(1); self.direct_spin.editingFinished.connect(self._direct_edited)
@@ -300,7 +301,9 @@ class MainWindow(QMainWindow):
         brow = QHBoxLayout(); brow.addWidget(self.b_photo); brow.addWidget(self.b_guide); brow.addStretch(1)
         lay.addLayout(top); lay.addLayout(brow); lay.addWidget(self.direct_row); lay.addWidget(self.help); lay.addWidget(self.live, 1)
         self.side.currentIndexChanged.connect(self._side_changed); self.part.currentIndexChanged.connect(self.recompute)
-        self.stack.addWidget(w)
+        self.live.setMinimumHeight(110)
+        w.setObjectName("page"); sa = QScrollArea(); sa.setWidget(w); sa.setWidgetResizable(True); sa.setFrameShape(QFrame.NoFrame); sa.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)   # a low window or a 150 % display scale scrolls instead of squashing the rows
+        self.stack.addWidget(sa)
 
     def build_result(self):
         w = QWidget(); h = QHBoxLayout(w); left = QVBoxLayout()
@@ -334,8 +337,8 @@ class MainWindow(QMainWindow):
             p = self.profiles[pid]; st = p["status"]
             badge.setText(f"<span style='color:white;background:{BADGE[st]};padding:3px 9px;font-weight:700;font-size:10px'>&nbsp;{self.t('status_' + st)}&nbsp;</span>")
             cut = lambda t, n: t if len(t) <= n else t[:n].rsplit(" ", 1)[0] + "…"
-            full = f"{self.t('license')}: {p['license']['name']}" + (f"<br><span style='color:#b00020'>{self.t('blocked')}: {p['blocking']}</span>" if p.get("blocking") else "") + (f"<br><span style='color:{theme.NAVY}'>{self.t('info')}: {p['notice']}</span>" if p.get("notice") else "")
-            info.setText(f"{self.t('license')}: {cut(p['license']['name'], 70)}" + (f"<br><span style='color:#b00020'>{self.t('blocked')}: {cut(p['blocking'], 110)}</span>" if p.get("blocking") else "") + (f"<br><span style='color:{theme.NAVY}'>{self.t('info')}: {cut(p['notice'], 150)}</span>" if p.get("notice") else ""))
+            full = f"{self.t('license')}: {p['license']['name']}" + (f"<br><span style='color:#b00020'>{self.t('blocked')}: {p['blocking']}</span>" if p.get("blocking") else "") + (f"<br><span style='color:{theme.NAVY}'>{self.t('info')}: {self.notice(p)}</span>" if self.notice(p) else "")
+            info.setText(f"{self.t('license')}: {cut(p['license']['name'], 70)}" + (f"<br><span style='color:#b00020'>{self.t('blocked')}: {cut(p['blocking'], 110)}</span>" if p.get("blocking") else "") + (f"<br><span style='color:{theme.NAVY}'>{self.t('info')}: {cut(self.notice(p), 150)}</span>" if self.notice(p) else ""))
             info.setToolTip(f"<div style='width:420px'>{full}</div>")
             btn.setText(self.t("select"))
         self.b_scad.setText(self.t("import_scad")); self.scale_cb.setText(self.t("scale_cb"))
@@ -424,7 +427,7 @@ class MainWindow(QMainWindow):
                     it.widget().setParent(None)
         self.fields = {}
         self.m_title.setText(p["name"])
-        self.block.setText((f"<span style='color:#b00020'>{self.t('blocked')}: {p['blocking']}</span><br>" if p.get("blocking") else "") + (f"<span style='color:{theme.NAVY}'>{self.t('info')}: {p['notice']}</span>" if p.get("notice") else "")); self.block.setTextFormat(Qt.RichText)
+        self.block.setText((f"<span style='color:#b00020'>{self.t('blocked')}: {p['blocking']}</span><br>" if p.get("blocking") else "") + (f"<span style='color:{theme.NAVY}'>{self.t('info')}: {self.notice(p)}</span>" if self.notice(p) else "")); self.block.setTextFormat(Qt.RichText)
         self.part.blockSignals(True); self.part.clear(); self.part.addItems(p["parts"]); self.part.blockSignals(False)
         self.form.addRow(self.t("side"), self.side)
         if p["parts"]: self.form.addRow(self.t("part"), self.part)
@@ -458,7 +461,7 @@ class MainWindow(QMainWindow):
     DIRECT = ("phoenix_hand", "kinetic_hand")          # devices whose scale can be chosen directly (no measures needed)
 
     def scale_percent(self):
-        """Scale CustomLab applies at export: the volunteer's own value if any (also without measures for the Phoenix and the Kinetic Hand),
+        """Scale e-NableLab applies at export: the volunteer's own value if any (also without measures for the Phoenix and the Kinetic Hand),
         else the computed one. None if the device is not scaled here or nothing gives a scale. Kinetic Arm: scale of the selected part's group."""
         if self.dev == "kinetic_arm":
             a = self.arm_part(); return None if a is None or a["prescaled"] else self.arm_group_scale(a["group"])
@@ -525,7 +528,7 @@ class MainWindow(QMainWindow):
         return r is not None and v is not None and self.scale_cb.isChecked() and not (r[0] - 1e-9 <= v <= r[1] + 1e-9)
 
     def computed_scale(self):
-        """Uniform scale CustomLab computes from the measures (None if the device is not scaled here or sizing is invalid)."""
+        """Uniform scale e-NableLab computes from the measures (None if the device is not scaled here or sizing is invalid)."""
         if self.sizing is None: return None
         if self.dev == "phoenix_hand": return self.sizing.scad_defines.get("HandPerc")
         if self.dev == "kinetic_hand": return self.sizing.derived.get("scale_percent")

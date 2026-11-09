@@ -1,19 +1,19 @@
-; Inno Setup : installateur Windows de e-NABLE CustomLab (construit par .github/workflows/build.yml, après PyInstaller -> dist\CustomLab\)
+; Inno Setup : installateur Windows de e-NableLab (construit par .github/workflows/build.yml, après PyInstaller -> dist\e-NableLab\)
 [Setup]
-AppName=e-NABLE CustomLab
+AppName=e-NableLab
 AppVersion=1.0.0-beta.2
 AppPublisher=e-NABLE France
 AppPublisherURL=https://e-nable.fr
-AppComments=e-NABLE CustomLab, par e-NABLE France
+AppComments=e-NableLab, By e-Nable France
 WizardImageFile=wizard_large.bmp
 WizardSmallImageFile=wizard_small.bmp
-DefaultDirName={autopf}\e-NABLE CustomLab
-DefaultGroupName=e-NABLE CustomLab
+DefaultDirName={autopf}\e-NableLab
+DefaultGroupName=e-NableLab
 PrivilegesRequired=lowest
 OutputDir=..\dist
-OutputBaseFilename=e-NABLE_CustomLab_Setup
-SetupIconFile=CustomLab.ico
-UninstallDisplayIcon={app}\CustomLab.exe
+OutputBaseFilename=e-NableLab_Setup
+SetupIconFile=e-NableLab.ico
+UninstallDisplayIcon={app}\e-NableLab.exe
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
@@ -23,14 +23,14 @@ ArchitecturesInstallIn64BitMode=x64compatible
 Name: "french"; MessagesFile: "compiler:Languages\French.isl"
 
 [Files]
-Source: "..\dist\CustomLab\*"; DestDir: "{app}"; Flags: recursesubdirs createallsubdirs ignoreversion
+Source: "..\dist\e-NableLab\*"; DestDir: "{app}"; Flags: recursesubdirs createallsubdirs ignoreversion
 
 [Icons]
-Name: "{group}\e-NABLE CustomLab"; Filename: "{app}\CustomLab.exe"
-Name: "{autodesktop}\e-NABLE CustomLab"; Filename: "{app}\CustomLab.exe"; Tasks: desktopicon
+Name: "{group}\e-NableLab"; Filename: "{app}\e-NableLab.exe"
+Name: "{autodesktop}\e-NableLab"; Filename: "{app}\e-NableLab.exe"; Tasks: desktopicon
 
 [Tasks]
 Name: "desktopicon"; Description: "Créer un raccourci sur le Bureau"; Flags: unchecked
 
 [Run]
-Filename: "{app}\CustomLab.exe"; Description: "Lancer e-NABLE CustomLab"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\e-NableLab.exe"; Description: "Lancer e-NableLab"; Flags: nowait postinstall skipifsilent

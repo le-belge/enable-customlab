@@ -38,7 +38,7 @@ def run(parts, base_spec, out_root, ctx, progress=lambda i, n, msg: None, cancel
     summary = {"generated": datetime.now().isoformat(timespec="seconds"), "status": "EXPERIMENTAL", "spec": deco._spec_dict(base_spec), "parts": results,
                "disclaimer": deco.DISCLAIMER}
     (out_root / "RECAP_camouflage.json").write_text(json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")
-    lines = ["CustomLab — camouflage sur plusieurs pièces (EXPÉRIMENTAL)", "", deco.DISCLAIMER, ""]
+    lines = ["e-NableLab — camouflage sur plusieurs pièces (EXPÉRIMENTAL)", "", deco.DISCLAIMER, ""]
     for r in results: lines.append(f"[{r['status']}] {r['part']} — {r['message']}")
     lines += ["", "Chaque dossier contient le fichier 3MF prêt pour Bambu Studio, les STL séparés, une fiche JSON et l'attribution de la pièce d'origine.", "Aucune impression ni validation physique n'a été faite."]
     (out_root / "RECAP_camouflage.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")

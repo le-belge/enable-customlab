@@ -62,22 +62,22 @@ jobs:
         if: matrix.name == 'mac'
         run: |
           python -m PyInstaller packaging/customlab.spec --noconfirm --distpath dist --workpath build
-          codesign --force --deep --sign - "dist/e-NABLE CustomLab.app"
-          cd dist && ditto -c -k --sequesterRsrc --keepParent "e-NABLE CustomLab.app" "e-NABLE_CustomLab_mac.zip"
+          codesign --force --deep --sign - "dist/e-NableLab.app"
+          cd dist && ditto -c -k --sequesterRsrc --keepParent "e-NableLab.app" "e-NableLab_mac.zip"
       - name: Build (Windows)
         if: matrix.name == 'windows'
         run: |
           python -m PyInstaller packaging/customlab.spec --noconfirm --distpath dist --workpath build
-          Compress-Archive -Path dist/CustomLab -DestinationPath dist/e-NABLE_CustomLab_windows.zip -Force
+          Compress-Archive -Path dist/e-NableLab -DestinationPath dist/e-NableLab_windows.zip -Force
       - name: Self-test of the built app (macOS)
         if: matrix.name == 'mac'
         run: |
-          "dist/e-NABLE CustomLab.app/Contents/MacOS/CustomLab" --selftest --report selftest_mac.txt
+          "dist/e-NableLab.app/Contents/MacOS/e-NableLab" --selftest --report selftest_mac.txt
       - name: Self-test of the built app (Windows)
         if: matrix.name == 'windows'
         # console=False: the .exe has no console, so wait for it explicitly and read the report file
         run: |
-          $p = Start-Process -FilePath "dist\CustomLab\CustomLab.exe" -ArgumentList "--selftest", "--report", "selftest_windows.txt" -Wait -PassThru -NoNewWindow
+          $p = Start-Process -FilePath "dist\e-NableLab\e-NableLab.exe" -ArgumentList "--selftest", "--report", "selftest_windows.txt" -Wait -PassThru -NoNewWindow
           if (Test-Path selftest_windows.txt) { Get-Content selftest_windows.txt -Encoding utf8 } else { Write-Output "no report written" }
           # fail-safe: a null ExitCode or a missing/incomplete report must not pass as success
           $ok = (Test-Path selftest_windows.txt) -and (Select-String -Path selftest_windows.txt -Pattern '^selftest OK$' -Quiet)
@@ -89,7 +89,7 @@ jobs:
           & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" packaging\installer.iss
       - uses: actions/upload-artifact@v4
         with:
-          name: e-NABLE_CustomLab_${{ matrix.name }}
+          name: e-NableLab_${{ matrix.name }}
           path: |
             dist/*.zip
             dist/*Setup.exe
@@ -108,5 +108,5 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "$GITHUB_REF_NAME" dist/* --repo "$GITHUB_REPOSITORY" --prerelease \
-            --title "e-NABLE CustomLab V1 - bêta test ($GITHUB_REF_NAME)" \
-            --notes "Version bêta de test, EXPÉRIMENTALE : non signée, non testée sur poste vierge, aucune validation médicale ni d'impression (à faire contrôler par un bénévole e-NABLE compétent). Windows : lancer e-NABLE_CustomLab_Setup.exe (installer OpenSCAD à part). macOS : e-NABLE_CustomLab_mac.zip. Voir le README. Code sous GPL-3.0 ; pièces jesimon (CC BY-NC) et logo e-NABLE France : licences propres."
+            --title "e-NableLab V1 - bêta test ($GITHUB_REF_NAME)" \
+            --notes "Version bêta de test, EXPÉRIMENTALE : non signée, non testée sur poste vierge, aucune validation médicale ni d'impression (à faire contrôler par un bénévole e-NABLE compétent). Windows : lancer e-NableLab_Setup.exe (installer OpenSCAD à part). macOS : e-NableLab_mac.zip. Voir le README. Code sous GPL-3.0 ; pièces jesimon (CC BY-NC) et logo e-NABLE France : licences propres."

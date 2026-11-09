@@ -1,7 +1,7 @@
 """Help window "Mettre à l'échelle pas à pas", one guide per device: the documented method (paraphrased), screenshots of this app and a live calculator that uses the same functions as the app.
 
 Source of the method: https://e-nable.fr/fr/fabrications/matching/mettre-a-lechelle/ (formula, 5 mm margin, 43 mm reference). The page itself gives no limits;
-the 100-160 % range used by CustomLab comes from the official OpenSCAD `scale` parameter (see docs/TUTO_ECHELLES.md).
+the 100-160 % range used by e-NableLab comes from the official OpenSCAD `scale` parameter (see docs/TUTO_ECHELLES.md).
 """
 from pathlib import Path
 
@@ -19,27 +19,27 @@ TX = {"fr": {"title": "Mettre à l'échelle la Phoenix : pas à pas", "close": "
              "html": """<h2>1. Mesurer la largeur du poignet</h2>
 <p>On mesure la <b>largeur du poignet de la main atteinte, à la ligne d'articulation</b> (le pli entre la main et l'avant-bras), en millimètres. Si vous pouvez rencontrer la personne, mesurez directement. Sinon, prenez une <b>photo de la main posée à plat sur une table</b>, avec à côté un mètre ou une carte bancaire.</p>
 <p><img src="{schema}" width="520"></p>
-<h2>2. Mesurer sur une photo (dans CustomLab)</h2>
+<h2>2. Mesurer sur une photo (dans e-NableLab)</h2>
 <p>À l'étape « Mesures », le bouton <b>📷 Mesurer sur une photo</b> remplace l'outil externe d'autrefois :</p>
 <ol><li>ouvrez la photo ;</li><li>choisissez la référence : <b>carte bancaire</b> (85,6 mm), feuille A4, ou mètre/règle ;</li><li>cliquez deux repères sur la référence (les deux coins de la carte, ou 10 cm et 20 cm sur un mètre) ;</li><li>cliquez les deux bords du poignet, sur la ligne d'articulation. Zoomez avec la molette pour placer les points précisément ;</li><li>« Utiliser cette mesure ».</li></ol>
 <p><img src="{photo}" width="520"><br><i>Illustration dessinée (pas une vraie photo).</i></p>
 <p><b>Attention :</b> photo de face, référence posée dans le même plan que le poignet. La perspective n'est pas corrigée : contrôlez la valeur avec un mètre ruban quand c'est possible.</p>
 <h2>3. Ajouter 5 mm de confort et calculer le %</h2>
 <p><b>Échelle (%) = (poignet + marge) ÷ 43 × 100</b>, avec une marge de <b>5 mm</b>. Les 43 mm sont la place disponible pour le poignet dans la main Phoenix à 100 %.</p>
-<p>Exemple : un poignet de 40 mm donne (40 + 5) ÷ 43 × 100 = <b>104,65 %</b>. <b>CustomLab ajoute la marge tout seul : ne la rajoutez pas à la mesure.</b></p>
+<p>Exemple : un poignet de 40 mm donne (40 + 5) ÷ 43 × 100 = <b>104,65 %</b>. <b>e-NableLab ajoute la marge tout seul : ne la rajoutez pas à la mesure.</b></p>
 <p><img src="{mes}" width="620"></p>
-<p>Cette règle vaut pour les mains Phoenix (et Raptor, Raptor Reloaded selon la page e-NABLE France). Dans CustomLab, la plage documentée est de <b>100 à 160 %</b> (poignet d'environ 38 à 63,8 mm) : hors plage, la valeur est refusée et jamais corrigée.</p>
+<p>Cette règle vaut pour les mains Phoenix (et Raptor, Raptor Reloaded selon la page e-NABLE France). Dans e-NableLab, la plage documentée est de <b>100 à 160 %</b> (poignet d'environ 38 à 63,8 mm) : hors plage, la valeur est refusée et jamais corrigée.</p>
 <h2>4. Vérifier avant d'imprimer</h2>
-<ul><li>La paume mise à l'échelle ne doit pas être très différente de la paume de la main valide de la personne.</li><li>Imprimez d'abord le <b>gabarit Phoenix</b> (rapide) ou la paume d'essai, et essayez-le sur le poignet.</li><li>Les règles ci-dessus restent à valider par un bénévole e-NABLE compétent : aucun essayage n'a été fait avec CustomLab.</li></ul>
+<ul><li>La paume mise à l'échelle ne doit pas être très différente de la paume de la main valide de la personne.</li><li>Imprimez d'abord le <b>gabarit Phoenix</b> (rapide) ou la paume d'essai, et essayez-le sur le poignet.</li><li>Les règles ci-dessus restent à valider par un bénévole e-NABLE compétent : aucun essayage n'a été fait avec e-NableLab.</li></ul>
 <p style="color:#5b6b78"><small>Méthode d'après la page e-NABLE France « Mettre à l'échelle » : https://e-nable.fr/fr/fabrications/matching/mettre-a-lechelle/</small></p>"""},
       "en": {"title": "Scaling the Phoenix: step by step", "close": "Close", "calc": "Quick calculator", "wrist": "Measured wrist width:", "res": "Scale: <b>{p:.2f} %</b> = ({w:g} + {m:g}) ÷ 43 × 100",
              "oob": "<span style='color:#b00020'><b>{p:.1f} %</b>: outside the documented range (100–160 %, wrist {lo:.1f} to {hi:.1f} mm). Nothing is corrected: check the measurement.</span>",
              "html": """<h2>1. Measure the wrist width</h2><p>Measure the <b>width of the affected wrist at the joint line</b> (the crease between hand and forearm), in millimetres. If you can meet the person, measure directly; otherwise use a <b>photo of the hand lying flat on a table</b> with a ruler or a bank card beside it.</p>
-<p><img src="{schema}" width="520"></p><h2>2. Measure on a photo (in CustomLab)</h2><p>In the "Measures" step, the <b>📷 Measure on a photo</b> button: open the photo, choose the reference (bank card 85.6 mm, A4 sheet or ruler), click two marks on it, click the two wrist edges (zoom with the wheel), then "Use this measure".</p>
+<p><img src="{schema}" width="520"></p><h2>2. Measure on a photo (in e-NableLab)</h2><p>In the "Measures" step, the <b>📷 Measure on a photo</b> button: open the photo, choose the reference (bank card 85.6 mm, A4 sheet or ruler), click two marks on it, click the two wrist edges (zoom with the wheel), then "Use this measure".</p>
 <p><img src="{photo}" width="520"><br><i>Drawn illustration (not a real photo).</i></p><p><b>Note:</b> straight-on photo, reference in the same plane as the wrist; perspective is not corrected, check with a tape when possible.</p>
-<h2>3. Add the 5 mm margin and compute the %</h2><p><b>Scale (%) = (wrist + margin) ÷ 43 × 100</b>, margin 5 mm; 43 mm is the room for the wrist in the Phoenix hand at 100 %. Example: 40 mm → (40 + 5) ÷ 43 × 100 = <b>104.65 %</b>. <b>CustomLab adds the margin itself: do not add it.</b></p>
-<p><img src="{mes}" width="620"></p><p>CustomLab's documented range is <b>100–160 %</b> (wrist about 38–63.8 mm); outside it the value is refused, never corrected.</p>
-<h2>4. Check before printing</h2><ul><li>The scaled palm should not differ much from the person's sound palm.</li><li>Print the Phoenix jig (gabarit) or a test palm first and try it on the wrist.</li><li>To be validated by a competent e-NABLE volunteer: no fitting has been done with CustomLab.</li></ul>
+<h2>3. Add the 5 mm margin and compute the %</h2><p><b>Scale (%) = (wrist + margin) ÷ 43 × 100</b>, margin 5 mm; 43 mm is the room for the wrist in the Phoenix hand at 100 %. Example: 40 mm → (40 + 5) ÷ 43 × 100 = <b>104.65 %</b>. <b>e-NableLab adds the margin itself: do not add it.</b></p>
+<p><img src="{mes}" width="620"></p><p>e-NableLab's documented range is <b>100–160 %</b> (wrist about 38–63.8 mm); outside it the value is refused, never corrected.</p>
+<h2>4. Check before printing</h2><ul><li>The scaled palm should not differ much from the person's sound palm.</li><li>Print the Phoenix jig (gabarit) or a test palm first and try it on the wrist.</li><li>To be validated by a competent e-NABLE volunteer: no fitting has been done with e-NableLab.</li></ul>
 <p><small>Method after the e-NABLE France page "Mettre à l'échelle": https://e-nable.fr/fr/fabrications/matching/mettre-a-lechelle/</small></p>"""}}
 
 
@@ -54,25 +54,25 @@ KH = {"fr": """<h2>1. Mesurer (main atteinte)</h2>
 <p>Espace libre dans la paume = longueur de paume du modèle (à cette échelle) − longueur mesurée → on prend l'insert le plus proche (A à E).</p>
 <p><img src="{mes}" width="640"><br><i>Exemple du manuel reproduit : poignet 48 mm → 72,5 % + insert D (paume mesurée 40 mm).</i></p>
 <h2>4. Main gauche et vérification</h2>
-<ul><li>Toutes les pièces sont des mains droites : la main gauche est la <b>symétrie en X</b>, appliquée avant la décoration. CustomLab le fait seul.</li><li>Imprimez d'abord une <b>paume d'essai</b> et essayez-la avant de fabriquer la main.</li><li>À valider par un bénévole compétent : aucun essayage n'a été fait avec CustomLab.</li></ul>
+<ul><li>Toutes les pièces sont des mains droites : la main gauche est la <b>symétrie en X</b>, appliquée avant la décoration. e-NableLab le fait seul.</li><li>Imprimez d'abord une <b>paume d'essai</b> et essayez-la avant de fabriquer la main.</li><li>À valider par un bénévole compétent : aucun essayage n'a été fait avec e-NableLab.</li></ul>
 <p><small>Source : manuel Kinetic Hand (Free 3D Hands, Mat Bowtell), annexe 1 « Hand Scaling Chart ». Voir aussi docs/KINETIC_HAND.md.</small></p>""",
 "en": """<h2>1. Measure (affected hand)</h2><p>Kinetic Hand manual method: photo of the affected hand <b>flat</b>, ruler on the table edge (the "📷 Measure on a photo" tool does this), measured <b>at the wrist flexion line</b>.</p><ul><li><b>Wrist width</b> (required). <b>Do not add a margin</b>: 3 mm of padding is added automatically.</li><li><b>Palm length</b> (required): wrist line to the longest part of the palm; used to choose the soft insert.</li><li>Optional: maximum palm width; sound hand length (information only).</li></ul>
 <h2>2. The scale</h2><p>Wrist width + 3 mm → nearest line of the manual's <b>Hand Scaling Chart</b> (appendix 1): <b>50 to 100 %</b> in 2.5 % steps; a tie goes to the larger scale. The print guide recommends <b>55 % minimum</b>. Uniform scale for all parts.</p>
 <h2>3. Soft insert A–E</h2><p>Free room in the palm = model palm length (at that scale) − measured length → nearest insert.</p><p><img src="{mes}" width="640"><br><i>Manual example reproduced: wrist 48 mm → 72.5 % + insert D (palm 40 mm).</i></p>
-<h2>4. Left hand and checks</h2><ul><li>All parts are right hands: the left hand is the X mirror, applied before decoration (automatic).</li><li>Print a <b>test palm</b> first.</li><li>To be validated by a competent volunteer: no fitting done with CustomLab.</li></ul><p><small>Source: Kinetic Hand manual (Free 3D Hands, Mat Bowtell), appendix 1. See docs/KINETIC_HAND.md.</small></p>"""}
+<h2>4. Left hand and checks</h2><ul><li>All parts are right hands: the left hand is the X mirror, applied before decoration (automatic).</li><li>Print a <b>test palm</b> first.</li><li>To be validated by a competent volunteer: no fitting done with e-NableLab.</li></ul><p><small>Source: Kinetic Hand manual (Free 3D Hands, Mat Bowtell), appendix 1. See docs/KINETIC_HAND.md.</small></p>"""}
 KA = {"fr": """<h2>1. Les 3 mesures (manuel Kinetic Arm, étape 2)</h2>
 <ul><li><b>Longueur de la main saine</b> : du bout du majeur au poignet.</li><li><b>Largeur du coude</b> du membre résiduel : la partie la plus large, souvent au pli.</li><li><b>Longueur du membre résiduel</b> : de l'olécrâne à l'extrémité.</li><li>Facultatif : longueur de l'avant-bras valide, pour un contrôle (le membre résiduel doit faire 15 à 70 % de l'avant-bras valide).</li></ul>
 <h2>2. Du chiffre aux pièces (pages 28–33, tableaux B1 à B4)</h2>
 <ol><li>Longueur de la main saine → <b>échelle des composants inférieurs</b> (arrondie vers le <b>bas</b> ; 50 à 100 %).</li><li>Largeur du coude → <b>type d'avant-bras A à F</b> (arrondie vers le <b>haut</b>).</li><li>(échelle inférieure, type) → <b>échelle des composants supérieurs</b>.</li><li>Longueur du membre résiduel → <b>insert A à Q</b> (arrondie vers le haut).</li><li>(insert, type) → <b>languette 1 à 4</b> et <b>doublure néoprène</b> (jeu 1 à 12).</li></ol>
 <p><img src="{mes}" width="640"></p>
 <h2>3. Fichiers pré-échelonnés</h2>
-<p>Paume, mécanisme de verrouillage et tendeurs existent en plusieurs échelles : on prend <b>le bon fichier</b>, qu'on ne met <b>jamais à l'échelle dans le trancheur</b>. CustomLab choisit le fichier et prévient si l'échelle ne correspond pas exactement (les tendeurs existent par pas de 2,5 %).</p>
+<p>Paume, mécanisme de verrouillage et tendeurs existent en plusieurs échelles : on prend <b>le bon fichier</b>, qu'on ne met <b>jamais à l'échelle dans le trancheur</b>. e-NableLab choisit le fichier et prévient si l'échelle ne correspond pas exactement (les tendeurs existent par pas de 2,5 %).</p>
 <h2>4. Vérifier</h2>
 <ul><li>Imprimez d'abord un <b>bras d'essai</b> (bras supérieur, charnières de coude, avant-bras).</li><li>Un changement d'échelle doit être revu par un <b>professionnel de santé</b> (manuel).</li><li><b>Les tableaux B1 à B3 ont été recopiés depuis des images</b> : un bénévole doit en relire quelques lignes.</li></ul>
 <p><small>Source : Kinetic Arm Assembly Manual (Free 3D Hands, Mat Bowtell). Voir docs/KINETIC_ARM.md.</small></p>""",
 "en": """<h2>1. The 3 measurements (Kinetic Arm manual, step 2)</h2><ul><li><b>Sound hand length</b>: middle fingertip to wrist.</li><li><b>Elbow width</b> of the residual limb: widest part, often at the crease.</li><li><b>Residual limb length</b>: olecranon to the end.</li><li>Optional: sound forearm length, for a check (residual limb = 15–70 % of it).</li></ul>
 <h2>2. From numbers to parts (pages 28–33, tables B1–B4)</h2><ol><li>Sound hand length → <b>lower components scale</b> (rounded <b>down</b>; 50–100 %).</li><li>Elbow width → <b>forearm type A–F</b> (rounded <b>up</b>).</li><li>(lower scale, type) → <b>upper components scale</b>.</li><li>Residual limb length → <b>insert A–Q</b> (rounded up).</li><li>(insert, type) → <b>tongue 1–4</b> and <b>neoprene liner</b> (set 1–12).</li></ol><p><img src="{mes}" width="640"></p>
-<h2>3. Pre-scaled files</h2><p>Palm, locking mechanism and tensioners exist in several scales: take <b>the right file</b>, <b>never scale it in the slicer</b>. CustomLab picks it and warns when the scale is not exact.</p>
+<h2>3. Pre-scaled files</h2><p>Palm, locking mechanism and tensioners exist in several scales: take <b>the right file</b>, <b>never scale it in the slicer</b>. e-NableLab picks it and warns when the scale is not exact.</p>
 <h2>4. Check</h2><ul><li>Print a <b>test arm</b> first.</li><li>A change of scale must be reviewed by an <b>allied-health professional</b> (manual).</li><li><b>Tables B1–B3 were copied from images</b>: a volunteer should proof-read some rows.</li></ul><p><small>Source: Kinetic Arm Assembly Manual (Free 3D Hands, Mat Bowtell). See docs/KINETIC_ARM.md.</small></p>"""}
 UA = {"fr": """<h2>1. Les 3 mesures (page e-NABLE France « Prise de mesures du destinataire »)</h2>
 <p>Pour le bras Unlimbited, trois mesures sont nécessaires. Attention : <b>deux sont prises sur le bras NON atteint</b>, une seule sur le bras atteint.</p>

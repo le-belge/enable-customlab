@@ -16,9 +16,9 @@ from . import __version__, paths
 MAX_BYTES, BACKUPS = 1_000_000, 3          # customlab.log + customlab.log.1..3: at most ~4 MB on disk
 lang = "fr"                                # set by the main window (FR/EN toggle)
 
-TX = {"fr": {"title": "Erreur inattendue", "text": "Une erreur inattendue s'est produite. Votre travail en cours n'a pas forcément été enregistré.\n\nLe détail a été écrit dans le journal :\n{f}\n\nEnvoyez le rapport à l'équipe CustomLab (bouton « Copier le rapport »).",
+TX = {"fr": {"title": "Erreur inattendue", "text": "Une erreur inattendue s'est produite. Votre travail en cours n'a pas forcément été enregistré.\n\nLe détail a été écrit dans le journal :\n{f}\n\nEnvoyez le rapport à l'équipe e-NableLab (bouton « Copier le rapport »).",
              "copy": "Copier le rapport", "open": "Ouvrir le dossier des journaux", "close": "Fermer"},
-      "en": {"title": "Unexpected error", "text": "An unexpected error occurred. Your current work may not have been saved.\n\nThe details were written to the log:\n{f}\n\nPlease send the report to the CustomLab team (\"Copy the report\" button).",
+      "en": {"title": "Unexpected error", "text": "An unexpected error occurred. Your current work may not have been saved.\n\nThe details were written to the log:\n{f}\n\nPlease send the report to the e-NableLab team (\"Copy the report\" button).",
              "copy": "Copy the report", "open": "Open the logs folder", "close": "Close"}}
 
 
@@ -50,7 +50,7 @@ def warning(msg):
 
 def report(exc_type, exc, tb):
     """Plain-text report: version, system, time and the full trace."""
-    head = f"CustomLab {__version__} — Python {platform.python_version()} — {platform.platform()} — {datetime.now().isoformat(timespec='seconds')}"
+    head = f"e-NableLab {__version__} — Python {platform.python_version()} — {platform.platform()} — {datetime.now().isoformat(timespec='seconds')}"
     return head + "\n" + "".join(traceback.format_exception(exc_type, exc, tb))
 
 
@@ -97,4 +97,4 @@ def _thread_hook(args):
 def install():
     """Log every uncaught exception (main and worker threads) and show it to the user (main thread)."""
     sys.excepthook = excepthook; threading.excepthook = _thread_hook
-    get_logger().info("Démarrage de CustomLab %s (%s)", __version__, platform.platform())
+    get_logger().info("Démarrage de e-NableLab %s (%s)", __version__, platform.platform())

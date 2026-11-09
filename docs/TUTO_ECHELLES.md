@@ -1,6 +1,6 @@
 # Tuto rapide : mesurer, mettre à l'échelle, personnaliser, exporter
 
-Résumé des méthodes **documentées** pour chaque appareil, à lire avant de se lancer. Tout est EXPÉRIMENTAL : aucun essayage ni impression n'a été fait avec CustomLab. Une valeur hors plage est **refusée**, jamais corrigée. Imprimer d'abord une pièce d'essai (paume ou gabarit) avant de fabriquer l'appareil.
+Résumé des méthodes **documentées** pour chaque appareil, à lire avant de se lancer. Tout est EXPÉRIMENTAL : aucun essayage ni impression n'a été fait avec e-NableLab. Une valeur hors plage est **refusée**, jamais corrigée. Imprimer d'abord une pièce d'essai (paume ou gabarit) avant de fabriquer l'appareil.
 
 ## L'ordre à suivre
 1. **Choisir l'appareil** (page d'accueil).
@@ -33,13 +33,13 @@ Méthode des pages 28–33 du manuel (tableaux B1–B4) :
 3. (échelle inférieure, type) → échelle des composants **supérieurs**.
 4. Longueur du membre résiduel → insert A–Q (arrondi vers le haut).
 5. (insert, type) → languette 1–4 et doublure néoprène 1–12.
-- **Fichiers pré-échelonnés** (Palm, mécanisme de verrouillage, tendeurs) : on prend le bon fichier, **jamais mis à l'échelle** dans le trancheur. CustomLab avertit si le fichier ne correspond pas à l'échelle calculée.
+- **Fichiers pré-échelonnés** (Palm, mécanisme de verrouillage, tendeurs) : on prend le bon fichier, **jamais mis à l'échelle** dans le trancheur. e-NableLab avertit si le fichier ne correspond pas à l'échelle calculée.
 - Contrôle documenté : membre résiduel = 15 à 70 % de l'avant-bras valide.
 - **À relire** : les tableaux B1–B3 ont été recopiés depuis des images ; un bénévole doit en vérifier quelques lignes. La règle de symétrie du bras gauche (fichiers « RH ») est à confirmer.
 - Le manuel demande un bras d'essai et une relecture par un professionnel de santé en cas de changement d'échelle.
 
 ## Unlimbited Arm v2.1
-Pas de mise à l'échelle par CustomLab : le **SCAD officiel** calcule les pièces à partir de trois mesures, telles que la page e-NABLE France « Prise de mesures du destinataire » les décrit (A = bras atteint ; B et C = bras/main **NON atteints**) :
+Pas de mise à l'échelle par e-NableLab : le **SCAD officiel** calcule les pièces à partir de trois mesures, telles que la page e-NABLE France « Prise de mesures du destinataire » les décrit (A = bras atteint ; B et C = bras/main **NON atteints**) :
 
 | Mesure | Paramètre | Plage officielle |
 |---|---|---|

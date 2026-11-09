@@ -10,4 +10,4 @@ phoenix_jesimon_100pct/{left,right}
 Fichiers copiés sans modification, avec leurs LICENSE.txt / README.txt / SOURCES.txt d'origine.
 USAGE NON COMMERCIAL UNIQUEMENT. Ne pas vendre ce logiciel ni ces fichiers. Conserver cette notice et l'attribution à toute redistribution.
 Les pièces décorées dérivées héritent de cette licence (non commercial + attribution).
-Le code de CustomLab est distinct de ces fichiers ; seuls ces dossiers sont soumis à la licence ci-dessus.
+Le code de e-NableLab est distinct de ces fichiers ; seuls ces dossiers sont soumis à la licence ci-dessus.

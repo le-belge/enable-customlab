@@ -122,7 +122,7 @@ class MeshView(QWidget):
     def paintEvent(self, _):
         p = QPainter(self); p.fillRect(self.rect(), QColor("#eaf4f9"))
         if self.tris is None:
-            p.setPen(QColor("#667")); p.drawText(self.rect(), Qt.AlignCenter, self.message or "—"); return
+            p.setPen(QColor("#667")); p.drawText(self.rect().adjusted(12, 0, -12, 0), Qt.AlignCenter | Qt.TextWordWrap, self.message or "—"); return
         W, H = max(2, self.width()), max(2, self.height()); key = (W, H, self.yaw, self.pitch, self.zoom)
         if self._cache is not None and self._cache[0] == key: img = self._cache[1]
         elif len(self.tris) > DRAG_MAX and self._draft_key != key:

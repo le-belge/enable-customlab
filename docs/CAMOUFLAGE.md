@@ -1,6 +1,6 @@
 # Camouflage (expérimental)
 
-Motif organique à 3 couleurs généré par CustomLab (aucune image tierce), appliqué à toute la surface décorable d'une pièce.
+Motif organique à 3 couleurs généré par e-NableLab (aucune image tierce), appliqué à toute la surface décorable d'une pièce.
 
 - **Styles** : `fr` (style Centre Europe : vert olive #5B6236, brun #6B4A2E, noir #1E1E1C ; pièce conseillée : sable #C2B280) et `winter`
   (gris clair #C5CBD0, gris acier #8D969E, anthracite #4B5259 ; pièce conseillée : blanc #F2F4F5). Ce sont des **styles inspirés**, pas la

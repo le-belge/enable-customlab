@@ -810,7 +810,7 @@ def export_result(result: DecoResult, part_path, spec: DecoSpec, out_dir, zones=
         cols = ((["#FFFFFF"] + [L["hex"] for L in result.layers]) if result.layers else None) if bambu3mf.WITH_FILAMENT_CONFIG else None
         write_bambu_3mf(out / bambu_name, parts, object_name=src.stem[:40], filament_colours=cols)
         guide_name = f"{src.stem[:40]}_LISEZ-MOI_Bambu.txt"
-        lines = ["CustomLab — pièce décorée EXPÉRIMENTALE : mode d'emploi pour Bambu Studio", "",
+        lines = ["e-NableLab — pièce décorée EXPÉRIMENTALE : mode d'emploi pour Bambu Studio", "",
                  f"1. Double-cliquez sur {bambu_name} (ou Fichier > Ouvrir dans Bambu Studio).",
                  "   Il contient la pièce d'origine et la décoration comme PIÈCES d'un même objet, avec les filaments déjà assignés.", "",
                  "2. Vérifiez l'onglet « Objets » : filament par pièce :", f"   - Base (pièce d'origine) -> filament 1  (couleur du fond, y compris les parties blanches/vides du motif)"]
